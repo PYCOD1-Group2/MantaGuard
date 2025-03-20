@@ -1,9 +1,16 @@
 import pyshark
 
-def scan_network(interface="eth0", packet_count=50):
+def get_network_interfaces():
+    try:
+        import netifaces
+        return netifaces.interfaces()
+    except ImportError:
+        print("netifaces module not found. Install it using: pip install netifaces")
+        return []
+
+def scan_network(interface, packet_count=50):
     print(f"Starting network scan on interface {interface}...")
     try:
-        # Capture packets in real-time
         capture = pyshark.LiveCapture(interface=interface)
         packets = []
 
@@ -21,7 +28,26 @@ def scan_network(interface="eth0", packet_count=50):
         return []
 
 def main():
-    interface = "eth0"  # Change this to match your network interface
+    interfaces = get_network_interfaces()
+    if not interfaces:
+        print("No network interfaces found or unable to list them.")
+        return
+    
+    print("Available network interfaces:")
+    for i, iface in enumerate(interfaces):
+        print(f"{i + 1}: {iface}")
+    
+    while True:
+        try:
+            choice = int(input("Select an interface by number: ")) - 1
+            if 0 <= choice < len(interfaces):
+                interface = interfaces[choice]
+                break
+            else:
+                print("Invalid selection. Try again.")
+        except ValueError:
+            print("Please enter a valid number.")
+
     packet_count = 50  # Number of packets to capture
     scan_network(interface, packet_count)
 
