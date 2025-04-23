@@ -1,0 +1,3154 @@
+Type,No,Timestamp,Source IP,Destination IP,Source Port,Destination Port,Transport Layer,Protocol,TTL,MAC Src,MAC Dst,Length,Info,Host,State,Nmap Protocol,Port,Service,Product,Version
+Packet,1,2025-04-23 13:48:04,10.0.96.87,10.0.96.21,63921,8009,TCP,TCP,128,20:0b:74:19:ee:af,38:4b:76:f1:27:a8,171,"Packet (Length: 171)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 38:4b:76:f1:27:a8
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 157
+[0m[1m[32m	Identification:[0m[1m 0x5237 (21047)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 128
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0xd3b7 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Destination Address:[0m[1m 10.0.96.21
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 63921
+[0m[1m[32m	Destination Port:[0m[1m 8009
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (0)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 0... = Data:[0m[1m Absent
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m [ Null ]
+[0m[1m[32m	TCP Segment Len:[0m[1m 117
+[0m[1m[32m	Sequence Number:[0m[1m 1    (relative sequence number)
+[0m[1m[32m	Sequence Number (raw):[0m[1m 347725828
+[0m[1m[32m	Next Sequence Number:[0m[1m 118    (relative sequence number)
+[0m[1m[32m	Acknowledgment Number:[0m[1m 1    (relative ack number)
+[0m[1m[32m	Acknowledgment number (raw):[0m[1m 3151756674
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x018 (PSH, ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 1... = Push:[0m[1m Set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······AP···
+[0m[1m[32m	Window:[0m[1m 250
+[0m[1m[32m	Calculated window size:[0m[1m 250
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0x1740 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m	SEQ/ACK analysis
+[0m[1m[32m	Bytes in flight:[0m[1m 117
+[0m[1m[32m	Bytes sent since last PSH flag:[0m[1m 117
+[0m[1m	TCP payload (117 bytes)
+[0m[1m	TCP segment data (117 bytes)
+[0m",,,,,,,
+Packet,2,2025-04-23 13:48:04,10.0.96.21,10.0.96.87,8009,63921,TCP,TCP,64,38:4b:76:f1:27:a8,20:0b:74:19:ee:af,175,"Packet (Length: 175)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 38:4b:76:f1:27:a8
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 161
+[0m[1m[32m	Identification:[0m[1m 0xe278 (57976)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 64
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0x8372 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.21
+[0m[1m[32m	Destination Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 8009
+[0m[1m[32m	Destination Port:[0m[1m 63921
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[32m	Stream Packet Number:[0m[1m 2
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (8)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 1... = Data:[0m[1m Present
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m ··D···
+[0m[1m[32m	TCP Segment Len:[0m[1m 121
+[0m[1m[32m	Sequence Number:[0m[1m 1    (relative sequence number)
+[0m[1m[32m	Sequence Number (raw):[0m[1m 3151756674
+[0m[1m[32m	Next Sequence Number:[0m[1m 122    (relative sequence number)
+[0m[1m[32m	Acknowledgment Number:[0m[1m 118    (relative ack number)
+[0m[1m[32m	Acknowledgment number (raw):[0m[1m 347725945
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x018 (PSH, ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 1... = Push:[0m[1m Set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······AP···
+[0m[1m[32m	Window:[0m[1m 320
+[0m[1m[32m	Calculated window size:[0m[1m 320
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0xbe94 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.004485000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.004485000 seconds
+[0m[1m	SEQ/ACK analysis
+[0m[1m[32m	This is an ACK to the segment in frame:[0m[1m 1
+[0m[1m[32m	The RTT to ACK the segment was:[0m[1m 0.004485000 seconds
+[0m[1m[32m	Bytes in flight:[0m[1m 121
+[0m[1m[32m	Bytes sent since last PSH flag:[0m[1m 121
+[0m[1m	TCP payload (121 bytes)
+[0m[1m	TCP segment data (121 bytes)
+[0m",,,,,,,
+Packet,3,2025-04-23 13:48:04,N/A,N/A,N/A,N/A,N/A,ARP,N/A,52:d2:75:e9:70:bb,ff:ff:ff:ff:ff:ff,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m ff:ff:ff:ff:ff:ff
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 52:d2:75:e9:70:bb
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 1
+[0m[1m[32m	Padding:[0m[1m 000000000000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m 52:d2:75:e9:70:bb
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.0.80
+[0m[1m[32m	Target MAC address:[0m[1m 00:00:00:00:00:00
+[0m[1m[32m	Target IP address:[0m[1m 10.0.221.2
+[0m",,,,,,,
+Packet,4,2025-04-23 13:48:04,10.0.96.87,10.0.96.21,63921,8009,TCP,TCP,128,20:0b:74:19:ee:af,38:4b:76:f1:27:a8,54,"Packet (Length: 54)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 38:4b:76:f1:27:a8
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 40
+[0m[1m[32m	Identification:[0m[1m 0x5238 (21048)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 128
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0xd42b [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Destination Address:[0m[1m 10.0.96.21
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 63921
+[0m[1m[32m	Destination Port:[0m[1m 8009
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[32m	Stream Packet Number:[0m[1m 3
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (8)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 1... = Data:[0m[1m Present
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m ··D···
+[0m[1m[32m	TCP Segment Len:[0m[1m 0
+[0m[1m[32m	Sequence Number:[0m[1m 118    (relative sequence number)
+[0m[1m[32m	Sequence Number (raw):[0m[1m 347725945
+[0m[1m[32m	Next Sequence Number:[0m[1m 118    (relative sequence number)
+[0m[1m[32m	Acknowledgment Number:[0m[1m 122    (relative ack number)
+[0m[1m[32m	Acknowledgment number (raw):[0m[1m 3151756795
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x010 (ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 0... = Push:[0m[1m Not set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······A····
+[0m[1m[32m	Window:[0m[1m 255
+[0m[1m[32m	Calculated window size:[0m[1m 255
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0x1264 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.047076000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.042591000 seconds
+[0m[1m	SEQ/ACK analysis
+[0m[1m[32m	This is an ACK to the segment in frame:[0m[1m 2
+[0m[1m[32m	The RTT to ACK the segment was:[0m[1m 0.042591000 seconds
+[0m",,,,,,,
+Packet,5,2025-04-23 13:48:04,10.0.96.87,202.39.224.7,N/A,N/A,N/A,ICMP,255,20:0b:74:19:ee:af,84:39:8f:37:90:96,58,"Packet (Length: 58)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 84:39:8f:37:90:96
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 44
+[0m[1m[32m	Identification:[0m[1m 0xb76a (46954)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 255
+[0m[1m[32m	Protocol:[0m[1m ICMP (1)
+[0m[1m[32m	Header Checksum:[0m[1m 0xefdf [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Destination Address:[0m[1m 202.39.224.7
+[0m[1m[32m	Stream index:[0m[1m 1
+[0m[1m[33mLayer ICMP
+:[0m[1m[32m	Type:[0m[1m 8 (Echo (ping) request)
+[0m[1m[32m	Code:[0m[1m 0
+[0m[1m[32m	Checksum:[0m[1m 0x8bec [correct]
+[0m[1m[32m	Checksum Status:[0m[1m Good
+[0m[1m[32m	Identifier (BE):[0m[1m 3 (0x0003)
+[0m[1m[32m	Identifier (LE):[0m[1m 768 (0x0300)
+[0m[1m[32m	Sequence Number (BE):[0m[1m 54590 (0xd53e)
+[0m[1m[32m	Sequence Number (LE):[0m[1m 16085 (0x3ed5)
+[0m[1m[32m	data:[0m[1m 447261676f6e2049434d50206563686f
+[0m[1m[32m	Data:[0m[1m 447261676f6e2049434d50206563686f
+[0m[1m[32m	Length:[0m[1m 16
+[0m",,,,,,,
+Packet,6,2025-04-23 13:48:04,N/A,N/A,N/A,N/A,N/A,ARP,N/A,00:1e:67:12:df:48,ff:ff:ff:ff:ff:ff,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m ff:ff:ff:ff:ff:ff
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 00:1e:67:12:df:48
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 3
+[0m[1m[32m	Padding:[0m[1m 000000000000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m 00:1e:67:12:df:48
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.10.31
+[0m[1m[32m	Target MAC address:[0m[1m 00:00:00:00:00:00
+[0m[1m[32m	Target IP address:[0m[1m 10.0.10.41
+[0m",,,,,,,
+Packet,7,2025-04-23 13:48:04,N/A,N/A,N/A,N/A,N/A,ARP,N/A,bc:24:11:ac:f8:8a,ff:ff:ff:ff:ff:ff,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m ff:ff:ff:ff:ff:ff
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m bc:24:11:ac:f8:8a
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 4
+[0m[1m[32m	Padding:[0m[1m 000000000000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m bc:24:11:ac:f8:8a
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.97.44
+[0m[1m[32m	Target MAC address:[0m[1m 00:00:00:00:00:00
+[0m[1m[32m	Target IP address:[0m[1m 10.0.221.1
+[0m",,,,,,,
+Packet,8,2025-04-23 13:48:04,N/A,N/A,N/A,N/A,N/A,ARP,N/A,00:1e:67:0c:33:24,ff:ff:ff:ff:ff:ff,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m ff:ff:ff:ff:ff:ff
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 00:1e:67:0c:33:24
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 5
+[0m[1m[32m	Padding:[0m[1m 000000000000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m 00:1e:67:0c:33:24
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.10.91
+[0m[1m[32m	Target MAC address:[0m[1m 00:00:00:00:00:00
+[0m[1m[32m	Target IP address:[0m[1m 10.0.10.62
+[0m",,,,,,,
+Packet,9,2025-04-23 13:48:04,10.0.96.87,10.0.96.103,64407,8009,TCP,TCP,128,20:0b:74:19:ee:af,38:4b:76:f1:36:fe,171,"Packet (Length: 171)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 38:4b:76:f1:36:fe
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 6
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 157
+[0m[1m[32m	Identification:[0m[1m 0x1f5e (8030)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 128
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0x063f [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Destination Address:[0m[1m 10.0.96.103
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 64407
+[0m[1m[32m	Destination Port:[0m[1m 8009
+[0m[1m[32m	Stream index:[0m[1m 1
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (0)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 0... = Data:[0m[1m Absent
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m [ Null ]
+[0m[1m[32m	TCP Segment Len:[0m[1m 117
+[0m[1m[32m	Sequence Number:[0m[1m 1    (relative sequence number)
+[0m[1m[32m	Sequence Number (raw):[0m[1m 3729734856
+[0m[1m[32m	Next Sequence Number:[0m[1m 118    (relative sequence number)
+[0m[1m[32m	Acknowledgment Number:[0m[1m 1    (relative ack number)
+[0m[1m[32m	Acknowledgment number (raw):[0m[1m 3925192121
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x018 (PSH, ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 1... = Push:[0m[1m Set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······AP···
+[0m[1m[32m	Window:[0m[1m 255
+[0m[1m[32m	Calculated window size:[0m[1m 255
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0x7a3b [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m	SEQ/ACK analysis
+[0m[1m[32m	Bytes in flight:[0m[1m 117
+[0m[1m[32m	Bytes sent since last PSH flag:[0m[1m 117
+[0m[1m	TCP payload (117 bytes)
+[0m[1m	TCP segment data (117 bytes)
+[0m",,,,,,,
+Packet,10,2025-04-23 13:48:04,10.0.96.103,10.0.96.87,8009,64407,TCP,TCP,64,38:4b:76:f1:36:fe,20:0b:74:19:ee:af,175,"Packet (Length: 175)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 38:4b:76:f1:36:fe
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 6
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 161
+[0m[1m[32m	Identification:[0m[1m 0x6448 (25672)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 64
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0x0151 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.103
+[0m[1m[32m	Destination Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 8009
+[0m[1m[32m	Destination Port:[0m[1m 64407
+[0m[1m[32m	Stream index:[0m[1m 1
+[0m[1m[32m	Stream Packet Number:[0m[1m 2
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (8)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 1... = Data:[0m[1m Present
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m ··D···
+[0m[1m[32m	TCP Segment Len:[0m[1m 121
+[0m[1m[32m	Sequence Number:[0m[1m 1    (relative sequence number)
+[0m[1m[32m	Sequence Number (raw):[0m[1m 3925192121
+[0m[1m[32m	Next Sequence Number:[0m[1m 122    (relative sequence number)
+[0m[1m[32m	Acknowledgment Number:[0m[1m 118    (relative ack number)
+[0m[1m[32m	Acknowledgment number (raw):[0m[1m 3729734973
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x018 (PSH, ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 1... = Push:[0m[1m Set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······AP···
+[0m[1m[32m	Window:[0m[1m 320
+[0m[1m[32m	Calculated window size:[0m[1m 320
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0x25e6 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.003546000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.003546000 seconds
+[0m[1m	SEQ/ACK analysis
+[0m[1m[32m	This is an ACK to the segment in frame:[0m[1m 9
+[0m[1m[32m	The RTT to ACK the segment was:[0m[1m 0.003546000 seconds
+[0m[1m[32m	Bytes in flight:[0m[1m 121
+[0m[1m[32m	Bytes sent since last PSH flag:[0m[1m 121
+[0m[1m	TCP payload (121 bytes)
+[0m[1m	TCP segment data (121 bytes)
+[0m",,,,,,,
+Packet,11,2025-04-23 13:48:04,N/A,N/A,N/A,N/A,N/A,ARP,N/A,52:d2:75:e9:70:bb,ff:ff:ff:ff:ff:ff,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m ff:ff:ff:ff:ff:ff
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 52:d2:75:e9:70:bb
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 1
+[0m[1m[32m	Padding:[0m[1m 000000000000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m 52:d2:75:e9:70:bb
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.0.80
+[0m[1m[32m	Target MAC address:[0m[1m 00:00:00:00:00:00
+[0m[1m[32m	Target IP address:[0m[1m 10.0.221.1
+[0m",,,,,,,
+Packet,12,2025-04-23 13:48:04,10.0.96.101,239.255.255.250,54285,3702,UDP,XML,1,d8:3b:bf:be:11:a3,01:00:5e:7f:ff:fa,698,"Packet (Length: 698)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:7f:ff:fa
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m d8:3b:bf:be:11:a3
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 7
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 684
+[0m[1m[32m	Identification:[0m[1m 0xd1c7 (53703)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 1
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0x8b1a [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.101
+[0m[1m[32m	Destination Address:[0m[1m 239.255.255.250
+[0m[1m[32m	Stream index:[0m[1m 3
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 54285
+[0m[1m[32m	Destination Port:[0m[1m 3702
+[0m[1m[32m	Length:[0m[1m 664
+[0m[1m[32m	Checksum:[0m[1m 0x6de8 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (656 bytes)
+[0m[1m[33mLayer XML
+:[0m[1m	<?xml
+[0m[1m	version=""1.0""
+[0m[1m	encoding=""utf-8""
+[0m[1m	?>
+[0m[1m[32m	<soap:[0m[1mEnvelope
+[0m[1m[32m	xmlns:[0m[1msoap=""http://www.w3.org/2003/05/soap-envelope""
+[0m[1m[32m	urn:[0m[1mschemas-xmlsoap-org:ws:2005:04:discovery
+[0m[1m[32m	</wsa:[0m[1mTo>
+[0m[1m[32m	</wsa:[0m[1mAction>
+[0m[1m[32m	</wsa:[0m[1mMessageID>
+[0m[1m[32m	</soap:[0m[1mHeader>
+[0m[1m[32m	</wsa:[0m[1mAddress>
+[0m[1m[32m	</wsa:[0m[1mEndpointReference>
+[0m[1m[32m	</wsd:[0m[1mResolve>
+[0m[1m[32m	</soap:[0m[1mBody>
+[0m[1m[32m	</soap:[0m[1mEnvelope>
+[0m[1m[32m	<soap:[0m[1mHeader>
+[0m[1m[32m	<wsa:[0m[1mTo>
+[0m[1m[32m	<wsa:[0m[1mAction>
+[0m[1m[32m	<wsa:[0m[1mMessageID>
+[0m[1m[32m	<soap:[0m[1mBody>
+[0m[1m[32m	<wsd:[0m[1mResolve>
+[0m[1m[32m	<wsa:[0m[1mEndpointReference>
+[0m[1m[32m	<wsa:[0m[1mAddress>
+[0m[1m[32m	xmlns:[0m[1mwsa=""http://schemas.xmlsoap.org/ws/2004/08/addressing""
+[0m[1m[32m	xmlns:[0m[1mwsd=""http://schemas.xmlsoap.org/ws/2005/04/discovery"">
+[0m[1m[32m	http:[0m[1m//schemas.xmlsoap.org/ws/2005/04/discovery/Resolve
+[0m[1m[32m	urn:[0m[1muuid:bfa062b3-5bfd-440f-b0dd-9304e9923346
+[0m[1m[32m	urn:[0m[1muuid:1c852a4d-b800-1f08-abcd-f439096a549a
+[0m",,,,,,,
+Packet,13,2025-04-23 13:48:04,N/A,N/A,N/A,N/A,N/A,ARP,N/A,bc:24:11:ac:f8:8a,ff:ff:ff:ff:ff:ff,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m ff:ff:ff:ff:ff:ff
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m bc:24:11:ac:f8:8a
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 4
+[0m[1m[32m	Padding:[0m[1m 000000000000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m bc:24:11:ac:f8:8a
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.97.44
+[0m[1m[32m	Target MAC address:[0m[1m 00:00:00:00:00:00
+[0m[1m[32m	Target IP address:[0m[1m 10.0.221.3
+[0m",,,,,,,
+Packet,14,2025-04-23 13:48:04,10.0.96.87,10.0.96.103,64407,8009,TCP,TCP,128,20:0b:74:19:ee:af,38:4b:76:f1:36:fe,54,"Packet (Length: 54)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 38:4b:76:f1:36:fe
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 6
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 40
+[0m[1m[32m	Identification:[0m[1m 0x1f5f (8031)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 128
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0x06b3 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Destination Address:[0m[1m 10.0.96.103
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 64407
+[0m[1m[32m	Destination Port:[0m[1m 8009
+[0m[1m[32m	Stream index:[0m[1m 1
+[0m[1m[32m	Stream Packet Number:[0m[1m 3
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (8)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 1... = Data:[0m[1m Present
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m ··D···
+[0m[1m[32m	TCP Segment Len:[0m[1m 0
+[0m[1m[32m	Sequence Number:[0m[1m 118    (relative sequence number)
+[0m[1m[32m	Sequence Number (raw):[0m[1m 3729734973
+[0m[1m[32m	Next Sequence Number:[0m[1m 118    (relative sequence number)
+[0m[1m[32m	Acknowledgment Number:[0m[1m 122    (relative ack number)
+[0m[1m[32m	Acknowledgment number (raw):[0m[1m 3925192242
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x010 (ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 0... = Push:[0m[1m Not set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······A····
+[0m[1m[32m	Window:[0m[1m 255
+[0m[1m[32m	Calculated window size:[0m[1m 255
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0x0b81 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.047091000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.043545000 seconds
+[0m[1m	SEQ/ACK analysis
+[0m[1m[32m	This is an ACK to the segment in frame:[0m[1m 10
+[0m[1m[32m	The RTT to ACK the segment was:[0m[1m 0.043545000 seconds
+[0m",,,,,,,
+Packet,15,2025-04-23 13:48:05,N/A,N/A,N/A,N/A,N/A,ARP,N/A,cc:79:d7:f1:6b:f0,ff:ff:ff:ff:ff:ff,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m ff:ff:ff:ff:ff:ff
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m cc:79:d7:f1:6b:f0
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 8
+[0m[1m[32m	Padding:[0m[1m 000000000000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m cc:79:d7:f1:6b:f0
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.232.1
+[0m[1m[32m	Target MAC address:[0m[1m 00:00:00:00:00:00
+[0m[1m[32m	Target IP address:[0m[1m 10.0.222.1
+[0m",,,,,,,
+Packet,16,2025-04-23 13:48:05,10.0.96.8,239.255.255.250,53557,1900,UDP,SSDP,255,c4:03:a8:b0:42:4e,01:00:5e:7f:ff:fa,209,"Packet (Length: 209)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:7f:ff:fa
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m c4:03:a8:b0:42:4e
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 9
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 195
+[0m[1m[32m	Identification:[0m[1m 0x2b48 (11080)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 255
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0x35df [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.8
+[0m[1m[32m	Destination Address:[0m[1m 239.255.255.250
+[0m[1m[32m	Stream index:[0m[1m 4
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 53557
+[0m[1m[32m	Destination Port:[0m[1m 1900
+[0m[1m[32m	Length:[0m[1m 175
+[0m[1m[32m	Checksum:[0m[1m 0xe899 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 1
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (167 bytes)
+[0m[1m[33mLayer SSDP
+:[0m[1m	M-SEARCH * HTTP/1.1\r\n
+[0m[1m[32m	Request Method:[0m[1m M-SEARCH
+[0m[1m[32m	Request URI:[0m[1m *
+[0m[1m[32m	Request Version:[0m[1m HTTP/1.1
+[0m[1m[32m	HOST:[0m[1m 239.255.255.250:1900\r\n
+[0m[1m[32m	USER-AGENT:[0m[1m Dummy/1.0 UPnP/1.1 AirTame-SSDP/1.0\r\n
+[0m[1m[32m	Full request URI:[0m[1m http://239.255.255.250:1900*
+[0m[1m	\r\n
+[0m[1m[32m	MAN:[0m[1m ""ssdp:discover""\r\n
+[0m[1m[32m	MX:[0m[1m 5\r\n
+[0m[1m[32m	ST:[0m[1m urn:airtame-com:device:airtame:1\r\n
+[0m",,,,,,,
+Packet,17,2025-04-23 13:48:05,N/A,N/A,N/A,N/A,N/A,ARP,N/A,52:d2:75:e9:70:bb,ff:ff:ff:ff:ff:ff,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m ff:ff:ff:ff:ff:ff
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 52:d2:75:e9:70:bb
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 1
+[0m[1m[32m	Padding:[0m[1m 000000000000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m 52:d2:75:e9:70:bb
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.0.80
+[0m[1m[32m	Target MAC address:[0m[1m 00:00:00:00:00:00
+[0m[1m[32m	Target IP address:[0m[1m 10.0.221.3
+[0m",,,,,,,
+Packet,18,2025-04-23 13:48:05,N/A,N/A,N/A,N/A,N/A,ARP,N/A,52:d2:75:e9:70:bb,ff:ff:ff:ff:ff:ff,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m ff:ff:ff:ff:ff:ff
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 52:d2:75:e9:70:bb
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 1
+[0m[1m[32m	Padding:[0m[1m 000000000000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m 52:d2:75:e9:70:bb
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.0.80
+[0m[1m[32m	Target MAC address:[0m[1m 00:00:00:00:00:00
+[0m[1m[32m	Target IP address:[0m[1m 10.0.221.2
+[0m",,,,,,,
+Packet,19,2025-04-23 13:48:05,N/A,N/A,N/A,N/A,N/A,ARP,N/A,cc:6e:a4:13:02:0d,ff:ff:ff:ff:ff:ff,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m ff:ff:ff:ff:ff:ff
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m cc:6e:a4:13:02:0d
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 10
+[0m[1m[32m	Padding:[0m[1m 000000000000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m cc:6e:a4:13:02:0d
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.96.75
+[0m[1m[32m	Target MAC address:[0m[1m 00:00:00:00:00:00
+[0m[1m[32m	Target IP address:[0m[1m 10.0.0.1
+[0m",,,,,,,
+Packet,20,2025-04-23 13:48:05,10.0.96.28,224.0.0.251,5353,5353,UDP,MDNS,1,04:7c:16:36:29:23,01:00:5e:00:00:fb,89,"Packet (Length: 89)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:00:00:fb
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 04:7c:16:36:29:23
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 11
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 75
+[0m[1m[32m	Identification:[0m[1m 0x7e6c (32364)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 1
+[0m[1m[32m	Expert Info (Note/Sequence):[0m[1m ""Time To Live"" != 255 for a packet sent to the Local Network Control Block (see RFC 3171)
+[0m[1m	""Time To Live"" != 255 for a packet sent to the Local Network Control Block (see RFC 3171)
+[0m[1m[32m	Severity level:[0m[1m Note
+[0m[1m[32m	Group:[0m[1m Sequence
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0xf01e [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.28
+[0m[1m[32m	Destination Address:[0m[1m 224.0.0.251
+[0m[1m[32m	Stream index:[0m[1m 5
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 55
+[0m[1m[32m	Checksum:[0m[1m 0xbbac [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (47 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Flags:[0m[1m 0x0000 Standard query
+[0m[1m[32m	0... .... .... .... = Response:[0m[1m Message is a query
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	Questions:[0m[1m 1
+[0m[1m[32m	Answer RRs:[0m[1m 0
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Queries
+[0m[1m[32m	Name:[0m[1m A207-3._googlecast._tcp.local
+[0m[1m[32m	Name Length:[0m[1m 29
+[0m[1m[32m	Label Count:[0m[1m 4
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	0... .... .... .... = ""QU"" question:[0m[1m False
+[0m[1m[32m	A207-3._googlecast._tcp.local:[0m[1m type SRV, class IN, ""QM"" question
+[0m",,,,,,,
+Packet,21,2025-04-23 13:48:05,N/A,N/A,5353,5353,UDP,MDNS,N/A,04:7c:16:36:29:23,33:33:00:00:00:fb,109,"Packet (Length: 109)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 33:33:00:00:00:fb
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 04:7c:16:36:29:23
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv6 (0x86dd)
+[0m[1m[32m	Stream index:[0m[1m 12
+[0m[1m[33mLayer IPV6
+:[0m[1m[32m	0110 .... = Version:[0m[1m 6
+[0m[1m[32m	.... 0000 0000 .... .... .... .... .... = Traffic Class:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	.... 0000 00.. .... .... .... .... .... = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... .... ..00 .... .... .... .... .... = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	.... 1111 0011 1010 0010 1110 = Flow Label:[0m[1m 0xf3a2e
+[0m[1m[32m	Payload Length:[0m[1m 55
+[0m[1m[32m	Next Header:[0m[1m UDP (17)
+[0m[1m[32m	Hop Limit:[0m[1m 1
+[0m[1m[32m	Source Address:[0m[1m fe80::24a6:32ba:fd71:f610
+[0m[1m[32m	Address Space:[0m[1m Link-Local Unicast
+[0m[1m[32m	Special-Purpose Allocation:[0m[1m Link-Local Unicast
+[0m[1m[32m	Source:[0m[1m True
+[0m[1m[32m	Destination:[0m[1m True
+[0m[1m[32m	Forwardable:[0m[1m False
+[0m[1m[32m	Globally Reachable:[0m[1m False
+[0m[1m[32m	Reserved-by-Protocol:[0m[1m True
+[0m[1m[32m	Address Space:[0m[1m Link-Local Unicast
+[0m[1m[32m	Special-Purpose Allocation:[0m[1m Link-Local Unicast
+[0m[1m[32m	Source:[0m[1m True
+[0m[1m[32m	Destination:[0m[1m True
+[0m[1m[32m	Forwardable:[0m[1m False
+[0m[1m[32m	Globally Reachable:[0m[1m False
+[0m[1m[32m	Reserved-by-Protocol:[0m[1m True
+[0m[1m[32m	Destination Address:[0m[1m ff02::fb
+[0m[1m[32m	Address Space:[0m[1m Multicast
+[0m[1m[32m	.... .... 0000 .... = Multicast Flags:[0m[1m 0x0
+[0m[1m[32m	.... .... 0... .... = Reserved:[0m[1m 0
+[0m[1m[32m	.... .... .0.. .... = Rendezvous Point (RP):[0m[1m False
+[0m[1m[32m	.... .... ..0. .... = Network Prefix:[0m[1m False
+[0m[1m[32m	.... .... ...0 .... = Transient:[0m[1m False
+[0m[1m[32m	.... .... .... 0010 = Multicast Scope:[0m[1m Link-Local scope (0x2)
+[0m[1m[32m	.... .... 0000 .... = Multicast Flags:[0m[1m 0x0
+[0m[1m[32m	.... .... 0... .... = Reserved:[0m[1m 0
+[0m[1m[32m	.... .... .0.. .... = Rendezvous Point (RP):[0m[1m False
+[0m[1m[32m	.... .... ..0. .... = Network Prefix:[0m[1m False
+[0m[1m[32m	.... .... ...0 .... = Transient:[0m[1m False
+[0m[1m[32m	.... .... .... 0010 = Multicast Scope:[0m[1m Link-Local scope (0x2)
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[32m	Address Space:[0m[1m Multicast
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 55
+[0m[1m[32m	Checksum:[0m[1m 0xbd62 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 3
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (47 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Flags:[0m[1m 0x0000 Standard query
+[0m[1m[32m	0... .... .... .... = Response:[0m[1m Message is a query
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	Questions:[0m[1m 1
+[0m[1m[32m	Answer RRs:[0m[1m 0
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Queries
+[0m[1m[32m	Name:[0m[1m A207-3._googlecast._tcp.local
+[0m[1m[32m	Name Length:[0m[1m 29
+[0m[1m[32m	Label Count:[0m[1m 4
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	0... .... .... .... = ""QU"" question:[0m[1m False
+[0m[1m[32m	A207-3._googlecast._tcp.local:[0m[1m type SRV, class IN, ""QM"" question
+[0m",,,,,,,
+Packet,22,2025-04-23 13:48:05,10.0.96.123,224.0.0.251,5353,5353,UDP,MDNS,255,38:4b:76:f1:36:f5,01:00:5e:00:00:fb,126,"Packet (Length: 126)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:00:00:fb
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 38:4b:76:f1:36:f5
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 13
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 112
+[0m[1m[32m	Identification:[0m[1m 0x7ad2 (31442)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 255
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0xb533 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.123
+[0m[1m[32m	Destination Address:[0m[1m 224.0.0.251
+[0m[1m[32m	Stream index:[0m[1m 6
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 92
+[0m[1m[32m	Checksum:[0m[1m 0x3c65 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 4
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (84 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Flags:[0m[1m 0x8400 Standard query response, No error
+[0m[1m[32m	1... .... .... .... = Response:[0m[1m Message is a response
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... .1.. .... .... = Authoritative:[0m[1m Server is an authority for domain
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... 0... .... = Recursion available:[0m[1m Server can't do recursive queries
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ..0. .... = Answer authenticated:[0m[1m Answer/authority portion was not authenticated by the server
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	.... .... .... 0000 = Reply code:[0m[1m No error (0)
+[0m[1m[32m	Questions:[0m[1m 0
+[0m[1m[32m	Answer RRs:[0m[1m 2
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Answers
+[0m[1m[32m	Instance:[0m[1m A207-3
+[0m[1m[32m	Service:[0m[1m _googlecast
+[0m[1m[32m	Protocol:[0m[1m _tcp
+[0m[1m[32m	Name:[0m[1m local
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	1... .... .... .... = Cache flush:[0m[1m True
+[0m[1m[32m	Time to live:[0m[1m 120 (2 minutes)
+[0m[1m[32m	Data length:[0m[1m 15
+[0m[1m[32m	Priority:[0m[1m 0
+[0m[1m[32m	Weight:[0m[1m 0
+[0m[1m[32m	Port:[0m[1m 8009
+[0m[1m[32m	Target:[0m[1m a207-3.local
+[0m[1m[32m	Name:[0m[1m a207-3.local
+[0m[1m[32m	Address:[0m[1m 10.0.96.123
+[0m[1m[32m	Unsolicited:[0m[1m True
+[0m[1m[32m	A207-3._googlecast._tcp.local:[0m[1m type SRV, class IN, cache flush, priority 0, weight 0, port 8009, target a207-3.local
+[0m[1m[32m	a207-3.local:[0m[1m type A, class IN, cache flush, addr 10.0.96.123
+[0m[1m[32m	Type:[0m[1m A (1) (Host Address)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	1... .... .... .... = Cache flush:[0m[1m True
+[0m[1m[32m	Time to live:[0m[1m 120 (2 minutes)
+[0m[1m[32m	Data length:[0m[1m 4
+[0m",,,,,,,
+Packet,23,2025-04-23 13:48:05,10.0.96.126,224.0.0.251,5353,5353,UDP,MDNS,255,38:4b:76:09:98:b1,01:00:5e:00:00:fb,126,"Packet (Length: 126)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:00:00:fb
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 38:4b:76:09:98:b1
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 14
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 112
+[0m[1m[32m	Identification:[0m[1m 0x386a (14442)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 255
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0xf798 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.126
+[0m[1m[32m	Destination Address:[0m[1m 224.0.0.251
+[0m[1m[32m	Stream index:[0m[1m 7
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 92
+[0m[1m[32m	Checksum:[0m[1m 0x3c5f [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 5
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (84 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Flags:[0m[1m 0x8400 Standard query response, No error
+[0m[1m[32m	1... .... .... .... = Response:[0m[1m Message is a response
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... .1.. .... .... = Authoritative:[0m[1m Server is an authority for domain
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... 0... .... = Recursion available:[0m[1m Server can't do recursive queries
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ..0. .... = Answer authenticated:[0m[1m Answer/authority portion was not authenticated by the server
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	.... .... .... 0000 = Reply code:[0m[1m No error (0)
+[0m[1m[32m	Questions:[0m[1m 0
+[0m[1m[32m	Answer RRs:[0m[1m 2
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Answers
+[0m[1m[32m	Instance:[0m[1m A207-3
+[0m[1m[32m	Service:[0m[1m _googlecast
+[0m[1m[32m	Protocol:[0m[1m _tcp
+[0m[1m[32m	Name:[0m[1m local
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	1... .... .... .... = Cache flush:[0m[1m True
+[0m[1m[32m	Time to live:[0m[1m 120 (2 minutes)
+[0m[1m[32m	Data length:[0m[1m 15
+[0m[1m[32m	Priority:[0m[1m 0
+[0m[1m[32m	Weight:[0m[1m 0
+[0m[1m[32m	Port:[0m[1m 8009
+[0m[1m[32m	Target:[0m[1m a207-3.local
+[0m[1m[32m	Name:[0m[1m a207-3.local
+[0m[1m[32m	Address:[0m[1m 10.0.96.126
+[0m[1m[32m	Unsolicited:[0m[1m True
+[0m[1m[32m	A207-3._googlecast._tcp.local:[0m[1m type SRV, class IN, cache flush, priority 0, weight 0, port 8009, target a207-3.local
+[0m[1m[32m	a207-3.local:[0m[1m type A, class IN, cache flush, addr 10.0.96.126
+[0m[1m[32m	Type:[0m[1m A (1) (Host Address)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	1... .... .... .... = Cache flush:[0m[1m True
+[0m[1m[32m	Time to live:[0m[1m 120 (2 minutes)
+[0m[1m[32m	Data length:[0m[1m 4
+[0m",,,,,,,
+Packet,24,2025-04-23 13:48:05,10.0.96.60,224.0.0.251,5353,5353,UDP,MDNS,1,7c:70:db:ac:bc:37,01:00:5e:00:00:fb,89,"Packet (Length: 89)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:00:00:fb
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 7c:70:db:ac:bc:37
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 15
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 75
+[0m[1m[32m	Identification:[0m[1m 0x7d86 (32134)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 1
+[0m[1m[32m	Expert Info (Note/Sequence):[0m[1m ""Time To Live"" != 255 for a packet sent to the Local Network Control Block (see RFC 3171)
+[0m[1m	""Time To Live"" != 255 for a packet sent to the Local Network Control Block (see RFC 3171)
+[0m[1m[32m	Severity level:[0m[1m Note
+[0m[1m[32m	Group:[0m[1m Sequence
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0xf0e4 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.60
+[0m[1m[32m	Destination Address:[0m[1m 224.0.0.251
+[0m[1m[32m	Stream index:[0m[1m 8
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 55
+[0m[1m[32m	Checksum:[0m[1m 0xbb8c [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 6
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (47 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Flags:[0m[1m 0x0000 Standard query
+[0m[1m[32m	0... .... .... .... = Response:[0m[1m Message is a query
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	Questions:[0m[1m 1
+[0m[1m[32m	Answer RRs:[0m[1m 0
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Queries
+[0m[1m[32m	Name:[0m[1m A207-3._googlecast._tcp.local
+[0m[1m[32m	Name Length:[0m[1m 29
+[0m[1m[32m	Label Count:[0m[1m 4
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	0... .... .... .... = ""QU"" question:[0m[1m False
+[0m[1m[32m	A207-3._googlecast._tcp.local:[0m[1m type SRV, class IN, ""QM"" question
+[0m",,,,,,,
+Packet,25,2025-04-23 13:48:05,N/A,N/A,5353,5353,UDP,MDNS,N/A,7c:70:db:ac:bc:37,33:33:00:00:00:fb,109,"Packet (Length: 109)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 33:33:00:00:00:fb
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 7c:70:db:ac:bc:37
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv6 (0x86dd)
+[0m[1m[32m	Stream index:[0m[1m 16
+[0m[1m[33mLayer IPV6
+:[0m[1m[32m	0110 .... = Version:[0m[1m 6
+[0m[1m[32m	.... 0000 0000 .... .... .... .... .... = Traffic Class:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	.... 0000 00.. .... .... .... .... .... = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... .... ..00 .... .... .... .... .... = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	.... 0101 0000 0101 0100 0000 = Flow Label:[0m[1m 0x50540
+[0m[1m[32m	Payload Length:[0m[1m 55
+[0m[1m[32m	Next Header:[0m[1m UDP (17)
+[0m[1m[32m	Hop Limit:[0m[1m 1
+[0m[1m[32m	Source Address:[0m[1m fe80::458f:42c5:3ad9:9df0
+[0m[1m[32m	Address Space:[0m[1m Link-Local Unicast
+[0m[1m[32m	Special-Purpose Allocation:[0m[1m Link-Local Unicast
+[0m[1m[32m	Source:[0m[1m True
+[0m[1m[32m	Destination:[0m[1m True
+[0m[1m[32m	Forwardable:[0m[1m False
+[0m[1m[32m	Globally Reachable:[0m[1m False
+[0m[1m[32m	Reserved-by-Protocol:[0m[1m True
+[0m[1m[32m	Address Space:[0m[1m Link-Local Unicast
+[0m[1m[32m	Special-Purpose Allocation:[0m[1m Link-Local Unicast
+[0m[1m[32m	Source:[0m[1m True
+[0m[1m[32m	Destination:[0m[1m True
+[0m[1m[32m	Forwardable:[0m[1m False
+[0m[1m[32m	Globally Reachable:[0m[1m False
+[0m[1m[32m	Reserved-by-Protocol:[0m[1m True
+[0m[1m[32m	Destination Address:[0m[1m ff02::fb
+[0m[1m[32m	Address Space:[0m[1m Multicast
+[0m[1m[32m	.... .... 0000 .... = Multicast Flags:[0m[1m 0x0
+[0m[1m[32m	.... .... 0... .... = Reserved:[0m[1m 0
+[0m[1m[32m	.... .... .0.. .... = Rendezvous Point (RP):[0m[1m False
+[0m[1m[32m	.... .... ..0. .... = Network Prefix:[0m[1m False
+[0m[1m[32m	.... .... ...0 .... = Transient:[0m[1m False
+[0m[1m[32m	.... .... .... 0010 = Multicast Scope:[0m[1m Link-Local scope (0x2)
+[0m[1m[32m	.... .... 0000 .... = Multicast Flags:[0m[1m 0x0
+[0m[1m[32m	.... .... 0... .... = Reserved:[0m[1m 0
+[0m[1m[32m	.... .... .0.. .... = Rendezvous Point (RP):[0m[1m False
+[0m[1m[32m	.... .... ..0. .... = Network Prefix:[0m[1m False
+[0m[1m[32m	.... .... ...0 .... = Transient:[0m[1m False
+[0m[1m[32m	.... .... .... 0010 = Multicast Scope:[0m[1m Link-Local scope (0x2)
+[0m[1m[32m	Stream index:[0m[1m 1
+[0m[1m[32m	Address Space:[0m[1m Multicast
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 55
+[0m[1m[32m	Checksum:[0m[1m 0xa727 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 7
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (47 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Flags:[0m[1m 0x0000 Standard query
+[0m[1m[32m	0... .... .... .... = Response:[0m[1m Message is a query
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	Questions:[0m[1m 1
+[0m[1m[32m	Answer RRs:[0m[1m 0
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Queries
+[0m[1m[32m	Name:[0m[1m A207-3._googlecast._tcp.local
+[0m[1m[32m	Name Length:[0m[1m 29
+[0m[1m[32m	Label Count:[0m[1m 4
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	0... .... .... .... = ""QU"" question:[0m[1m False
+[0m[1m[32m	A207-3._googlecast._tcp.local:[0m[1m type SRV, class IN, ""QM"" question
+[0m",,,,,,,
+Packet,26,2025-04-23 13:48:05,10.0.96.60,224.0.0.251,5353,5353,UDP,MDNS,1,7c:70:db:ac:bc:37,01:00:5e:00:00:fb,89,"Packet (Length: 89)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:00:00:fb
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 7c:70:db:ac:bc:37
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 15
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 75
+[0m[1m[32m	Identification:[0m[1m 0x7d87 (32135)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 1
+[0m[1m[32m	Expert Info (Note/Sequence):[0m[1m ""Time To Live"" != 255 for a packet sent to the Local Network Control Block (see RFC 3171)
+[0m[1m	""Time To Live"" != 255 for a packet sent to the Local Network Control Block (see RFC 3171)
+[0m[1m[32m	Severity level:[0m[1m Note
+[0m[1m[32m	Group:[0m[1m Sequence
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0xf0e3 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.60
+[0m[1m[32m	Destination Address:[0m[1m 224.0.0.251
+[0m[1m[32m	Stream index:[0m[1m 8
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 55
+[0m[1m[32m	Checksum:[0m[1m 0xbd8c [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 6
+[0m[1m[32m	Stream Packet Number:[0m[1m 2
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000885000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000885000 seconds
+[0m[1m	UDP payload (47 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Expert Info (Warning/Protocol):[0m[1m DNS query retransmission. Original request in frame 24
+[0m[1m	DNS query retransmission. Original request in frame 24
+[0m[1m[32m	Severity level:[0m[1m Warning
+[0m[1m[32m	Group:[0m[1m Protocol
+[0m[1m[32m	Flags:[0m[1m 0x0000 Standard query
+[0m[1m[32m	0... .... .... .... = Response:[0m[1m Message is a query
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	Questions:[0m[1m 1
+[0m[1m[32m	Answer RRs:[0m[1m 0
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Queries
+[0m[1m[32m	Name:[0m[1m A207-1._googlecast._tcp.local
+[0m[1m[32m	Name Length:[0m[1m 29
+[0m[1m[32m	Label Count:[0m[1m 4
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	0... .... .... .... = ""QU"" question:[0m[1m False
+[0m[1m[32m	Retransmitted request. Original request in:[0m[1m 24
+[0m[1m[32m	Retransmission:[0m[1m True
+[0m[1m[32m	A207-1._googlecast._tcp.local:[0m[1m type SRV, class IN, ""QM"" question
+[0m",,,,,,,
+Packet,27,2025-04-23 13:48:05,N/A,N/A,5353,5353,UDP,MDNS,N/A,7c:70:db:ac:bc:37,33:33:00:00:00:fb,109,"Packet (Length: 109)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 33:33:00:00:00:fb
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 7c:70:db:ac:bc:37
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv6 (0x86dd)
+[0m[1m[32m	Stream index:[0m[1m 16
+[0m[1m[33mLayer IPV6
+:[0m[1m[32m	0110 .... = Version:[0m[1m 6
+[0m[1m[32m	.... 0000 0000 .... .... .... .... .... = Traffic Class:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	.... 0000 00.. .... .... .... .... .... = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... .... ..00 .... .... .... .... .... = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	.... 0101 0000 0101 0100 0000 = Flow Label:[0m[1m 0x50540
+[0m[1m[32m	Payload Length:[0m[1m 55
+[0m[1m[32m	Next Header:[0m[1m UDP (17)
+[0m[1m[32m	Hop Limit:[0m[1m 1
+[0m[1m[32m	Source Address:[0m[1m fe80::458f:42c5:3ad9:9df0
+[0m[1m[32m	Address Space:[0m[1m Link-Local Unicast
+[0m[1m[32m	Special-Purpose Allocation:[0m[1m Link-Local Unicast
+[0m[1m[32m	Source:[0m[1m True
+[0m[1m[32m	Destination:[0m[1m True
+[0m[1m[32m	Forwardable:[0m[1m False
+[0m[1m[32m	Globally Reachable:[0m[1m False
+[0m[1m[32m	Reserved-by-Protocol:[0m[1m True
+[0m[1m[32m	Address Space:[0m[1m Link-Local Unicast
+[0m[1m[32m	Special-Purpose Allocation:[0m[1m Link-Local Unicast
+[0m[1m[32m	Source:[0m[1m True
+[0m[1m[32m	Destination:[0m[1m True
+[0m[1m[32m	Forwardable:[0m[1m False
+[0m[1m[32m	Globally Reachable:[0m[1m False
+[0m[1m[32m	Reserved-by-Protocol:[0m[1m True
+[0m[1m[32m	Destination Address:[0m[1m ff02::fb
+[0m[1m[32m	Address Space:[0m[1m Multicast
+[0m[1m[32m	.... .... 0000 .... = Multicast Flags:[0m[1m 0x0
+[0m[1m[32m	.... .... 0... .... = Reserved:[0m[1m 0
+[0m[1m[32m	.... .... .0.. .... = Rendezvous Point (RP):[0m[1m False
+[0m[1m[32m	.... .... ..0. .... = Network Prefix:[0m[1m False
+[0m[1m[32m	.... .... ...0 .... = Transient:[0m[1m False
+[0m[1m[32m	.... .... .... 0010 = Multicast Scope:[0m[1m Link-Local scope (0x2)
+[0m[1m[32m	.... .... 0000 .... = Multicast Flags:[0m[1m 0x0
+[0m[1m[32m	.... .... 0... .... = Reserved:[0m[1m 0
+[0m[1m[32m	.... .... .0.. .... = Rendezvous Point (RP):[0m[1m False
+[0m[1m[32m	.... .... ..0. .... = Network Prefix:[0m[1m False
+[0m[1m[32m	.... .... ...0 .... = Transient:[0m[1m False
+[0m[1m[32m	.... .... .... 0010 = Multicast Scope:[0m[1m Link-Local scope (0x2)
+[0m[1m[32m	Stream index:[0m[1m 1
+[0m[1m[32m	Address Space:[0m[1m Multicast
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 55
+[0m[1m[32m	Checksum:[0m[1m 0xa927 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 7
+[0m[1m[32m	Stream Packet Number:[0m[1m 2
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000887000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000887000 seconds
+[0m[1m	UDP payload (47 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Expert Info (Warning/Protocol):[0m[1m DNS query retransmission. Original request in frame 25
+[0m[1m	DNS query retransmission. Original request in frame 25
+[0m[1m[32m	Severity level:[0m[1m Warning
+[0m[1m[32m	Group:[0m[1m Protocol
+[0m[1m[32m	Flags:[0m[1m 0x0000 Standard query
+[0m[1m[32m	0... .... .... .... = Response:[0m[1m Message is a query
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	Questions:[0m[1m 1
+[0m[1m[32m	Answer RRs:[0m[1m 0
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Queries
+[0m[1m[32m	Name:[0m[1m A207-1._googlecast._tcp.local
+[0m[1m[32m	Name Length:[0m[1m 29
+[0m[1m[32m	Label Count:[0m[1m 4
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	0... .... .... .... = ""QU"" question:[0m[1m False
+[0m[1m[32m	Retransmitted request. Original request in:[0m[1m 25
+[0m[1m[32m	Retransmission:[0m[1m True
+[0m[1m[32m	A207-1._googlecast._tcp.local:[0m[1m type SRV, class IN, ""QM"" question
+[0m",,,,,,,
+Packet,28,2025-04-23 13:48:05,10.0.96.21,224.0.0.251,5353,5353,UDP,MDNS,255,38:4b:76:f1:27:a8,01:00:5e:00:00:fb,126,"Packet (Length: 126)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:00:00:fb
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 38:4b:76:f1:27:a8
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 17
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 112
+[0m[1m[32m	Identification:[0m[1m 0xa3f9 (41977)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 255
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0x8c72 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.21
+[0m[1m[32m	Destination Address:[0m[1m 224.0.0.251
+[0m[1m[32m	Stream index:[0m[1m 9
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 92
+[0m[1m[32m	Checksum:[0m[1m 0x3f33 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 8
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (84 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Flags:[0m[1m 0x8400 Standard query response, No error
+[0m[1m[32m	1... .... .... .... = Response:[0m[1m Message is a response
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... .1.. .... .... = Authoritative:[0m[1m Server is an authority for domain
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... 0... .... = Recursion available:[0m[1m Server can't do recursive queries
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ..0. .... = Answer authenticated:[0m[1m Answer/authority portion was not authenticated by the server
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	.... .... .... 0000 = Reply code:[0m[1m No error (0)
+[0m[1m[32m	Questions:[0m[1m 0
+[0m[1m[32m	Answer RRs:[0m[1m 2
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Answers
+[0m[1m[32m	Instance:[0m[1m A207-1
+[0m[1m[32m	Service:[0m[1m _googlecast
+[0m[1m[32m	Protocol:[0m[1m _tcp
+[0m[1m[32m	Name:[0m[1m local
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	1... .... .... .... = Cache flush:[0m[1m True
+[0m[1m[32m	Time to live:[0m[1m 120 (2 minutes)
+[0m[1m[32m	Data length:[0m[1m 15
+[0m[1m[32m	Priority:[0m[1m 0
+[0m[1m[32m	Weight:[0m[1m 0
+[0m[1m[32m	Port:[0m[1m 8009
+[0m[1m[32m	Target:[0m[1m a207-1.local
+[0m[1m[32m	Name:[0m[1m a207-1.local
+[0m[1m[32m	Address:[0m[1m 10.0.96.21
+[0m[1m[32m	Unsolicited:[0m[1m True
+[0m[1m[32m	A207-1._googlecast._tcp.local:[0m[1m type SRV, class IN, cache flush, priority 0, weight 0, port 8009, target a207-1.local
+[0m[1m[32m	a207-1.local:[0m[1m type A, class IN, cache flush, addr 10.0.96.21
+[0m[1m[32m	Type:[0m[1m A (1) (Host Address)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	1... .... .... .... = Cache flush:[0m[1m True
+[0m[1m[32m	Time to live:[0m[1m 120 (2 minutes)
+[0m[1m[32m	Data length:[0m[1m 4
+[0m",,,,,,,
+Packet,29,2025-04-23 13:48:05,10.0.96.28,224.0.0.251,5353,5353,UDP,MDNS,1,04:7c:16:36:29:23,01:00:5e:00:00:fb,89,"Packet (Length: 89)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:00:00:fb
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 04:7c:16:36:29:23
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 11
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 75
+[0m[1m[32m	Identification:[0m[1m 0x7e6d (32365)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 1
+[0m[1m[32m	Expert Info (Note/Sequence):[0m[1m ""Time To Live"" != 255 for a packet sent to the Local Network Control Block (see RFC 3171)
+[0m[1m	""Time To Live"" != 255 for a packet sent to the Local Network Control Block (see RFC 3171)
+[0m[1m[32m	Severity level:[0m[1m Note
+[0m[1m[32m	Group:[0m[1m Sequence
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0xf01d [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.28
+[0m[1m[32m	Destination Address:[0m[1m 224.0.0.251
+[0m[1m[32m	Stream index:[0m[1m 5
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 55
+[0m[1m[32m	Checksum:[0m[1m 0xbcac [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[32m	Stream Packet Number:[0m[1m 2
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.104441000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.104441000 seconds
+[0m[1m	UDP payload (47 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Expert Info (Warning/Protocol):[0m[1m DNS query retransmission. Original request in frame 20
+[0m[1m	DNS query retransmission. Original request in frame 20
+[0m[1m[32m	Severity level:[0m[1m Warning
+[0m[1m[32m	Group:[0m[1m Protocol
+[0m[1m[32m	Flags:[0m[1m 0x0000 Standard query
+[0m[1m[32m	0... .... .... .... = Response:[0m[1m Message is a query
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	Questions:[0m[1m 1
+[0m[1m[32m	Answer RRs:[0m[1m 0
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Queries
+[0m[1m[32m	Name:[0m[1m A207-2._googlecast._tcp.local
+[0m[1m[32m	Name Length:[0m[1m 29
+[0m[1m[32m	Label Count:[0m[1m 4
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	0... .... .... .... = ""QU"" question:[0m[1m False
+[0m[1m[32m	Retransmitted request. Original request in:[0m[1m 20
+[0m[1m[32m	Retransmission:[0m[1m True
+[0m[1m[32m	A207-2._googlecast._tcp.local:[0m[1m type SRV, class IN, ""QM"" question
+[0m",,,,,,,
+Packet,30,2025-04-23 13:48:05,N/A,N/A,5353,5353,UDP,MDNS,N/A,04:7c:16:36:29:23,33:33:00:00:00:fb,109,"Packet (Length: 109)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 33:33:00:00:00:fb
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 04:7c:16:36:29:23
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv6 (0x86dd)
+[0m[1m[32m	Stream index:[0m[1m 12
+[0m[1m[33mLayer IPV6
+:[0m[1m[32m	0110 .... = Version:[0m[1m 6
+[0m[1m[32m	.... 0000 0000 .... .... .... .... .... = Traffic Class:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	.... 0000 00.. .... .... .... .... .... = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... .... ..00 .... .... .... .... .... = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	.... 1111 0011 1010 0010 1110 = Flow Label:[0m[1m 0xf3a2e
+[0m[1m[32m	Payload Length:[0m[1m 55
+[0m[1m[32m	Next Header:[0m[1m UDP (17)
+[0m[1m[32m	Hop Limit:[0m[1m 1
+[0m[1m[32m	Source Address:[0m[1m fe80::24a6:32ba:fd71:f610
+[0m[1m[32m	Address Space:[0m[1m Link-Local Unicast
+[0m[1m[32m	Special-Purpose Allocation:[0m[1m Link-Local Unicast
+[0m[1m[32m	Source:[0m[1m True
+[0m[1m[32m	Destination:[0m[1m True
+[0m[1m[32m	Forwardable:[0m[1m False
+[0m[1m[32m	Globally Reachable:[0m[1m False
+[0m[1m[32m	Reserved-by-Protocol:[0m[1m True
+[0m[1m[32m	Address Space:[0m[1m Link-Local Unicast
+[0m[1m[32m	Special-Purpose Allocation:[0m[1m Link-Local Unicast
+[0m[1m[32m	Source:[0m[1m True
+[0m[1m[32m	Destination:[0m[1m True
+[0m[1m[32m	Forwardable:[0m[1m False
+[0m[1m[32m	Globally Reachable:[0m[1m False
+[0m[1m[32m	Reserved-by-Protocol:[0m[1m True
+[0m[1m[32m	Destination Address:[0m[1m ff02::fb
+[0m[1m[32m	Address Space:[0m[1m Multicast
+[0m[1m[32m	.... .... 0000 .... = Multicast Flags:[0m[1m 0x0
+[0m[1m[32m	.... .... 0... .... = Reserved:[0m[1m 0
+[0m[1m[32m	.... .... .0.. .... = Rendezvous Point (RP):[0m[1m False
+[0m[1m[32m	.... .... ..0. .... = Network Prefix:[0m[1m False
+[0m[1m[32m	.... .... ...0 .... = Transient:[0m[1m False
+[0m[1m[32m	.... .... .... 0010 = Multicast Scope:[0m[1m Link-Local scope (0x2)
+[0m[1m[32m	.... .... 0000 .... = Multicast Flags:[0m[1m 0x0
+[0m[1m[32m	.... .... 0... .... = Reserved:[0m[1m 0
+[0m[1m[32m	.... .... .0.. .... = Rendezvous Point (RP):[0m[1m False
+[0m[1m[32m	.... .... ..0. .... = Network Prefix:[0m[1m False
+[0m[1m[32m	.... .... ...0 .... = Transient:[0m[1m False
+[0m[1m[32m	.... .... .... 0010 = Multicast Scope:[0m[1m Link-Local scope (0x2)
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[32m	Address Space:[0m[1m Multicast
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 55
+[0m[1m[32m	Checksum:[0m[1m 0xbe62 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 3
+[0m[1m[32m	Stream Packet Number:[0m[1m 2
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.104503000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.104503000 seconds
+[0m[1m	UDP payload (47 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Expert Info (Warning/Protocol):[0m[1m DNS query retransmission. Original request in frame 21
+[0m[1m	DNS query retransmission. Original request in frame 21
+[0m[1m[32m	Severity level:[0m[1m Warning
+[0m[1m[32m	Group:[0m[1m Protocol
+[0m[1m[32m	Flags:[0m[1m 0x0000 Standard query
+[0m[1m[32m	0... .... .... .... = Response:[0m[1m Message is a query
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	Questions:[0m[1m 1
+[0m[1m[32m	Answer RRs:[0m[1m 0
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Queries
+[0m[1m[32m	Name:[0m[1m A207-2._googlecast._tcp.local
+[0m[1m[32m	Name Length:[0m[1m 29
+[0m[1m[32m	Label Count:[0m[1m 4
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	0... .... .... .... = ""QU"" question:[0m[1m False
+[0m[1m[32m	Retransmitted request. Original request in:[0m[1m 21
+[0m[1m[32m	Retransmission:[0m[1m True
+[0m[1m[32m	A207-2._googlecast._tcp.local:[0m[1m type SRV, class IN, ""QM"" question
+[0m",,,,,,,
+Packet,31,2025-04-23 13:48:05,10.0.96.147,224.0.0.251,5353,5353,UDP,MDNS,255,38:4b:76:f1:27:5e,01:00:5e:00:00:fb,126,"Packet (Length: 126)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:00:00:fb
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 38:4b:76:f1:27:5e
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 18
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 112
+[0m[1m[32m	Identification:[0m[1m 0x51d7 (20951)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 255
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0xde16 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.147
+[0m[1m[32m	Destination Address:[0m[1m 224.0.0.251
+[0m[1m[32m	Stream index:[0m[1m 10
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 92
+[0m[1m[32m	Checksum:[0m[1m 0x3d36 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 9
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (84 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Flags:[0m[1m 0x8400 Standard query response, No error
+[0m[1m[32m	1... .... .... .... = Response:[0m[1m Message is a response
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... .1.. .... .... = Authoritative:[0m[1m Server is an authority for domain
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... 0... .... = Recursion available:[0m[1m Server can't do recursive queries
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ..0. .... = Answer authenticated:[0m[1m Answer/authority portion was not authenticated by the server
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	.... .... .... 0000 = Reply code:[0m[1m No error (0)
+[0m[1m[32m	Questions:[0m[1m 0
+[0m[1m[32m	Answer RRs:[0m[1m 2
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Answers
+[0m[1m[32m	Instance:[0m[1m A207-2
+[0m[1m[32m	Service:[0m[1m _googlecast
+[0m[1m[32m	Protocol:[0m[1m _tcp
+[0m[1m[32m	Name:[0m[1m local
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	1... .... .... .... = Cache flush:[0m[1m True
+[0m[1m[32m	Time to live:[0m[1m 120 (2 minutes)
+[0m[1m[32m	Data length:[0m[1m 15
+[0m[1m[32m	Priority:[0m[1m 0
+[0m[1m[32m	Weight:[0m[1m 0
+[0m[1m[32m	Port:[0m[1m 8009
+[0m[1m[32m	Target:[0m[1m a207-2.local
+[0m[1m[32m	Name:[0m[1m a207-2.local
+[0m[1m[32m	Address:[0m[1m 10.0.96.147
+[0m[1m[32m	Unsolicited:[0m[1m True
+[0m[1m[32m	A207-2._googlecast._tcp.local:[0m[1m type SRV, class IN, cache flush, priority 0, weight 0, port 8009, target a207-2.local
+[0m[1m[32m	a207-2.local:[0m[1m type A, class IN, cache flush, addr 10.0.96.147
+[0m[1m[32m	Type:[0m[1m A (1) (Host Address)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	1... .... .... .... = Cache flush:[0m[1m True
+[0m[1m[32m	Time to live:[0m[1m 120 (2 minutes)
+[0m[1m[32m	Data length:[0m[1m 4
+[0m",,,,,,,
+Packet,32,2025-04-23 13:48:05,N/A,N/A,N/A,N/A,N/A,ARP,N/A,00:e0:4c:68:06:e2,ff:ff:ff:ff:ff:ff,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m ff:ff:ff:ff:ff:ff
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 00:e0:4c:68:06:e2
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 19
+[0m[1m[32m	Padding:[0m[1m 000000000000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m 00:e0:4c:68:06:e2
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.96.44
+[0m[1m[32m	Target MAC address:[0m[1m 00:00:00:00:00:00
+[0m[1m[32m	Target IP address:[0m[1m 10.0.0.1
+[0m",,,,,,,
+Packet,33,2025-04-23 13:48:05,10.0.96.199,224.0.0.251,5353,5353,UDP,MDNS,255,38:4b:76:09:98:df,01:00:5e:00:00:fb,126,"Packet (Length: 126)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:00:00:fb
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 38:4b:76:09:98:df
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 20
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 112
+[0m[1m[32m	Identification:[0m[1m 0x1302 (4866)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 255
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0x1cb8 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.199
+[0m[1m[32m	Destination Address:[0m[1m 224.0.0.251
+[0m[1m[32m	Stream index:[0m[1m 11
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 92
+[0m[1m[32m	Checksum:[0m[1m 0x3dcf [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 10
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (84 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Flags:[0m[1m 0x8400 Standard query response, No error
+[0m[1m[32m	1... .... .... .... = Response:[0m[1m Message is a response
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... .1.. .... .... = Authoritative:[0m[1m Server is an authority for domain
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... 0... .... = Recursion available:[0m[1m Server can't do recursive queries
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ..0. .... = Answer authenticated:[0m[1m Answer/authority portion was not authenticated by the server
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	.... .... .... 0000 = Reply code:[0m[1m No error (0)
+[0m[1m[32m	Questions:[0m[1m 0
+[0m[1m[32m	Answer RRs:[0m[1m 2
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Answers
+[0m[1m[32m	Instance:[0m[1m A207-1
+[0m[1m[32m	Service:[0m[1m _googlecast
+[0m[1m[32m	Protocol:[0m[1m _tcp
+[0m[1m[32m	Name:[0m[1m local
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	1... .... .... .... = Cache flush:[0m[1m True
+[0m[1m[32m	Time to live:[0m[1m 120 (2 minutes)
+[0m[1m[32m	Data length:[0m[1m 15
+[0m[1m[32m	Priority:[0m[1m 0
+[0m[1m[32m	Weight:[0m[1m 0
+[0m[1m[32m	Port:[0m[1m 8009
+[0m[1m[32m	Target:[0m[1m a207-1.local
+[0m[1m[32m	Name:[0m[1m a207-1.local
+[0m[1m[32m	Address:[0m[1m 10.0.96.199
+[0m[1m[32m	Unsolicited:[0m[1m True
+[0m[1m[32m	A207-1._googlecast._tcp.local:[0m[1m type SRV, class IN, cache flush, priority 0, weight 0, port 8009, target a207-1.local
+[0m[1m[32m	a207-1.local:[0m[1m type A, class IN, cache flush, addr 10.0.96.199
+[0m[1m[32m	Type:[0m[1m A (1) (Host Address)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	1... .... .... .... = Cache flush:[0m[1m True
+[0m[1m[32m	Time to live:[0m[1m 120 (2 minutes)
+[0m[1m[32m	Data length:[0m[1m 4
+[0m",,,,,,,
+Packet,34,2025-04-23 13:48:05,10.0.96.76,224.0.0.251,5353,5353,UDP,MDNS,255,38:4b:76:09:98:e3,01:00:5e:00:00:fb,126,"Packet (Length: 126)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:00:00:fb
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 38:4b:76:09:98:e3
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 21
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 112
+[0m[1m[32m	Identification:[0m[1m 0x47bb (18363)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 255
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0xe879 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.76
+[0m[1m[32m	Destination Address:[0m[1m 224.0.0.251
+[0m[1m[32m	Stream index:[0m[1m 12
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 92
+[0m[1m[32m	Checksum:[0m[1m 0x3dc4 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 11
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (84 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Flags:[0m[1m 0x8400 Standard query response, No error
+[0m[1m[32m	1... .... .... .... = Response:[0m[1m Message is a response
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... .1.. .... .... = Authoritative:[0m[1m Server is an authority for domain
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... 0... .... = Recursion available:[0m[1m Server can't do recursive queries
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ..0. .... = Answer authenticated:[0m[1m Answer/authority portion was not authenticated by the server
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	.... .... .... 0000 = Reply code:[0m[1m No error (0)
+[0m[1m[32m	Questions:[0m[1m 0
+[0m[1m[32m	Answer RRs:[0m[1m 2
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Answers
+[0m[1m[32m	Instance:[0m[1m A207-2
+[0m[1m[32m	Service:[0m[1m _googlecast
+[0m[1m[32m	Protocol:[0m[1m _tcp
+[0m[1m[32m	Name:[0m[1m local
+[0m[1m[32m	Type:[0m[1m SRV (33) (Server Selection)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	1... .... .... .... = Cache flush:[0m[1m True
+[0m[1m[32m	Time to live:[0m[1m 120 (2 minutes)
+[0m[1m[32m	Data length:[0m[1m 15
+[0m[1m[32m	Priority:[0m[1m 0
+[0m[1m[32m	Weight:[0m[1m 0
+[0m[1m[32m	Port:[0m[1m 8009
+[0m[1m[32m	Target:[0m[1m a207-2.local
+[0m[1m[32m	Name:[0m[1m a207-2.local
+[0m[1m[32m	Address:[0m[1m 10.0.96.76
+[0m[1m[32m	Unsolicited:[0m[1m True
+[0m[1m[32m	A207-2._googlecast._tcp.local:[0m[1m type SRV, class IN, cache flush, priority 0, weight 0, port 8009, target a207-2.local
+[0m[1m[32m	a207-2.local:[0m[1m type A, class IN, cache flush, addr 10.0.96.76
+[0m[1m[32m	Type:[0m[1m A (1) (Host Address)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	1... .... .... .... = Cache flush:[0m[1m True
+[0m[1m[32m	Time to live:[0m[1m 120 (2 minutes)
+[0m[1m[32m	Data length:[0m[1m 4
+[0m",,,,,,,
+Packet,35,2025-04-23 13:48:05,N/A,N/A,N/A,N/A,N/A,ARP,N/A,00:1e:67:0b:b6:88,ff:ff:ff:ff:ff:ff,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m ff:ff:ff:ff:ff:ff
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 00:1e:67:0b:b6:88
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 22
+[0m[1m[32m	Padding:[0m[1m 000000000000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m 00:1e:67:0b:b6:88
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.10.21
+[0m[1m[32m	Target MAC address:[0m[1m 00:00:00:00:00:00
+[0m[1m[32m	Target IP address:[0m[1m 10.0.10.62
+[0m",,,,,,,
+Packet,36,2025-04-23 13:48:05,N/A,N/A,N/A,N/A,N/A,ARP,N/A,00:1e:67:12:df:48,ff:ff:ff:ff:ff:ff,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m ff:ff:ff:ff:ff:ff
+[0m[1m[32m	.... ..1. .... .... .... .... = LG bit:[0m[1m Locally administered address (this is NOT the factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 00:1e:67:12:df:48
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 3
+[0m[1m[32m	Padding:[0m[1m 000000000000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m 00:1e:67:12:df:48
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.10.31
+[0m[1m[32m	Target MAC address:[0m[1m 00:00:00:00:00:00
+[0m[1m[32m	Target IP address:[0m[1m 10.0.10.41
+[0m",,,,,,,
+Packet,37,2025-04-23 13:48:05,N/A,N/A,N/A,N/A,N/A,ARP,N/A,c4:03:a8:b0:42:4e,20:0b:74:19:ee:af,56,"Packet (Length: 56)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m c4:03:a8:b0:42:4e
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 23
+[0m[1m[32m	Trailer:[0m[1m 0000000000000000000000000000
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m request (1)
+[0m[1m[32m	Sender MAC address:[0m[1m c4:03:a8:b0:42:4e
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.96.8
+[0m[1m[32m	Target MAC address:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	Target IP address:[0m[1m 10.0.96.87
+[0m",,,,,,,
+Packet,38,2025-04-23 13:48:05,N/A,N/A,N/A,N/A,N/A,ARP,N/A,20:0b:74:19:ee:af,c4:03:a8:b0:42:4e,42,"Packet (Length: 42)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m c4:03:a8:b0:42:4e
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m ARP (0x0806)
+[0m[1m[32m	Stream index:[0m[1m 23
+[0m[1m[33mLayer ARP
+:[0m[1m[32m	Hardware type:[0m[1m Ethernet (1)
+[0m[1m[32m	Protocol type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Hardware size:[0m[1m 6
+[0m[1m[32m	Protocol size:[0m[1m 4
+[0m[1m[32m	Opcode:[0m[1m reply (2)
+[0m[1m[32m	Sender MAC address:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	Sender IP address:[0m[1m 10.0.96.87
+[0m[1m[32m	Target MAC address:[0m[1m c4:03:a8:b0:42:4e
+[0m[1m[32m	Target IP address:[0m[1m 10.0.96.8
+[0m",,,,,,,
+Packet,39,2025-04-23 13:48:05,10.0.96.87,20.42.65.84,64528,443,TCP,TLS,128,20:0b:74:19:ee:af,84:39:8f:37:90:96,172,"Packet (Length: 172)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 84:39:8f:37:90:96
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 158
+[0m[1m[32m	Identification:[0m[1m 0xeb58 (60248)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 128
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0x4f2c [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Destination Address:[0m[1m 20.42.65.84
+[0m[1m[32m	Stream index:[0m[1m 13
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 64528
+[0m[1m[32m	Destination Port:[0m[1m 443
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (0)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 0... = Data:[0m[1m Absent
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m [ Null ]
+[0m[1m[32m	TCP Segment Len:[0m[1m 118
+[0m[1m[32m	Sequence Number:[0m[1m 1    (relative sequence number)
+[0m[1m[32m	Sequence Number (raw):[0m[1m 2125317884
+[0m[1m[32m	Next Sequence Number:[0m[1m 119    (relative sequence number)
+[0m[1m[32m	Acknowledgment Number:[0m[1m 1    (relative ack number)
+[0m[1m[32m	Acknowledgment number (raw):[0m[1m 1645541988
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x018 (PSH, ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 1... = Push:[0m[1m Set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······AP···
+[0m[1m[32m	Window:[0m[1m 251
+[0m[1m[32m	Calculated window size:[0m[1m 251
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0x79d8 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m	SEQ/ACK analysis
+[0m[1m[32m	Bytes in flight:[0m[1m 118
+[0m[1m[32m	Bytes sent since last PSH flag:[0m[1m 118
+[0m[1m	TCP payload (118 bytes)
+[0m[1m[33mLayer TLS
+:[0m[1m[32m	TLSv1.2 Record Layer:[0m[1m Application Data Protocol: Hypertext Transfer Protocol
+[0m[1m[32m	Content Type:[0m[1m Application Data (23)
+[0m[1m[32m	Version:[0m[1m TLS 1.2 (0x0303)
+[0m[1m[32m	Length:[0m[1m 113
+[0m[1m[32m	Encrypted Application Data […]:[0m[1m 0f42a55df8a054ac1ea8e45eab631b0ce8fd69ee0c028ea26903c7e700a16fbcd9c8d19e08c0dc1200a35dd21f7e006271a1405412dd99304637f4bd0c6a453939162f8631ab372fdec98699baaf762480f8b2b92a50a4852c226f881061b098884bc534d8d02
+[0m[1m[32m	Application Data Protocol:[0m[1m Hypertext Transfer Protocol
+[0m",,,,,,,
+Packet,40,2025-04-23 13:48:05,10.0.96.87,20.42.65.84,64528,443,TCP,TLS,128,20:0b:74:19:ee:af,84:39:8f:37:90:96,1494,"Packet (Length: 1494)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 84:39:8f:37:90:96
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 1480
+[0m[1m[32m	Identification:[0m[1m 0xeb59 (60249)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 128
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0x4a01 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Destination Address:[0m[1m 20.42.65.84
+[0m[1m[32m	Stream index:[0m[1m 13
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 64528
+[0m[1m[32m	Destination Port:[0m[1m 443
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[32m	Stream Packet Number:[0m[1m 2
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (8)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 1... = Data:[0m[1m Present
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m ··D···
+[0m[1m[32m	TCP Segment Len:[0m[1m 1440
+[0m[1m[32m	Sequence Number:[0m[1m 119    (relative sequence number)
+[0m[1m[32m	Sequence Number (raw):[0m[1m 2125318002
+[0m[1m[32m	Next Sequence Number:[0m[1m 1559    (relative sequence number)
+[0m[1m[32m	Acknowledgment Number:[0m[1m 1    (relative ack number)
+[0m[1m[32m	Acknowledgment number (raw):[0m[1m 1645541988
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x010 (ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 0... = Push:[0m[1m Not set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······A····
+[0m[1m[32m	Window:[0m[1m 251
+[0m[1m[32m	Calculated window size:[0m[1m 251
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0xea8b [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.000160000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.000160000 seconds
+[0m[1m	SEQ/ACK analysis
+[0m[1m[32m	Bytes in flight:[0m[1m 1558
+[0m[1m[32m	Bytes sent since last PSH flag:[0m[1m 1440
+[0m[1m	TCP payload (1440 bytes)
+[0m[1m	TCP segment data (1440 bytes)
+[0m[1m[33mLayer TLS
+:[0m[1m	TLS segment data (1440 bytes)
+[0m",,,,,,,
+Packet,41,2025-04-23 13:48:05,10.0.96.87,20.42.65.84,64528,443,TCP,TCP,128,20:0b:74:19:ee:af,84:39:8f:37:90:96,1494,"Packet (Length: 1494)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 84:39:8f:37:90:96
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 1480
+[0m[1m[32m	Identification:[0m[1m 0xeb5a (60250)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 128
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0x4a00 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Destination Address:[0m[1m 20.42.65.84
+[0m[1m[32m	Stream index:[0m[1m 13
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 64528
+[0m[1m[32m	Destination Port:[0m[1m 443
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[32m	Stream Packet Number:[0m[1m 3
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (8)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 1... = Data:[0m[1m Present
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m ··D···
+[0m[1m[32m	TCP Segment Len:[0m[1m 1440
+[0m[1m[32m	Sequence Number:[0m[1m 1559    (relative sequence number)
+[0m[1m[32m	Sequence Number (raw):[0m[1m 2125319442
+[0m[1m[32m	Next Sequence Number:[0m[1m 2999    (relative sequence number)
+[0m[1m[32m	Acknowledgment Number:[0m[1m 1    (relative ack number)
+[0m[1m[32m	Acknowledgment number (raw):[0m[1m 1645541988
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x010 (ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 0... = Push:[0m[1m Not set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······A····
+[0m[1m[32m	Window:[0m[1m 251
+[0m[1m[32m	Calculated window size:[0m[1m 251
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0x6b92 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.000204000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.000044000 seconds
+[0m[1m	SEQ/ACK analysis
+[0m[1m[32m	Bytes in flight:[0m[1m 2998
+[0m[1m[32m	Bytes sent since last PSH flag:[0m[1m 2880
+[0m[1m	TCP payload (1440 bytes)
+[0m[1m	TCP segment data (1440 bytes)
+[0m",,,,,,,
+Packet,42,2025-04-23 13:48:05,10.0.96.87,20.42.65.84,64528,443,TCP,TLS,128,20:0b:74:19:ee:af,84:39:8f:37:90:96,1448,"Packet (Length: 1448)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 84:39:8f:37:90:96
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 1434
+[0m[1m[32m	Identification:[0m[1m 0xeb5b (60251)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 128
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0x4a2d [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Destination Address:[0m[1m 20.42.65.84
+[0m[1m[32m	Stream index:[0m[1m 13
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 64528
+[0m[1m[32m	Destination Port:[0m[1m 443
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[32m	Stream Packet Number:[0m[1m 4
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (8)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 1... = Data:[0m[1m Present
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m ··D···
+[0m[1m[32m	TCP Segment Len:[0m[1m 1394
+[0m[1m[32m	Sequence Number:[0m[1m 2999    (relative sequence number)
+[0m[1m[32m	Sequence Number (raw):[0m[1m 2125320882
+[0m[1m[32m	Next Sequence Number:[0m[1m 4393    (relative sequence number)
+[0m[1m[32m	Acknowledgment Number:[0m[1m 1    (relative ack number)
+[0m[1m[32m	Acknowledgment number (raw):[0m[1m 1645541988
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x018 (PSH, ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 1... = Push:[0m[1m Set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······AP···
+[0m[1m[32m	Window:[0m[1m 251
+[0m[1m[32m	Calculated window size:[0m[1m 251
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0x8c94 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.000237000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.000033000 seconds
+[0m[1m	SEQ/ACK analysis
+[0m[1m[32m	Bytes in flight:[0m[1m 4392
+[0m[1m[32m	Bytes sent since last PSH flag:[0m[1m 4274
+[0m[1m	TCP payload (1394 bytes)
+[0m[1m	TCP segment data (1394 bytes)
+[0mDATA[1m[33mLayer TLS
+:[0m[1m[32m	TLSv1.2 Record Layer:[0m[1m Application Data Protocol: Hypertext Transfer Protocol
+[0m[1m[32m	Content Type:[0m[1m Application Data (23)
+[0m[1m[32m	Version:[0m[1m TLS 1.2 (0x0303)
+[0m[1m[32m	Length:[0m[1m 4269
+[0m[1m[32m	Encrypted Application Data […]:[0m[1m 5a61cb38cb11144377702a76f4cd9cfbf1c5671d9a3f41d54d1d3d846a3ed2fe24b261d8c6d392f50f501c3dc4c04edbc5606720b2dd32e8df73b4a167ec37baf2277aaaf51b5d83425557d09b2f1f39b74a086a130b7ae5b73ed57a80c788beeb93f58c3b722
+[0m[1m[32m	Application Data Protocol:[0m[1m Hypertext Transfer Protocol
+[0m",,,,,,,
+Packet,43,2025-04-23 13:48:05,10.0.96.75,239.255.255.250,42549,15600,UDP,DATA,64,cc:6e:a4:13:02:0d,01:00:5e:7f:ff:fa,77,"Packet (Length: 77)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:7f:ff:fa
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m cc:6e:a4:13:02:0d
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 24
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 63
+[0m[1m[32m	Identification:[0m[1m 0xb7ac (47020)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 64
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0x28bc [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.75
+[0m[1m[32m	Destination Address:[0m[1m 239.255.255.250
+[0m[1m[32m	Stream index:[0m[1m 14
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 42549
+[0m[1m[32m	Destination Port:[0m[1m 15600
+[0m[1m[32m	Length:[0m[1m 43
+[0m[1m[32m	Checksum:[0m[1m 0x79f5 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 12
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (35 bytes)
+[0mDATA",,,,,,,
+Packet,44,2025-04-23 13:48:05,20.42.65.84,10.0.96.87,443,64528,TCP,TCP,108,00:a0:57:47:f0:4b,20:0b:74:19:ee:af,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 00:a0:57:47:f0:4b
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 25
+[0m[1m[32m	Padding:[0m[1m 000000000000
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0xa4 (DSCP: Unknown, ECN: Not-ECT)
+[0m[1m[32m	1010 01.. = Differentiated Services Codepoint:[0m[1m Unknown (41)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 40
+[0m[1m[32m	Identification:[0m[1m 0x6ab9 (27321)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 108
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0xe39d [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 20.42.65.84
+[0m[1m[32m	Destination Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Stream index:[0m[1m 13
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 443
+[0m[1m[32m	Destination Port:[0m[1m 64528
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[32m	Stream Packet Number:[0m[1m 5
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (8)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 1... = Data:[0m[1m Present
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m ··D···
+[0m[1m[32m	TCP Segment Len:[0m[1m 0
+[0m[1m[32m	Sequence Number:[0m[1m 1    (relative sequence number)
+[0m[1m[32m	Sequence Number (raw):[0m[1m 1645541988
+[0m[1m[32m	Next Sequence Number:[0m[1m 1    (relative sequence number)
+[0m[1m[32m	Acknowledgment Number:[0m[1m 1559    (relative ack number)
+[0m[1m[32m	Acknowledgment number (raw):[0m[1m 2125319442
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x010 (ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 0... = Push:[0m[1m Not set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······A····
+[0m[1m[32m	Window:[0m[1m 16385
+[0m[1m[32m	Calculated window size:[0m[1m 16385
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0x09f9 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.096136000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.095899000 seconds
+[0m[1m	SEQ/ACK analysis
+[0m[1m[32m	This is an ACK to the segment in frame:[0m[1m 40
+[0m[1m[32m	The RTT to ACK the segment was:[0m[1m 0.095976000 seconds
+[0m",,,,,,,
+Packet,45,2025-04-23 13:48:05,20.42.65.84,10.0.96.87,443,64528,TCP,TCP,108,00:a0:57:47:f0:4b,20:0b:74:19:ee:af,60,"Packet (Length: 60)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 00:a0:57:47:f0:4b
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 25
+[0m[1m[32m	Padding:[0m[1m 000000000000
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0xa4 (DSCP: Unknown, ECN: Not-ECT)
+[0m[1m[32m	1010 01.. = Differentiated Services Codepoint:[0m[1m Unknown (41)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 40
+[0m[1m[32m	Identification:[0m[1m 0x6aba (27322)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 108
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0xe39c [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 20.42.65.84
+[0m[1m[32m	Destination Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Stream index:[0m[1m 13
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 443
+[0m[1m[32m	Destination Port:[0m[1m 64528
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[32m	Stream Packet Number:[0m[1m 6
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (12)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 1... = Data:[0m[1m Present
+[0m[1m[32m	.... .1.. = ACK:[0m[1m Present
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m ··DA··
+[0m[1m[32m	TCP Segment Len:[0m[1m 0
+[0m[1m[32m	Sequence Number:[0m[1m 1    (relative sequence number)
+[0m[1m[32m	Sequence Number (raw):[0m[1m 1645541988
+[0m[1m[32m	Next Sequence Number:[0m[1m 1    (relative sequence number)
+[0m[1m[32m	Acknowledgment Number:[0m[1m 4393    (relative ack number)
+[0m[1m[32m	Acknowledgment number (raw):[0m[1m 2125322276
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x010 (ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 0... = Push:[0m[1m Not set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······A····
+[0m[1m[32m	Window:[0m[1m 16385
+[0m[1m[32m	Calculated window size:[0m[1m 16385
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0xfee6 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.096136000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m	SEQ/ACK analysis
+[0m[1m[32m	This is an ACK to the segment in frame:[0m[1m 42
+[0m[1m[32m	The RTT to ACK the segment was:[0m[1m 0.095899000 seconds
+[0m",,,,,,,
+Packet,46,2025-04-23 13:48:05,20.42.65.84,10.0.96.87,443,64528,TCP,TLS,108,84:39:8f:37:90:96,20:0b:74:19:ee:af,153,"Packet (Length: 153)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 20:0b:74:19:ee:af
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 84:39:8f:37:90:96
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0xa4 (DSCP: Unknown, ECN: Not-ECT)
+[0m[1m[32m	1010 01.. = Differentiated Services Codepoint:[0m[1m Unknown (41)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 139
+[0m[1m[32m	Identification:[0m[1m 0x6abb (27323)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 108
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0xe338 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 20.42.65.84
+[0m[1m[32m	Destination Address:[0m[1m 10.0.96.87
+[0m[1m[32m	Stream index:[0m[1m 13
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 443
+[0m[1m[32m	Destination Port:[0m[1m 64528
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[32m	Stream Packet Number:[0m[1m 7
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (12)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 1... = Data:[0m[1m Present
+[0m[1m[32m	.... .1.. = ACK:[0m[1m Present
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m ··DA··
+[0m[1m[32m	TCP Segment Len:[0m[1m 99
+[0m[1m[32m	Sequence Number:[0m[1m 1    (relative sequence number)
+[0m[1m[32m	Sequence Number (raw):[0m[1m 1645541988
+[0m[1m[32m	Next Sequence Number:[0m[1m 100    (relative sequence number)
+[0m[1m[32m	Acknowledgment Number:[0m[1m 4393    (relative ack number)
+[0m[1m[32m	Acknowledgment number (raw):[0m[1m 2125322276
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x018 (PSH, ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 1... = Push:[0m[1m Set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······AP···
+[0m[1m[32m	Window:[0m[1m 16385
+[0m[1m[32m	Calculated window size:[0m[1m 16385
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0x1956 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.097449000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.001313000 seconds
+[0m[1m	SEQ/ACK analysis
+[0m[1m[32m	Bytes in flight:[0m[1m 99
+[0m[1m[32m	Bytes sent since last PSH flag:[0m[1m 99
+[0m[1m	TCP payload (99 bytes)
+[0m[1m[33mLayer TLS
+:[0m[1m[32m	TLSv1.2 Record Layer:[0m[1m Application Data Protocol: Hypertext Transfer Protocol
+[0m[1m[32m	Content Type:[0m[1m Application Data (23)
+[0m[1m[32m	Version:[0m[1m TLS 1.2 (0x0303)
+[0m[1m[32m	Length:[0m[1m 94
+[0m[1m[32m	Encrypted Application Data:[0m[1m 2cd3e8be999b2fb1705d1dd1459ad756ab1a09c65f66ca4032a4dbe18e08041c6b695bd97df13b6d6da6f8becd5f6c186dd32632427ba9c05ff11f5109cc21ca3d4998c10d52458c2094ccdbbb1aa7e1e2aa14294032d05e9ee2ccc9e13b
+[0m[1m[32m	Application Data Protocol:[0m[1m Hypertext Transfer Protocol
+[0m",,,,,,,
+Packet,47,2025-04-23 13:48:05,10.0.96.101,239.255.255.250,54285,3702,UDP,XML,1,d8:3b:bf:be:11:a3,01:00:5e:7f:ff:fa,698,"Packet (Length: 698)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:7f:ff:fa
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m d8:3b:bf:be:11:a3
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 7
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 684
+[0m[1m[32m	Identification:[0m[1m 0xd1c8 (53704)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 1
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0x8b19 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.101
+[0m[1m[32m	Destination Address:[0m[1m 239.255.255.250
+[0m[1m[32m	Stream index:[0m[1m 3
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 54285
+[0m[1m[32m	Destination Port:[0m[1m 3702
+[0m[1m[32m	Length:[0m[1m 664
+[0m[1m[32m	Checksum:[0m[1m 0x5d70 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[32m	Stream Packet Number:[0m[1m 2
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.716671000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.716671000 seconds
+[0m[1m	UDP payload (656 bytes)
+[0m[1m[33mLayer XML
+:[0m[1m	<?xml
+[0m[1m	version=""1.0""
+[0m[1m	encoding=""utf-8""
+[0m[1m	?>
+[0m[1m[32m	<soap:[0m[1mEnvelope
+[0m[1m[32m	xmlns:[0m[1msoap=""http://www.w3.org/2003/05/soap-envelope""
+[0m[1m[32m	urn:[0m[1mschemas-xmlsoap-org:ws:2005:04:discovery
+[0m[1m[32m	</wsa:[0m[1mTo>
+[0m[1m[32m	</wsa:[0m[1mAction>
+[0m[1m[32m	</wsa:[0m[1mMessageID>
+[0m[1m[32m	</soap:[0m[1mHeader>
+[0m[1m[32m	</wsa:[0m[1mAddress>
+[0m[1m[32m	</wsa:[0m[1mEndpointReference>
+[0m[1m[32m	</wsd:[0m[1mResolve>
+[0m[1m[32m	</soap:[0m[1mBody>
+[0m[1m[32m	</soap:[0m[1mEnvelope>
+[0m[1m[32m	<soap:[0m[1mHeader>
+[0m[1m[32m	<wsa:[0m[1mTo>
+[0m[1m[32m	<wsa:[0m[1mAction>
+[0m[1m[32m	<wsa:[0m[1mMessageID>
+[0m[1m[32m	<soap:[0m[1mBody>
+[0m[1m[32m	<wsd:[0m[1mResolve>
+[0m[1m[32m	<wsa:[0m[1mEndpointReference>
+[0m[1m[32m	<wsa:[0m[1mAddress>
+[0m[1m[32m	xmlns:[0m[1mwsa=""http://schemas.xmlsoap.org/ws/2004/08/addressing""
+[0m[1m[32m	xmlns:[0m[1mwsd=""http://schemas.xmlsoap.org/ws/2005/04/discovery"">
+[0m[1m[32m	http:[0m[1m//schemas.xmlsoap.org/ws/2005/04/discovery/Resolve
+[0m[1m[32m	urn:[0m[1muuid:6d562ff1-e3b4-4ec5-a545-e1bd3c2c3f81
+[0m[1m[32m	urn:[0m[1muuid:1c852a4d-b800-1f08-abcd-5cb90167bd70
+[0m",,,,,,,
+Packet,48,2025-04-23 13:48:05,10.0.96.8,224.0.0.251,5353,5353,UDP,MDNS,255,c4:03:a8:b0:42:4e,01:00:5e:00:00:fb,79,"Packet (Length: 79)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:00:00:fb
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m c4:03:a8:b0:42:4e
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 26
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 65
+[0m[1m[32m	Identification:[0m[1m 0xf7ee (63470)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 255
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0x78b9 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.8
+[0m[1m[32m	Destination Address:[0m[1m 224.0.0.251
+[0m[1m[32m	Stream index:[0m[1m 15
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 45
+[0m[1m[32m	Checksum:[0m[1m 0x41ee [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 13
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (37 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Flags:[0m[1m 0x0000 Standard query
+[0m[1m[32m	0... .... .... .... = Response:[0m[1m Message is a query
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	Questions:[0m[1m 1
+[0m[1m[32m	Answer RRs:[0m[1m 0
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Queries
+[0m[1m[32m	Name:[0m[1m _airtame._tcp.local
+[0m[1m[32m	Name Length:[0m[1m 19
+[0m[1m[32m	Label Count:[0m[1m 3
+[0m[1m[32m	Type:[0m[1m PTR (12) (domain name PoinTeR)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	0... .... .... .... = ""QU"" question:[0m[1m False
+[0m[1m[32m	_airtame._tcp.local:[0m[1m type PTR, class IN, ""QM"" question
+[0m",,,,,,,
+Packet,49,2025-04-23 13:48:05,10.0.96.51,224.0.0.251,5353,5353,UDP,MDNS,255,38:4b:76:f1:59:d6,01:00:5e:00:00:fb,94,"Packet (Length: 94)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:00:00:fb
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 38:4b:76:f1:59:d6
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 27
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 80
+[0m[1m[32m	Identification:[0m[1m 0xc617 (50711)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 255
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0x6a56 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.51
+[0m[1m[32m	Destination Address:[0m[1m 224.0.0.251
+[0m[1m[32m	Stream index:[0m[1m 16
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 60
+[0m[1m[32m	Checksum:[0m[1m 0xc1e4 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 14
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.000000000 seconds
+[0m[1m	UDP payload (52 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Flags:[0m[1m 0x8400 Standard query response, No error
+[0m[1m[32m	1... .... .... .... = Response:[0m[1m Message is a response
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... .1.. .... .... = Authoritative:[0m[1m Server is an authority for domain
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... 0... .... = Recursion available:[0m[1m Server can't do recursive queries
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ..0. .... = Answer authenticated:[0m[1m Answer/authority portion was not authenticated by the server
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	.... .... .... 0000 = Reply code:[0m[1m No error (0)
+[0m[1m[32m	Questions:[0m[1m 0
+[0m[1m[32m	Answer RRs:[0m[1m 1
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Answers
+[0m[1m[32m	Name:[0m[1m _airtame._tcp.local
+[0m[1m[32m	Type:[0m[1m PTR (12) (domain name PoinTeR)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	0... .... .... .... = Cache flush:[0m[1m False
+[0m[1m[32m	Time to live:[0m[1m 4500 (1 hour, 15 minutes)
+[0m[1m[32m	Data length:[0m[1m 9
+[0m[1m[32m	Domain Name:[0m[1m A206-3._airtame._tcp.local
+[0m[1m[32m	Unsolicited:[0m[1m True
+[0m[1m[32m	_airtame._tcp.local:[0m[1m type PTR, class IN, A206-3._airtame._tcp.local
+[0m",,,,,,,
+Packet,50,2025-04-23 13:48:05,10.0.96.123,224.0.0.251,5353,5353,UDP,MDNS,255,38:4b:76:f1:36:f5,01:00:5e:00:00:fb,94,"Packet (Length: 94)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 01:00:5e:00:00:fb
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...1 .... .... .... .... = IG bit:[0m[1m Group address (multicast/broadcast)
+[0m[1m[32m	Source:[0m[1m 38:4b:76:f1:36:f5
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 13
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 80
+[0m[1m[32m	Identification:[0m[1m 0x7afc (31484)
+[0m[1m[32m	010. .... = Flags:[0m[1m 0x2, Don't fragment
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.1.. .... = Don't fragment:[0m[1m Set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 255
+[0m[1m[32m	Protocol:[0m[1m UDP (17)
+[0m[1m[32m	Header Checksum:[0m[1m 0xb529 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 10.0.96.123
+[0m[1m[32m	Destination Address:[0m[1m 224.0.0.251
+[0m[1m[32m	Stream index:[0m[1m 6
+[0m[1m[33mLayer UDP
+:[0m[1m[32m	Source Port:[0m[1m 5353
+[0m[1m[32m	Destination Port:[0m[1m 5353
+[0m[1m[32m	Length:[0m[1m 60
+[0m[1m[32m	Checksum:[0m[1m 0xc19b [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Stream index:[0m[1m 4
+[0m[1m[32m	Stream Packet Number:[0m[1m 2
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame:[0m[1m 0.410051000 seconds
+[0m[1m[32m	Time since previous frame:[0m[1m 0.410051000 seconds
+[0m[1m	UDP payload (52 bytes)
+[0m[1m[33mLayer MDNS
+:[0m[1m[32m	Transaction ID:[0m[1m 0x0000
+[0m[1m[32m	Flags:[0m[1m 0x8400 Standard query response, No error
+[0m[1m[32m	1... .... .... .... = Response:[0m[1m Message is a response
+[0m[1m[32m	.000 0... .... .... = Opcode:[0m[1m Standard query (0)
+[0m[1m[32m	.... .1.. .... .... = Authoritative:[0m[1m Server is an authority for domain
+[0m[1m[32m	.... ..0. .... .... = Truncated:[0m[1m Message is not truncated
+[0m[1m[32m	.... ...0 .... .... = Recursion desired:[0m[1m Don't do query recursively
+[0m[1m[32m	.... .... 0... .... = Recursion available:[0m[1m Server can't do recursive queries
+[0m[1m[32m	.... .... .0.. .... = Z:[0m[1m reserved (0)
+[0m[1m[32m	.... .... ..0. .... = Answer authenticated:[0m[1m Answer/authority portion was not authenticated by the server
+[0m[1m[32m	.... .... ...0 .... = Non-authenticated data:[0m[1m Unacceptable
+[0m[1m[32m	.... .... .... 0000 = Reply code:[0m[1m No error (0)
+[0m[1m[32m	Questions:[0m[1m 0
+[0m[1m[32m	Answer RRs:[0m[1m 1
+[0m[1m[32m	Authority RRs:[0m[1m 0
+[0m[1m[32m	Additional RRs:[0m[1m 0
+[0m[1m	Answers
+[0m[1m[32m	Name:[0m[1m _airtame._tcp.local
+[0m[1m[32m	Type:[0m[1m PTR (12) (domain name PoinTeR)
+[0m[1m[32m	.000 0000 0000 0001 = Class:[0m[1m IN (0x0001)
+[0m[1m[32m	0... .... .... .... = Cache flush:[0m[1m False
+[0m[1m[32m	Time to live:[0m[1m 4500 (1 hour, 15 minutes)
+[0m[1m[32m	Data length:[0m[1m 9
+[0m[1m[32m	Domain Name:[0m[1m A207-3._airtame._tcp.local
+[0m[1m[32m	Unsolicited:[0m[1m True
+[0m[1m[32m	_airtame._tcp.local:[0m[1m type PTR, class IN, A207-3._airtame._tcp.local
+[0m",,,,,,,
+Nmap,1,,,,,,,,,,,,,10.0.96.1,up,tcp,80,http,,
+Nmap,2,,,,,,,,,,,,,10.0.96.1,up,tcp,443,https,,
+Nmap,3,,,,,,,,,,,,,10.0.96.1,up,tcp,515,printer,,
+Nmap,4,,,,,,,,,,,,,10.0.96.1,up,tcp,631,ipp,,
+Nmap,5,,,,,,,,,,,,,10.0.96.1,up,tcp,9100,jetdirect,,
+Nmap,6,,,,,,,,,,,,,10.0.96.101,up,tcp,135,msrpc,,
+Nmap,7,,,,,,,,,,,,,10.0.96.101,up,tcp,139,netbios-ssn,,
+Nmap,8,,,,,,,,,,,,,10.0.96.101,up,tcp,445,microsoft-ds,,
+Nmap,9,,,,,,,,,,,,,10.0.96.101,up,tcp,5357,wsdapi,,
+Nmap,10,,,,,,,,,,,,,10.0.96.102,up,tcp,22,ssh,,
+Nmap,11,,,,,,,,,,,,,10.0.96.102,up,tcp,80,http,,
+Nmap,12,,,,,,,,,,,,,10.0.96.102,up,tcp,8080,http-proxy,,
+Nmap,13,,,,,,,,,,,,,10.0.96.103,up,tcp,22,ssh,,
+Nmap,14,,,,,,,,,,,,,10.0.96.103,up,tcp,80,http,,
+Nmap,15,,,,,,,,,,,,,10.0.96.103,up,tcp,8008,http,,
+Nmap,16,,,,,,,,,,,,,10.0.96.103,up,tcp,8009,ajp13,,
+Nmap,17,,,,,,,,,,,,,10.0.96.103,up,tcp,8080,http-proxy,,
+Nmap,18,,,,,,,,,,,,,10.0.96.106,up,tcp,22,ssh,,
+Nmap,19,,,,,,,,,,,,,10.0.96.106,up,tcp,80,http,,
+Nmap,20,,,,,,,,,,,,,10.0.96.106,up,tcp,8080,http-proxy,,
+Nmap,21,,,,,,,,,,,,,10.0.96.12,up,tcp,22,ssh,,
+Nmap,22,,,,,,,,,,,,,10.0.96.12,up,tcp,80,http,,
+Nmap,23,,,,,,,,,,,,,10.0.96.12,up,tcp,8008,http,,
+Nmap,24,,,,,,,,,,,,,10.0.96.12,up,tcp,8009,ajp13,,
+Nmap,25,,,,,,,,,,,,,10.0.96.12,up,tcp,8080,http-proxy,,
+Nmap,26,,,,,,,,,,,,,10.0.96.123,up,tcp,22,ssh,,
+Nmap,27,,,,,,,,,,,,,10.0.96.123,up,tcp,80,http,,
+Nmap,28,,,,,,,,,,,,,10.0.96.123,up,tcp,8008,http,,
+Nmap,29,,,,,,,,,,,,,10.0.96.123,up,tcp,8009,ajp13,,
+Nmap,30,,,,,,,,,,,,,10.0.96.123,up,tcp,8080,http-proxy,,
+Nmap,31,,,,,,,,,,,,,10.0.96.126,up,tcp,22,ssh,,
+Nmap,32,,,,,,,,,,,,,10.0.96.126,up,tcp,80,http,,
+Nmap,33,,,,,,,,,,,,,10.0.96.126,up,tcp,8008,http,,
+Nmap,34,,,,,,,,,,,,,10.0.96.126,up,tcp,8009,ajp13,,
+Nmap,35,,,,,,,,,,,,,10.0.96.126,up,tcp,8080,http-proxy,,
+Nmap,36,,,,,,,,,,,,,10.0.96.13,up,tcp,5000,upnp,,
+Nmap,37,,,,,,,,,,,,,10.0.96.133,up,tcp,80,http,,
+Nmap,38,,,,,,,,,,,,,10.0.96.133,up,tcp,443,https,,
+Nmap,39,,,,,,,,,,,,,10.0.96.133,up,tcp,515,printer,,
+Nmap,40,,,,,,,,,,,,,10.0.96.133,up,tcp,631,ipp,,
+Nmap,41,,,,,,,,,,,,,10.0.96.133,up,tcp,9100,jetdirect,,
+Nmap,42,,,,,,,,,,,,,10.0.96.137,up,tcp,22,ssh,,
+Nmap,43,,,,,,,,,,,,,10.0.96.137,up,tcp,80,http,,
+Nmap,44,,,,,,,,,,,,,10.0.96.147,up,tcp,22,ssh,,
+Nmap,45,,,,,,,,,,,,,10.0.96.147,up,tcp,80,http,,
+Nmap,46,,,,,,,,,,,,,10.0.96.147,up,tcp,8008,http,,
+Nmap,47,,,,,,,,,,,,,10.0.96.147,up,tcp,8009,ajp13,,
+Nmap,48,,,,,,,,,,,,,10.0.96.147,up,tcp,8080,http-proxy,,
+Nmap,49,,,,,,,,,,,,,10.0.96.148,up,tcp,22,ssh,,
+Nmap,50,,,,,,,,,,,,,10.0.96.150,up,tcp,22,ssh,,
+Nmap,51,,,,,,,,,,,,,10.0.96.150,up,tcp,443,https,,
+Nmap,52,,,,,,,,,,,,,10.0.96.151,up,tcp,22,ssh,,
+Nmap,53,,,,,,,,,,,,,10.0.96.151,up,tcp,80,http,,
+Nmap,54,,,,,,,,,,,,,10.0.96.151,up,tcp,5000,upnp,,
+Nmap,55,,,,,,,,,,,,,10.0.96.151,up,tcp,8080,http-proxy,,
+Nmap,56,,,,,,,,,,,,,10.0.96.156,up,tcp,22,ssh,,
+Nmap,57,,,,,,,,,,,,,10.0.96.156,up,tcp,80,http,,
+Nmap,58,,,,,,,,,,,,,10.0.96.161,up,tcp,135,msrpc,,
+Nmap,59,,,,,,,,,,,,,10.0.96.161,up,tcp,139,netbios-ssn,,
+Nmap,60,,,,,,,,,,,,,10.0.96.161,up,tcp,445,microsoft-ds,,
+Nmap,61,,,,,,,,,,,,,10.0.96.161,up,tcp,3389,ms-wbt-server,,
+Nmap,62,,,,,,,,,,,,,10.0.96.161,up,tcp,5357,wsdapi,,
+Nmap,63,,,,,,,,,,,,,10.0.96.162,up,tcp,22,ssh,,
+Nmap,64,,,,,,,,,,,,,10.0.96.162,up,tcp,80,http,,
+Nmap,65,,,,,,,,,,,,,10.0.96.162,up,tcp,443,https,,
+Nmap,66,,,,,,,,,,,,,10.0.96.167,up,tcp,9,discard,,
+Nmap,67,,,,,,,,,,,,,10.0.96.167,up,tcp,13,daytime,,
+Nmap,68,,,,,,,,,,,,,10.0.96.167,up,tcp,88,kerberos-sec,,
+Nmap,69,,,,,,,,,,,,,10.0.96.167,up,tcp,179,bgp,,
+Nmap,70,,,,,,,,,,,,,10.0.96.167,up,tcp,1029,ms-lsa,,
+Nmap,71,,,,,,,,,,,,,10.0.96.167,up,tcp,1110,nfsd-status,,
+Nmap,72,,,,,,,,,,,,,10.0.96.167,up,tcp,1900,upnp,,
+Nmap,73,,,,,,,,,,,,,10.0.96.167,up,tcp,2000,cisco-sccp,,
+Nmap,74,,,,,,,,,,,,,10.0.96.167,up,tcp,2001,dc,,
+Nmap,75,,,,,,,,,,,,,10.0.96.167,up,tcp,3986,mapper-ws_ethd,,
+Nmap,76,,,,,,,,,,,,,10.0.96.167,up,tcp,4899,radmin,,
+Nmap,77,,,,,,,,,,,,,10.0.96.167,up,tcp,5000,upnp,,
+Nmap,78,,,,,,,,,,,,,10.0.96.167,up,tcp,5009,airport-admin,,
+Nmap,79,,,,,,,,,,,,,10.0.96.167,up,tcp,5051,ida-agent,,
+Nmap,80,,,,,,,,,,,,,10.0.96.167,up,tcp,5101,admdog,,
+Nmap,81,,,,,,,,,,,,,10.0.96.167,up,tcp,5190,aol,,
+Nmap,82,,,,,,,,,,,,,10.0.96.167,up,tcp,8000,http-alt,,
+Nmap,83,,,,,,,,,,,,,10.0.96.167,up,tcp,8081,blackice-icecap,,
+Nmap,84,,,,,,,,,,,,,10.0.96.167,up,tcp,9999,abyss,,
+Nmap,85,,,,,,,,,,,,,10.0.96.167,up,tcp,49154,,,
+Nmap,86,,,,,,,,,,,,,10.0.96.167,up,tcp,49156,,,
+Nmap,87,,,,,,,,,,,,,10.0.96.167,up,tcp,49157,,,
+Nmap,88,,,,,,,,,,,,,10.0.96.168,up,tcp,3306,mysql,,
+Nmap,89,,,,,,,,,,,,,10.0.96.168,up,tcp,5357,wsdapi,,
+Nmap,90,,,,,,,,,,,,,10.0.96.17,up,tcp,22,ssh,,
+Nmap,91,,,,,,,,,,,,,10.0.96.17,up,tcp,8000,http-alt,,
+Nmap,92,,,,,,,,,,,,,10.0.96.170,up,tcp,49152,,,
+Nmap,93,,,,,,,,,,,,,10.0.96.179,up,tcp,22,ssh,,
+Nmap,94,,,,,,,,,,,,,10.0.96.179,up,tcp,80,http,,
+Nmap,95,,,,,,,,,,,,,10.0.96.179,up,tcp,3000,ppp,,
+Nmap,96,,,,,,,,,,,,,10.0.96.179,up,tcp,8000,http-alt,,
+Nmap,97,,,,,,,,,,,,,10.0.96.189,up,tcp,22,ssh,,
+Nmap,98,,,,,,,,,,,,,10.0.96.189,up,tcp,10000,snet-sensor-mgmt,,
+Nmap,99,,,,,,,,,,,,,10.0.96.190,up,tcp,135,msrpc,,
+Nmap,100,,,,,,,,,,,,,10.0.96.190,up,tcp,139,netbios-ssn,,
+Nmap,101,,,,,,,,,,,,,10.0.96.190,up,tcp,445,microsoft-ds,,
+Nmap,102,,,,,,,,,,,,,10.0.96.198,up,tcp,22,ssh,,
+Nmap,103,,,,,,,,,,,,,10.0.96.199,up,tcp,22,ssh,,
+Nmap,104,,,,,,,,,,,,,10.0.96.199,up,tcp,80,http,,
+Nmap,105,,,,,,,,,,,,,10.0.96.199,up,tcp,8008,http,,
+Nmap,106,,,,,,,,,,,,,10.0.96.199,up,tcp,8009,ajp13,,
+Nmap,107,,,,,,,,,,,,,10.0.96.199,up,tcp,8080,http-proxy,,
+Nmap,108,,,,,,,,,,,,,10.0.96.21,up,tcp,22,ssh,,
+Nmap,109,,,,,,,,,,,,,10.0.96.21,up,tcp,80,http,,
+Nmap,110,,,,,,,,,,,,,10.0.96.21,up,tcp,8008,http,,
+Nmap,111,,,,,,,,,,,,,10.0.96.21,up,tcp,8009,ajp13,,
+Nmap,112,,,,,,,,,,,,,10.0.96.21,up,tcp,8080,http-proxy,,
+Nmap,113,,,,,,,,,,,,,10.0.96.237,up,tcp,22,ssh,,
+Nmap,114,,,,,,,,,,,,,10.0.96.237,up,tcp,80,http,,
+Nmap,115,,,,,,,,,,,,,10.0.96.239,up,tcp,22,ssh,,
+Nmap,116,,,,,,,,,,,,,10.0.96.24,up,tcp,135,msrpc,,
+Nmap,117,,,,,,,,,,,,,10.0.96.24,up,tcp,139,netbios-ssn,,
+Nmap,118,,,,,,,,,,,,,10.0.96.24,up,tcp,445,microsoft-ds,,
+Nmap,119,,,,,,,,,,,,,10.0.96.26,up,tcp,22,ssh,,
+Nmap,120,,,,,,,,,,,,,10.0.96.26,up,tcp,23,telnet,,
+Nmap,121,,,,,,,,,,,,,10.0.96.26,up,tcp,80,http,,
+Nmap,122,,,,,,,,,,,,,10.0.96.27,up,tcp,22,ssh,,
+Nmap,123,,,,,,,,,,,,,10.0.96.28,up,tcp,135,msrpc,,
+Nmap,124,,,,,,,,,,,,,10.0.96.28,up,tcp,139,netbios-ssn,,
+Nmap,125,,,,,,,,,,,,,10.0.96.28,up,tcp,445,microsoft-ds,,
+Nmap,126,,,,,,,,,,,,,10.0.96.29,up,tcp,3389,ms-wbt-server,,
+Nmap,127,,,,,,,,,,,,,10.0.96.40,up,tcp,22,ssh,,
+Nmap,128,,,,,,,,,,,,,10.0.96.40,up,tcp,80,http,,
+Nmap,129,,,,,,,,,,,,,10.0.96.40,up,tcp,8080,http-proxy,,
+Nmap,130,,,,,,,,,,,,,10.0.96.43,up,tcp,5357,wsdapi,,
+Nmap,131,,,,,,,,,,,,,10.0.96.47,up,tcp,80,http,,
+Nmap,132,,,,,,,,,,,,,10.0.96.47,up,tcp,443,https,,
+Nmap,133,,,,,,,,,,,,,10.0.96.47,up,tcp,515,printer,,
+Nmap,134,,,,,,,,,,,,,10.0.96.47,up,tcp,631,ipp,,
+Nmap,135,,,,,,,,,,,,,10.0.96.47,up,tcp,9100,jetdirect,,
+Nmap,136,,,,,,,,,,,,,10.0.96.5,up,tcp,80,http,,
+Nmap,137,,,,,,,,,,,,,10.0.96.5,up,tcp,443,https,,
+Nmap,138,,,,,,,,,,,,,10.0.96.5,up,tcp,515,printer,,
+Nmap,139,,,,,,,,,,,,,10.0.96.5,up,tcp,631,ipp,,
+Nmap,140,,,,,,,,,,,,,10.0.96.5,up,tcp,9100,jetdirect,,
+Nmap,141,,,,,,,,,,,,,10.0.96.51,up,tcp,22,ssh,,
+Nmap,142,,,,,,,,,,,,,10.0.96.51,up,tcp,80,http,,
+Nmap,143,,,,,,,,,,,,,10.0.96.51,up,tcp,8080,http-proxy,,
+Nmap,144,,,,,,,,,,,,,10.0.96.53,up,tcp,8080,http-proxy,,
+Nmap,145,,,,,,,,,,,,,10.0.96.59,up,tcp,49152,,,
+Nmap,146,,,,,,,,,,,,,10.0.96.6,up,tcp,22,ssh,,
+Nmap,147,,,,,,,,,,,,,10.0.96.6,up,tcp,80,http,,
+Nmap,148,,,,,,,,,,,,,10.0.96.6,up,tcp,8080,http-proxy,,
+Nmap,149,,,,,,,,,,,,,10.0.96.60,up,tcp,135,msrpc,,
+Nmap,150,,,,,,,,,,,,,10.0.96.60,up,tcp,139,netbios-ssn,,
+Nmap,151,,,,,,,,,,,,,10.0.96.60,up,tcp,445,microsoft-ds,,
+Nmap,152,,,,,,,,,,,,,10.0.96.60,up,tcp,5357,wsdapi,,
+Nmap,153,,,,,,,,,,,,,10.0.96.66,up,tcp,135,msrpc,,
+Nmap,154,,,,,,,,,,,,,10.0.96.66,up,tcp,3389,ms-wbt-server,,
+Nmap,155,,,,,,,,,,,,,10.0.96.75,up,tcp,8080,http-proxy,,
+Nmap,156,,,,,,,,,,,,,10.0.96.75,up,tcp,9999,abyss,,
+Nmap,157,,,,,,,,,,,,,10.0.96.75,up,tcp,32768,filenet-tms,,
+Nmap,158,,,,,,,,,,,,,10.0.96.76,up,tcp,22,ssh,,
+Nmap,159,,,,,,,,,,,,,10.0.96.76,up,tcp,80,http,,
+Nmap,160,,,,,,,,,,,,,10.0.96.76,up,tcp,8008,http,,
+Nmap,161,,,,,,,,,,,,,10.0.96.76,up,tcp,8009,ajp13,,
+Nmap,162,,,,,,,,,,,,,10.0.96.76,up,tcp,8080,http-proxy,,
+Nmap,163,,,,,,,,,,,,,10.0.96.78,up,tcp,22,ssh,,
+Nmap,164,,,,,,,,,,,,,10.0.96.78,up,tcp,80,http,,
+Nmap,165,,,,,,,,,,,,,10.0.96.78,up,tcp,8080,http-proxy,,
+Nmap,166,,,,,,,,,,,,,10.0.96.8,up,tcp,135,msrpc,,
+Nmap,167,,,,,,,,,,,,,10.0.96.8,up,tcp,139,netbios-ssn,,
+Nmap,168,,,,,,,,,,,,,10.0.96.8,up,tcp,445,microsoft-ds,,
+Nmap,169,,,,,,,,,,,,,10.0.96.8,up,tcp,5357,wsdapi,,
+Nmap,170,,,,,,,,,,,,,10.0.96.86,up,tcp,5000,upnp,,
+Nmap,171,,,,,,,,,,,,,10.0.96.87,up,tcp,135,msrpc,,
+Nmap,172,,,,,,,,,,,,,10.0.96.87,up,tcp,139,netbios-ssn,,
+Nmap,173,,,,,,,,,,,,,10.0.96.87,up,tcp,445,microsoft-ds,,
+Nmap,174,,,,,,,,,,,,,10.0.96.87,up,tcp,5357,wsdapi,,
+Nmap,175,,,,,,,,,,,,,10.0.96.88,up,tcp,22,ssh,,
+Nmap,176,,,,,,,,,,,,,10.0.96.88,up,tcp,80,http,,
+Nmap,177,,,,,,,,,,,,,10.0.96.88,up,tcp,8080,http-proxy,,

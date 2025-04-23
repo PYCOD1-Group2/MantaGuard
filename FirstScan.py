@@ -3,6 +3,11 @@ import netifaces
 import csv
 from datetime import datetime
 import nmap
+import os
+import time
+
+# Ensure the path to Nmap is accessible (adjust if your install location differs)
+os.environ["PATH"] += os.pathsep + "C:\\Program Files (x86)\\Nmap\\"
 
 def get_network_interfaces():
     try:
@@ -14,17 +19,17 @@ def get_network_interfaces():
             if isinstance(i, dict):
                 name = i.get('name')
                 description = i.get('description', name)
-            else:  # fallback if it's just a string
+            else:
                 name = i
                 description = i
 
             ip = get_ip_for_interface(name)
-            full_desc = f"{description} (IP: {ip})"
-            interface_map[full_desc] = name
+            if ip not in ["No IP", "Unknown"]:
+                full_desc = f"{description} (IP: {ip})"
+                interface_map[full_desc] = name
 
         return interface_map
-    except Exception as e:
-        print(f"Failed to retrieve interfaces: {e}")
+    except Exception:
         return {}
 
 def get_ip_for_interface(iface_name):
@@ -39,17 +44,18 @@ def get_ip_for_interface(iface_name):
         pass
     return "Unknown"
 
-def save_packets_to_csv(packets, filename=None):
+def save_combined_csv(packets, nmap_results, filename=None):
     if not filename:
         now = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"packet_capture_{now}.csv"
+        filename = f"combined_scan_{now}.csv"
 
     with open(filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow([
-            "No", "Timestamp", "Source IP", "Destination IP", "Source Port",
+            "Type", "No", "Timestamp", "Source IP", "Destination IP", "Source Port",
             "Destination Port", "Transport Layer", "Protocol", "TTL",
-            "MAC Src", "MAC Dst", "Length", "Info"
+            "MAC Src", "MAC Dst", "Length", "Info",
+            "Host", "State", "Nmap Protocol", "Port", "Service", "Product", "Version"
         ])
 
         for i, packet in enumerate(packets, 1):
@@ -68,93 +74,97 @@ def save_packets_to_csv(packets, filename=None):
                 info = str(packet)
 
                 writer.writerow([
-                    i, timestamp, src_ip, dst_ip, src_port, dst_port,
-                    transport, proto, ttl, eth_src, eth_dst, length, info
+                    "Packet", i, timestamp, src_ip, dst_ip, src_port, dst_port,
+                    transport, proto, ttl, eth_src, eth_dst, length, info,
+                    "", "", "", "", "", "", ""
                 ])
-            except Exception as e:
-                print(f"Failed to write packet {i}: {e}")
+            except Exception:
+                pass
+
+        for i, result in enumerate(nmap_results, 1):
+            writer.writerow([
+                "Nmap", i, "", "", "", "", "", "", "", "", "", "", "", "",
+                result.get("host"), result.get("state"), result.get("protocol"),
+                result.get("port"), result.get("service"), result.get("product"), result.get("version")
+            ])
 
 def run_nmap_scan(target_subnet):
-    now = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"nmap_scan_{now}.csv"
     scanner = nmap.PortScanner()
-    print(f"Running Nmap scan on {target_subnet}...")
+    results = []
+    print(f"Running Nmap scan on {target_subnet} (light scan mode)...")
     try:
-        scanner.scan(hosts=target_subnet, arguments='-sS -sV')
-        with open(filename, mode='w', newline='', encoding='utf-8') as file:
-            writer = csv.writer(file)
-            writer.writerow(["Host", "State", "Protocol", "Port", "Service", "Product", "Version"])
-            for host in scanner.all_hosts():
-                for proto in scanner[host].all_protocols():
-                    ports = scanner[host][proto].keys()
-                    for port in ports:
-                        service = scanner[host][proto][port]
-                        writer.writerow([
-                            host,
-                            scanner[host].state(),
-                            proto,
-                            port,
-                            service.get('name', 'unknown'),
-                            service.get('product', 'unknown'),
-                            service.get('version', 'unknown')
-                        ])
-        print(f"Nmap scan saved to {filename}")
+        start_time = time.time()
+        # Light scan with ping discovery and top 100 ports
+        scanner.scan(hosts=target_subnet, arguments='-T4 -F')
+        total_hosts = len(scanner.all_hosts())
+        print(f"Discovered {total_hosts} host(s). Parsing results...")
+        for idx, host in enumerate(scanner.all_hosts(), 1):
+            print(f"[{idx}/{total_hosts}] Processing {host}...")
+            for proto in scanner[host].all_protocols():
+                ports = scanner[host][proto].keys()
+                for port in ports:
+                    service = scanner[host][proto][port]
+                    results.append({
+                        "host": host,
+                        "state": scanner[host].state(),
+                        "protocol": proto,
+                        "port": port,
+                        "service": service.get('name', 'unknown'),
+                        "product": service.get('product', 'unknown'),
+                        "version": service.get('version', 'unknown')
+                    })
+            if idx % 1 == 0:
+                elapsed = int(time.time() - start_time)
+                print(f"Elapsed: {elapsed}s - Scanned {idx}/{total_hosts} hosts")
     except Exception as e:
         print(f"Nmap scan failed: {e}")
+    return results
 
 def scan_network(interface, packet_count=50):
-    print(f"Starting network scan on interface {interface}...")
     try:
         capture = pyshark.LiveCapture(interface=interface)
         packets = []
-
         for packet in capture.sniff_continuously(packet_count=packet_count):
             try:
                 packets.append(packet)
-                print(f"Packet Captured: {packet}")
-            except Exception as e:
-                print(f"Error processing packet: {e}")
-
-        print(f"Scan completed. Captured {len(packets)} packets.")
-        save_packets_to_csv(packets)
+            except Exception:
+                pass
         return packets
-    except Exception as e:
-        print(f"Error: {e}")
+    except Exception:
         return []
 
-def main():
+def start_full_scan(interface_label: str, packet_count: int = 50):
     interface_map = get_network_interfaces()
-    if not interface_map:
-        print("No network interfaces found or unable to list them.")
-        return
+    selected_interface = interface_map.get(interface_label)
 
-    print("Available network interfaces:")
-    descriptions = list(interface_map.keys())
-    for i, desc in enumerate(descriptions):
-        print(f"{i + 1}: {desc}")
+    if not selected_interface:
+        raise ValueError("Invalid interface selected.")
 
-    while True:
-        try:
-            choice = int(input("Select an interface by number: ")) - 1
-            if 0 <= choice < len(descriptions):
-                selected_description = descriptions[choice]
-                selected_interface = interface_map[selected_description]
-                interface_ip = get_ip_for_interface(selected_interface)
-                break
-            else:
-                print("Invalid selection. Try again.")
-        except ValueError:
-            print("Please enter a valid number.")
+    interface_ip = get_ip_for_interface(selected_interface)
+    packets = scan_network(selected_interface, packet_count)
 
-    packet_count = 50  # Number of packets to capture
-    scan_network(selected_interface, packet_count)
-
-    # Derive subnet to scan for Nmap (assume /24 subnet)
-    if interface_ip != "Unknown" and interface_ip != "No IP":
+    nmap_results = []
+    if interface_ip not in ["Unknown", "No IP"]:
         subnet = '.'.join(interface_ip.split('.')[:3]) + ".0/24"
-        run_nmap_scan(subnet)
-    else:
-        print("Could not determine subnet for Nmap scan.")
+        nmap_results = run_nmap_scan(subnet)
+
+    save_combined_csv(packets, nmap_results)
 
 if __name__ == "__main__":
-    main()
+    interfaces = get_network_interfaces()
+    if not interfaces:
+        print("No usable network interfaces with valid IP found.")
+        exit()
+
+    print("Available network interfaces:")
+    options = list(interfaces.keys())
+    for i, desc in enumerate(options):
+        print(f"{i + 1}: {desc}")
+
+    try:
+        choice = int(input("Select an interface by number: ")) - 1
+        selected = options[choice]
+        start_full_scan(selected)
+        print("Scan complete. Combined CSV file has been saved.")
+    except Exception as e:
+        print(f"Error: {e}")
