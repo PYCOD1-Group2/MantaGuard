@@ -47,7 +47,7 @@ def get_ip_for_interface(iface_name):
 def save_combined_csv(packets, nmap_results, filename=None):
     if not filename:
         now = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"combined_scan_{now}.csv"
+        filename = f"scan_{now}.csv"
 
     with open(filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
