@@ -4,8 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Add new scripts and files for AI model data analysis  &#10;&#10;This commit introduces initial scripts and structures for analyzing network capture files and dataset preprocessing. Key additions include a PCAP analysis script, dataset checker, and various utility modules. Documentation and sample outputs are also included for debugging and testing.">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Add initial AI model analysis and data processing scripts&#10;&#10;This commit adds foundational scripts for analyzing PCAP files, loading and preprocessing NSL-KDD datasets, and managing the MantaGuard AI model pipeline. Updates include `analyze_capture.py`, `check_dataset.py`, and `data_loader.py`, along with sample outputs and initial `.gitignore` configurations for clarity and efficiency.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MANTAGUARD.py" beforeDir="false" afterPath="$PROJECT_DIR$/MANTAGUARD.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/analyze_capture.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/analyze_capture.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/capture.pcap" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/realtime_detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/realtime_detector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/timed_capture.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/timed_capture.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/conn.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/dhcp.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/dns.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/ntp.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/packet_filter.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/quic.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/reporter.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/ssl.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/weird.log" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +42,9 @@
     &quot;accountId&quot;: &quot;a8b22f56-0ab1-40d6-b6b1-90a16f9cdbdc&quot;
   }
 }</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/MANTAGUARD.py" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -72,6 +90,7 @@
       <workItem from="1747388278325" duration="1159000" />
       <workItem from="1747392536840" duration="99000" />
       <workItem from="1747392644081" duration="1654000" />
+      <workItem from="1747394307141" duration="5422000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project structure and configuration files for the AI">
       <option name="closed" value="true" />
@@ -129,7 +148,23 @@
       <option name="project" value="LOCAL" />
       <updated>1747393802554</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Add initial AI model analysis and data processing scripts&#10;&#10;This commit adds foundational scripts for analyzing PCAP files, loading and preprocessing NSL-KDD datasets, and managing the MantaGuard AI model pipeline. Updates include `analyze_capture.py`, `check_dataset.py`, and `data_loader.py`, along with sample outputs and initial `.gitignore` configurations for clarity and efficiency.">
+      <option name="closed" value="true" />
+      <created>1747394369612</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1747394369612</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Add initial AI model analysis and data processing scripts&#10;&#10;This commit adds foundational scripts for analyzing PCAP files, loading and preprocessing NSL-KDD datasets, and managing the MantaGuard AI model pipeline. Updates include `analyze_capture.py`, `check_dataset.py`, and `data_loader.py`, along with sample outputs and initial `.gitignore` configurations for clarity and efficiency.">
+      <option name="closed" value="true" />
+      <created>1747394382401</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1747394382401</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -184,7 +219,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="add initial project structure and configuration files for the AI" />
+    <MESSAGE value="change CSV file creation" />
     <MESSAGE value="Add new scripts and files for AI model data analysis  &#10;&#10;This commit introduces initial scripts and structures for analyzing network capture files and dataset preprocessing. Key additions include a PCAP analysis script, dataset checker, and various utility modules. Documentation and sample outputs are also included for debugging and testing." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add new scripts and files for AI model data analysis  &#10;&#10;This commit introduces initial scripts and structures for analyzing network capture files and dataset preprocessing. Key additions include a PCAP analysis script, dataset checker, and various utility modules. Documentation and sample outputs are also included for debugging and testing." />
+    <MESSAGE value="Add initial AI model analysis and data processing scripts&#10;&#10;This commit adds foundational scripts for analyzing PCAP files, loading and preprocessing NSL-KDD datasets, and managing the MantaGuard AI model pipeline. Updates include `analyze_capture.py`, `check_dataset.py`, and `data_loader.py`, along with sample outputs and initial `.gitignore` configurations for clarity and efficiency." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add initial AI model analysis and data processing scripts&#10;&#10;This commit adds foundational scripts for analyzing PCAP files, loading and preprocessing NSL-KDD datasets, and managing the MantaGuard AI model pipeline. Updates include `analyze_capture.py`, `check_dataset.py`, and `data_loader.py`, along with sample outputs and initial `.gitignore` configurations for clarity and efficiency." />
   </component>
 </project>

@@ -13,7 +13,7 @@ import json
 from datetime import datetime
 
 # Add parent directory to path to import custom modules
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'ai-model'))
 from parsers.zeek_loader import load_conn_log, zeek_to_features
 
 def run_capture(interface, duration, output_path):
@@ -78,14 +78,14 @@ def run_capture(interface, duration, output_path):
             print(f"Error during pyshark fallback: {str(pyshark_error)}")
             raise
 
-def update_unknown_categories(unknown_values, filename="training/unknown_categories.json"):
+def update_unknown_categories(unknown_values, filename="ai-model/training/unknown_categories.json"):
     """
     Update the unknown categories file with new unknown values.
 
     Args:
         unknown_values (dict): Dictionary of unknown categorical values
         filename (str, optional): Path to the unknown categories file.
-                                 Defaults to "training/unknown_categories.json".
+                                 Defaults to "ai-model/training/unknown_categories.json".
 
     Returns:
         dict: Merged unknown values
@@ -128,14 +128,14 @@ def update_unknown_categories(unknown_values, filename="training/unknown_categor
 
     return merged_unknown_values
 
-def analyze_pcap_with_zeek(pcap_path, model_dir='output/ocsvm_model', model_version=None):
+def analyze_pcap_with_zeek(pcap_path, model_dir='ai-model/output/ocsvm_model', model_version=None):
     """
     Analyze a PCAP file with Zeek and pass the conn.log to the ML model for classification.
 
     Args:
         pcap_path (str): Path to the PCAP file to analyze
         model_dir (str, optional): Directory containing the ML model files.
-                                  Defaults to 'output/ocsvm_model'.
+                                  Defaults to 'ai-model/output/ocsvm_model'.
         model_version (str, optional): Version suffix for model files (e.g., 'v2' for 
                                       ocsvm_model_v2.pkl). If None, will try to detect
                                       the available model files.
@@ -198,10 +198,14 @@ def analyze_pcap_with_zeek(pcap_path, model_dir='output/ocsvm_model', model_vers
 
         # Load the ML model, scaler, and encoders
         # Determine file names based on model_version
-        if model_version is None:
+        if model_version is None or not os.path.exists(os.path.join(model_dir, f'ocsvm_model_{model_version}.pkl')):
             # Try to detect available model files
             base_model_path = os.path.join(model_dir, 'ocsvm_model.pkl')
             v2_model_path = os.path.join(model_dir, 'ocsvm_model_v2.pkl')
+
+            # If model_version was provided but file doesn't exist, print a warning
+            if model_version is not None:
+                print(f"Warning: Model file with version '{model_version}' not found. Attempting to auto-detect available models.")
 
             if os.path.exists(v2_model_path):
                 model_version = 'v2'
@@ -210,7 +214,7 @@ def analyze_pcap_with_zeek(pcap_path, model_dir='output/ocsvm_model', model_vers
                 model_version = ''
                 print(f"Detected model version: base")
             else:
-                raise FileNotFoundError(f"No model files found in directory: {model_dir}")
+                raise FileNotFoundError(f"No model files found in directory: {model_dir}. Please ensure the model directory exists and contains model files (ocsvm_model.pkl or ocsvm_model_v2.pkl). You may need to train a model first or specify a different model directory.")
 
         # Construct file paths based on model_version
         version_suffix = f"_{model_version}" if model_version else ""
@@ -222,18 +226,18 @@ def analyze_pcap_with_zeek(pcap_path, model_dir='output/ocsvm_model', model_vers
 
         # Check if model files exist
         if not os.path.exists(model_path):
-            raise FileNotFoundError(f"Model file not found: {model_path}")
+            raise FileNotFoundError(f"Model file not found: {model_path}. Please ensure you have trained a model and it exists at this location.")
         if not os.path.exists(scaler_path):
-            raise FileNotFoundError(f"Scaler file not found: {scaler_path}")
+            raise FileNotFoundError(f"Scaler file not found: {scaler_path}. This file should be created during model training.")
         if not os.path.exists(encoders_path):
-            raise FileNotFoundError(f"Encoders file not found: {encoders_path}")
+            raise FileNotFoundError(f"Encoders file not found: {encoders_path}. This file should be created during model training.")
 
         try:
             model = joblib.load(model_path)
             scaler = joblib.load(scaler_path)
             encoders = joblib.load(encoders_path)
         except Exception as e:
-            raise Exception(f"Error loading model files from {model_dir}: {str(e)}")
+            raise Exception(f"Error loading model files from {model_dir}: {str(e)}. The model files may be corrupted or incompatible with the current version of the software.")
 
         # Convert to feature vectors
         X, _, unknown_values = zeek_to_features(df, encoders)
@@ -311,7 +315,7 @@ if __name__ == "__main__":
         print("  <duration>      : Duration in seconds to capture packets")
         print("  <output_path>   : Path where the PCAP file will be saved")
         print("  <model_dir>     : (Optional) Directory containing the AI model files")
-        print("                    Default: 'output/ocsvm_model'")
+        print("                    Default: 'ai-model/output/ocsvm_model'")
         print("  <model_version> : (Optional) Version suffix for model files (e.g., 'v2' for ocsvm_model_v2.pkl)")
         print("                    Default: Auto-detect based on available files")
         print("")
@@ -320,8 +324,8 @@ if __name__ == "__main__":
         print("")
         print("Examples:")
         print("  python timed_capture.py eth0 60 capture.pcap")
-        print("  python timed_capture.py eth0 60 capture.pcap output/retrained_model")
-        print("  python timed_capture.py eth0 60 capture.pcap output/retrained_model v2")
+        print("  python timed_capture.py eth0 60 capture.pcap ai-model/output/retrained_model")
+        print("  python timed_capture.py eth0 60 capture.pcap ai-model/output/retrained_model v2")
         sys.exit(1)
 
     interface = sys.argv[1]
@@ -329,7 +333,11 @@ if __name__ == "__main__":
     output_path = sys.argv[3]
 
     # Use the specified model directory if provided, otherwise use the default
-    model_dir = sys.argv[4] if len(sys.argv) > 4 else 'output/ocsvm_model'
+    model_dir = sys.argv[4] if len(sys.argv) > 4 else 'ai-model/output/ocsvm_model'
+
+    # If model_dir doesn't start with 'ai-model/' and doesn't start with '/', add 'ai-model/' prefix
+    if model_dir and not model_dir.startswith('ai-model/') and not model_dir.startswith('/'):
+        model_dir = os.path.join('ai-model', model_dir)
 
     # Use the specified model version if provided, otherwise auto-detect
     model_version = sys.argv[5] if len(sys.argv) > 5 else None
@@ -348,7 +356,7 @@ if __name__ == "__main__":
 
         # Save results to CSV
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_dir = os.path.join('output', 'analysis_results', timestamp)
+        output_dir = os.path.join('ai-model', 'output', 'analysis_results', timestamp)
         os.makedirs(output_dir, exist_ok=True)
 
         csv_path = os.path.join(output_dir, 'prediction_results.csv')
@@ -359,7 +367,7 @@ if __name__ == "__main__":
         # Generate visualizations
         try:
             import subprocess
-            vis_cmd = f"python visualize_results.py {csv_path} {output_dir}"
+            vis_cmd = f"python ai-model/visualize_results.py {csv_path} {output_dir}"
             print(f"\nGenerating visualizations with command: {vis_cmd}")
             subprocess.run(vis_cmd, shell=True, check=True)
             print(f"Visualizations saved to: {output_dir}")

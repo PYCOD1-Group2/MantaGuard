@@ -5,6 +5,9 @@ import os
 import sys
 import pandas as pd
 from datetime import datetime
+
+# Add parent directory to path to import custom modules
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'ai-model'))
 from timed_capture import analyze_pcap_with_zeek
 
 def main():
@@ -13,7 +16,7 @@ def main():
         print("Usage: python analyze_capture.py <pcap_path> [<model_dir> [<model_version>]]")
         print("  <pcap_path>     : Path to the existing PCAP file to analyze")
         print("  <model_dir>     : (Optional) Directory containing the AI model files")
-        print("                    Default: 'output/ocsvm_model'")
+        print("                    Default: 'ai-model/output/ocsvm_model'")
         print("  <model_version> : (Optional) Version suffix for model files (e.g., 'v2' for ocsvm_model_v2.pkl)")
         print("                    Default: Auto-detect based on available files")
         print("")
@@ -22,8 +25,8 @@ def main():
         print("")
         print("Examples:")
         print("  python analyze_capture.py capture.pcap")
-        print("  python analyze_capture.py capture.pcap output/retrained_model")
-        print("  python analyze_capture.py capture.pcap output/retrained_model v2")
+        print("  python analyze_capture.py capture.pcap ai-model/output/retrained_model")
+        print("  python analyze_capture.py capture.pcap ai-model/output/retrained_model v2")
         sys.exit(1)
 
     pcap_path = sys.argv[1]
@@ -34,7 +37,11 @@ def main():
         sys.exit(1)
 
     # Use the specified model directory if provided, otherwise use the default
-    model_dir = sys.argv[2] if len(sys.argv) > 2 else 'output/ocsvm_model'
+    model_dir = sys.argv[2] if len(sys.argv) > 2 else 'ai-model/output/ocsvm_model'
+
+    # If model_dir doesn't start with 'ai-model/' and doesn't start with '/', add 'ai-model/' prefix
+    if model_dir and not model_dir.startswith('ai-model/') and not model_dir.startswith('/'):
+        model_dir = os.path.join('ai-model', model_dir)
 
     # Use the specified model version if provided, otherwise auto-detect
     model_version = sys.argv[3] if len(sys.argv) > 3 else None
@@ -60,7 +67,7 @@ def main():
 
         # Save results to CSV
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_dir = os.path.join('output', 'analysis_results', timestamp)
+        output_dir = os.path.join('ai-model', 'output', 'analysis_results', timestamp)
         os.makedirs(output_dir, exist_ok=True)
 
         csv_path = os.path.join(output_dir, 'prediction_results.csv')
@@ -71,7 +78,7 @@ def main():
         # Generate visualizations
         try:
             import subprocess
-            vis_cmd = f"python visualize_results.py {csv_path} {output_dir}"
+            vis_cmd = f"python ai-model/visualize_results.py {csv_path} {output_dir}"
             print(f"\nGenerating visualizations with command: {vis_cmd}")
             subprocess.run(vis_cmd, shell=True, check=True)
             print(f"Visualizations saved to: {output_dir}")

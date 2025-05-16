@@ -14,7 +14,7 @@ import json
 from datetime import datetime
 
 # Add parent directory to path to import custom modules if needed
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'ai-model'))
 from parsers.zeek_loader import load_conn_log, zeek_to_features
 
 def parse_args():
@@ -22,12 +22,12 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Monitor a live Zeek conn.log and classify each new line as normal or anomaly.'
     )
-    parser.add_argument('--log', default='./current/conn.log', 
-                        help='Path to live Zeek conn.log file (default: ./current/conn.log)')
-    parser.add_argument('--csv', default='labeled_anomalies.csv',
-                        help='Path to CSV file for storing labeled anomalies (default: labeled_anomalies.csv)')
-    parser.add_argument('--sqlite', default='labeled_anomalies.db',
-                        help='Path to SQLite database for storing labeled anomalies (default: labeled_anomalies.db)')
+    parser.add_argument('--log', default='ai-model/current/conn.log', 
+                        help='Path to live Zeek conn.log file (default: ai-model/current/conn.log)')
+    parser.add_argument('--csv', default='ai-model/labeled_anomalies.csv',
+                        help='Path to CSV file for storing labeled anomalies (default: ai-model/labeled_anomalies.csv)')
+    parser.add_argument('--sqlite', default='ai-model/labeled_anomalies.db',
+                        help='Path to SQLite database for storing labeled anomalies (default: ai-model/labeled_anomalies.db)')
     parser.add_argument('--no-csv', action='store_true',
                         help='Disable CSV storage of labeled anomalies')
     parser.add_argument('--no-sqlite', action='store_true',
@@ -36,7 +36,7 @@ def parse_args():
 
 def load_models():
     """Load the trained model, scaler, and encoders."""
-    model_dir = 'output/ocsvm_model'
+    model_dir = 'ai-model/output/ocsvm_model'
     try:
         model_path = os.path.join(model_dir, 'ocsvm_model.pkl')
         scaler_path = os.path.join(model_dir, 'scaler.pkl')
@@ -48,7 +48,7 @@ def load_models():
         return model, scaler, encoders
     except FileNotFoundError as e:
         print(f"Error: Required model file not found: {e}")
-        print("Make sure to run training/train_ocsvm.py first to generate the model files.")
+        print("Make sure to run ai-model/training/train_ocsvm.py first to generate the model files.")
         sys.exit(1)
     except Exception as e:
         print(f"Error loading models: {e}")
@@ -212,14 +212,14 @@ def store_labeled_anomaly(labeled_anomalies, conn, args, timestamp, uid, score, 
 
     print(f"Labeled anomaly stored: UID={uid}, Label={'user-defined: ' + user_label if user_label else 'anomaly'}")
 
-def update_unknown_categories(unknown_values, filename="training/unknown_categories.json"):
+def update_unknown_categories(unknown_values, filename="ai-model/training/unknown_categories.json"):
     """
     Update the unknown categories file with new unknown values.
 
     Args:
         unknown_values (dict): Dictionary of unknown categorical values
         filename (str, optional): Path to the unknown categories file.
-                                 Defaults to "training/unknown_categories.json".
+                                 Defaults to "ai-model/training/unknown_categories.json".
 
     Returns:
         dict: Merged unknown values
