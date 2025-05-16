@@ -1,0 +1,41 @@
+=== PACKET ANALYSIS EVALUATION REPORT ===
+Date/Time: 2025-05-06 13:21:25
+
+Total packets analyzed: 100
+Normal packets: 100
+Anomalous packets: 0
+
+Distance Score Summary:
+Min distance: 1.2847
+Max distance: 1.8568
+Mean distance: 1.6805
+Median distance: 1.7083
+
+Protocol Distribution:
+TCP: 58 (58.0%)
+Modbus/TCP: 34 (34.0%)
+ARP: 4 (4.0%)
+STP: 3 (3.0%)
+UDP: 1 (1.0%)
+
+Top 5 Anomalies by Distance Score:
+1. UDP - 172.27.224.70 -> 255.255.255.255
+   Time: 4.695936
+   Distance Score: 1.8568
+
+2. Modbus/TCP - 172.27.224.70 -> 172.27.224.250
+   Time: 4.367941
+   Distance Score: 1.7133
+
+3. Modbus/TCP - 172.27.224.70 -> 172.27.224.250
+   Time: 2.495754
+   Distance Score: 1.7124
+
+4. Modbus/TCP - 172.27.224.70 -> 172.27.224.250
+   Time: 1.873647
+   Distance Score: 1.7122
+
+5. TCP - 172.27.224.70 -> 172.27.224.250
+   Time: 1.465626
+   Distance Score: 1.7120
+

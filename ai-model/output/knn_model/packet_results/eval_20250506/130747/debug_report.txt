@@ -1,0 +1,50 @@
+Debug report for packet file: data\AttackData\10 Attack Files\AttackData_1.csv
+Generated: 2025-05-06 13:08:08.829451
+
+Packet 1:
+  no: 1
+  timestamp: 0.0
+  source_ip: 172.27.224.70
+  destination_ip: 172.27.224.250
+  protocol: Modbus/TCP
+  length: 66
+  layers:
+
+Packet 2:
+  no: 2
+  timestamp: 0.007579
+  source_ip: 172.27.224.250
+  destination_ip: 172.27.224.70
+  protocol: Modbus/TCP
+  length: 85
+  layers:
+
+Packet 3:
+  no: 3
+  timestamp: 0.217635
+  source_ip: 172.27.224.70
+  destination_ip: 172.27.224.250
+  protocol: TCP
+  length: 60
+  layers:
+
+Packet 4:
+  no: 4
+  timestamp: 0.240748
+  source_ip: HewlettPacka_8e:40:b3
+  destination_ip: Spanning-tree-(for-bridges)_00
+  protocol: STP
+  length: 64
+  layers:
+
+Packet 5:
+  no: 5
+  timestamp: 0.311989
+  source_ip: 172.27.224.70
+  destination_ip: 172.27.224.250
+  protocol: Modbus/TCP
+  length: 66
+  layers:
+
+Total packets: 841625
+Feature dimensionality: 37

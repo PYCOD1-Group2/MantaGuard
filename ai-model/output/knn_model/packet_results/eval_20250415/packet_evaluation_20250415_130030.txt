@@ -1,0 +1,40 @@
+=== PACKET ANALYSIS EVALUATION REPORT ===
+Date/Time: 2025-04-15 13:00:32
+
+Total packets analyzed: 50
+Normal packets: 50
+Anomalous packets: 0
+
+Distance Score Summary:
+Min distance: 1.2849
+Max distance: 1.8638
+Mean distance: 1.5196
+Median distance: 1.5050
+
+Protocol Distribution:
+DATA: 22 (44.0%)
+SSDP: 16 (32.0%)
+MDNS: 10 (20.0%)
+XML: 2 (4.0%)
+
+Top 5 Anomalies by Distance Score:
+1. SSDP - 192.168.56.1 -> 239.255.255.250
+   Time: 2025-04-13 19:43:12
+   Distance Score: 1.8638
+
+2. SSDP - 192.168.56.1 -> 239.255.255.250
+   Time: 2025-04-13 19:42:52
+   Distance Score: 1.8636
+
+3. SSDP - 192.168.56.1 -> 239.255.255.250
+   Time: 2025-04-13 19:43:02
+   Distance Score: 1.8635
+
+4. SSDP - 192.168.56.1 -> 239.255.255.250
+   Time: 2025-04-13 19:42:42
+   Distance Score: 1.8630
+
+5. SSDP - 192.168.56.1 -> 239.255.255.250
+   Time: 2025-04-13 19:41:42
+   Distance Score: 1.8625
+

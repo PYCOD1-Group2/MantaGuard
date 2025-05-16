@@ -1,0 +1,21 @@
+#separator \x09
+#set_separator	,
+#empty_field	(empty)
+#unset_field	-
+#path	dns
+#open	2025-05-14-13-14-34
+#fields	ts	uid	id.orig_h	id.orig_p	id.resp_h	id.resp_p	proto	trans_id	rtt	query	qclass	qclass_name	qtype	qtype_name	rcode	rcode_name	AA	TC	RD	RA	Z	answers	TTLs	rejected
+#types	time	string	addr	port	addr	port	enum	count	interval	string	count	string	count	string	count	string	bool	bool	bool	bool	count	vector[string]	vector[interval]	bool
+1747221244.212804	Cod0bl3miPIeeqoWY8	192.168.39.112	57142	192.168.39.144	53	udp	3747	-	api.tabnine.com	-	-	-	-	0	NOERROR	F	F	F	T	0	api-gateway.p.tabnine.com,34.123.33.186	86.000000,86.000000	F
+1747221244.208414	CJSbx71UO6A1WOYjke	192.168.39.112	60708	192.168.39.144	53	udp	51252	-	api.tabnine.com	-	-	-	-	0	NOERROR	F	F	F	T	0	api-gateway.p.tabnine.com,34.123.33.186	86.000000,86.000000	F
+1747221244.373766	CmgymX1CzduPwhQRUa	192.168.39.112	39539	192.168.39.144	53	udp	42050	-	client.dropbox.com	-	-	-	-	0	NOERROR	F	F	F	T	0	client-env.dropbox-dns.com,162.125.66.13	17.000000,40.000000	F
+1747221244.378018	CmgymX1CzduPwhQRUa	192.168.39.112	39539	192.168.39.144	53	udp	1857	-	client.dropbox.com	-	-	-	-	0	NOERROR	F	F	F	T	0	client-env.dropbox-dns.com,2620:100:6022:13::a27d:420d	8.000000,39.000000	F
+1747221250.753489	Ca0fLb3otIdpiBaFJl	192.168.39.112	42835	192.168.39.144	53	udp	38189	-	nsf-2.dropbox.com	-	-	-	-	0	NOERROR	F	F	F	T	0	nsf-env-2.dropbox-dns.com,2620:100:6022:12::a27d:420c	37.000000,20.000000	F
+1747221250.749801	Ca0fLb3otIdpiBaFJl	192.168.39.112	42835	192.168.39.144	53	udp	41774	-	nsf-2.dropbox.com	-	-	-	-	0	NOERROR	F	F	F	T	0	nsf-env-2.dropbox-dns.com,162.125.66.12	8.000000,8.000000	F
+1747221262.239450	CIeKmawV3JQRIGV76	192.168.39.112	43889	192.168.39.144	53	udp	58771	-	api.dropbox.com	-	-	-	-	0	NOERROR	F	F	F	T	0	api-env.dropbox-dns.com,162.125.66.19	33.000000,33.000000	F
+1747221262.243398	CIeKmawV3JQRIGV76	192.168.39.112	43889	192.168.39.144	53	udp	44693	-	api.dropbox.com	-	-	-	-	0	NOERROR	F	F	F	T	0	api-env.dropbox-dns.com,2620:100:6022:19::a27d:4213	33.000000,14.000000	F
+1747221262.334073	CIcy8C2SfVZilYLYBf	192.168.39.112	35443	192.168.39.144	53	udp	54494	-	sync-v2.brave.com	-	-	-	-	0	NOERROR	F	F	F	T	0	sync-alb-152764135.us-west-2.elb.amazonaws.com	292.000000	F
+1747221262.334073	CIcy8C2SfVZilYLYBf	192.168.39.112	35443	192.168.39.144	53	udp	65247	-	sync-v2.brave.com	-	-	-	-	0	NOERROR	F	F	F	T	0	sync-alb-152764135.us-west-2.elb.amazonaws.com,35.164.159.216,100.20.37.90,52.42.129.170,44.239.43.133,54.213.11.106,54.200.215.173	216.000000,58.000000,58.000000,58.000000,58.000000,58.000000,58.000000	F
+1747221273.255027	CANYIHhPZ8pf7bmgc	192.168.39.112	45125	192.168.39.144	53	udp	6446	-	userportal.crazygames.com	-	-	-	-	0	NOERROR	F	F	F	T	0	2606:4700::6811:7b3e,2606:4700::6811:7a3e	129.000000,129.000000	F
+1747221273.311365	CANYIHhPZ8pf7bmgc	192.168.39.112	45125	192.168.39.144	53	udp	63275	-	userportal.crazygames.com	-	-	-	-	0	NOERROR	F	F	F	T	0	104.17.122.62,104.17.123.62	231.000000,231.000000	F
+#close	2025-05-14-13-14-34

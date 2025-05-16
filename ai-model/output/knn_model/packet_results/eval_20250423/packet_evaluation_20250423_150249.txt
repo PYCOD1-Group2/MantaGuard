@@ -1,0 +1,38 @@
+=== PACKET ANALYSIS EVALUATION REPORT ===
+Date/Time: 2025-04-23 15:02:51
+
+Total packets analyzed: 50
+Normal packets: 50
+Anomalous packets: 0
+
+Distance Score Summary:
+Min distance: 1.2915
+Max distance: 1.9564
+Mean distance: 1.8397
+Median distance: 1.9514
+
+Protocol Distribution:
+TCP: 47 (94.0%)
+TLS: 3 (6.0%)
+
+Top 5 Anomalies by Distance Score:
+1. TCP - 208.89.74.23 -> 10.212.134.200
+   Time: 2025-04-13 19:46:59
+   Distance Score: 1.9564
+
+2. TCP - 208.89.74.23 -> 10.212.134.200
+   Time: 2025-04-13 19:46:59
+   Distance Score: 1.9562
+
+3. TCP - 208.89.74.21 -> 10.212.134.200
+   Time: 2025-04-13 19:46:59
+   Distance Score: 1.9560
+
+4. TCP - 208.89.74.23 -> 10.212.134.200
+   Time: 2025-04-13 19:46:59
+   Distance Score: 1.9555
+
+5. TCP - 208.89.74.23 -> 10.212.134.200
+   Time: 2025-04-13 19:46:59
+   Distance Score: 1.9549
+
