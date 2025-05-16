@@ -4,23 +4,103 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Add initial AI model analysis and data processing scripts&#10;&#10;This commit adds foundational scripts for analyzing PCAP files, loading and preprocessing NSL-KDD datasets, and managing the MantaGuard AI model pipeline. Updates include `analyze_capture.py`, `check_dataset.py`, and `data_loader.py`, along with sample outputs and initial `.gitignore` configurations for clarity and efficiency.">
+    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Remove unused Zeek log files and improve model file handling&#10;&#10;Deleted redundant Zeek output logs to declutter the repository. Enhanced model file detection logic in timed_capture.py with fallback warnings and included detailed error messages for missing model files.">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MANTAGUARD.py" beforeDir="false" afterPath="$PROJECT_DIR$/MANTAGUARD.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/analyze_capture.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/analyze_capture.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/capture.pcap" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/realtime_detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/realtime_detector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/timed_capture.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/timed_capture.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/conn.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/dhcp.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/dns.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/ntp.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/packet_filter.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/quic.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/reporter.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/ssl.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/zeek_output/weird.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/base_model/encoders.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/base_model/evaluation_plots.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/base_model/model_params.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/base_model/ocsvm_model.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/base_model/scaler.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/knn_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/knn_labels.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/knn_params.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/knn_scaler.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/debug_report.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250415/dest_protocol_heatmap_20250415_130030.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250415/distance_distribution_20250415_130030.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250415/packet_evaluation_20250415_130030.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250415/protocol_distance_20250415_130030.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250415/timeline_20250415_130030.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250423/dest_protocol_heatmap_20250423_144540.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250423/dest_protocol_heatmap_20250423_150249.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250423/distance_distribution_20250423_144540.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250423/distance_distribution_20250423_150249.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250423/packet_evaluation_20250423_144540.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250423/packet_evaluation_20250423_150249.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250423/protocol_distance_20250423_144540.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250423/protocol_distance_20250423_150249.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250423/source_analysis_20250423_144540.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250423/source_analysis_20250423_150249.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250423/timeline_20250423_144540.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250423/timeline_20250423_150249.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/095350/debug_report.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/095350/dest_protocol_heatmap_20250424_095350.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/095350/distance_distribution_20250424_095350.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/095350/packet_data.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/095350/packet_evaluation_20250424_095350.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/095350/protocol_distance_20250424_095350.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/095350/results_20250424_095350.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/095350/source_analysis_20250424_095350.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/095350/timeline_20250424_095350.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/101246/debug_report.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/101246/dest_protocol_heatmap_20250424_101246.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/101246/distance_distribution_20250424_101246.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/101246/packet_data.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/101246/packet_evaluation_20250424_101246.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/101246/protocol_distance_20250424_101246.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/101246/results_20250424_101246.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/101246/source_analysis_20250424_101246.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250424/101246/timeline_20250424_101246.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/130747/debug_report.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/130747/packet_data.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132121/debug_report.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132121/dest_protocol_heatmap_20250506_132121.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132121/distance_distribution_20250506_132121.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132121/packet_data.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132121/packet_evaluation_20250506_132121.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132121/protocol_distance_20250506_132121.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132121/results_20250506_132121.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132121/source_analysis_20250506_132121.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132121/timeline_20250506_132121.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132145/debug_report.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132145/dest_protocol_heatmap_20250506_132145.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132145/distance_distribution_20250506_132145.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132145/packet_data.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132145/packet_evaluation_20250506_132145.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132145/protocol_distance_20250506_132145.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132145/results_20250506_132145.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132145/source_analysis_20250506_132145.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132145/timeline_20250506_132145.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132403/debug_report.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132403/dest_protocol_heatmap_20250506_132403.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132403/distance_distribution_20250506_132403.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132403/packet_data.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132403/packet_evaluation_20250506_132403.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132403/protocol_distance_20250506_132403.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132403/results_20250506_132403.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132403/source_analysis_20250506_132403.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/132403/timeline_20250506_132403.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/133018/debug_report.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/133018/dest_protocol_heatmap_20250506_133018.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/133018/distance_distribution_20250506_133018.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/133018/packet_data.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/133018/packet_evaluation_20250506_133018.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/133018/protocol_distance_20250506_133018.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/133018/results_20250506_133018.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/133018/source_analysis_20250506_133018.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/eval_20250506/133018/timeline_20250506_133018.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/packet_data.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/results.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/results_20250415_124744.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/results_20250415_130030.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/results_20250423_144540.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/results_20250423_150249.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/packet_results/results_20250424_093204.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/knn_model/plots/evaluation_plots.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test_visualize_results.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/test/test_visualize_results.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/combined_scan_20250423_134837.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/combined_scan_20250424_084608.csv" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,6 +150,11 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/ai-model/test" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -90,7 +175,7 @@
       <workItem from="1747388278325" duration="1159000" />
       <workItem from="1747392536840" duration="99000" />
       <workItem from="1747392644081" duration="1654000" />
-      <workItem from="1747394307141" duration="5422000" />
+      <workItem from="1747394307141" duration="5952000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project structure and configuration files for the AI">
       <option name="closed" value="true" />
@@ -164,7 +249,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747394382401</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Remove unused Zeek log files and improve model file handling&#10;&#10;Deleted redundant Zeek output logs to declutter the repository. Enhanced model file detection logic in timed_capture.py with fallback warnings and included detailed error messages for missing model files.">
+      <option name="closed" value="true" />
+      <created>1747399958152</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1747399958152</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -222,6 +315,7 @@
     <MESSAGE value="change CSV file creation" />
     <MESSAGE value="Add new scripts and files for AI model data analysis  &#10;&#10;This commit introduces initial scripts and structures for analyzing network capture files and dataset preprocessing. Key additions include a PCAP analysis script, dataset checker, and various utility modules. Documentation and sample outputs are also included for debugging and testing." />
     <MESSAGE value="Add initial AI model analysis and data processing scripts&#10;&#10;This commit adds foundational scripts for analyzing PCAP files, loading and preprocessing NSL-KDD datasets, and managing the MantaGuard AI model pipeline. Updates include `analyze_capture.py`, `check_dataset.py`, and `data_loader.py`, along with sample outputs and initial `.gitignore` configurations for clarity and efficiency." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add initial AI model analysis and data processing scripts&#10;&#10;This commit adds foundational scripts for analyzing PCAP files, loading and preprocessing NSL-KDD datasets, and managing the MantaGuard AI model pipeline. Updates include `analyze_capture.py`, `check_dataset.py`, and `data_loader.py`, along with sample outputs and initial `.gitignore` configurations for clarity and efficiency." />
+    <MESSAGE value="Remove unused Zeek log files and improve model file handling&#10;&#10;Deleted redundant Zeek output logs to declutter the repository. Enhanced model file detection logic in timed_capture.py with fallback warnings and included detailed error messages for missing model files." />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove unused Zeek log files and improve model file handling&#10;&#10;Deleted redundant Zeek output logs to declutter the repository. Enhanced model file detection logic in timed_capture.py with fallback warnings and included detailed error messages for missing model files." />
   </component>
 </project>

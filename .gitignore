@@ -9,6 +9,9 @@ wheels/
 # Virtual environments
 .venv
 ai-model/data
+ai-model/pcaps
+ai-model/output/analysis_results
+zeek_output
 venv
 .python-version
 
