@@ -4,30 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Remove large combined scan CSV file from repository&#10;&#10;The file `combined_scan_20250423_134837.csv` was removed due to its large size and potential redundancy. Keeping it in the repository could negatively impact performance and storage.">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Enhance MantaGuard UI and session state management&#10;&#10;- Improved sidebar navigation to preserve user selections during reruns.&#10;- Added functionality to display scan completion messages and manage refresh behavior.&#10;- Updated retrain_ocsvm.py to allow optional labeled anomalies for model retraining.&#10;- Adjusted model directory paths in timed_capture.py for consistency.&#10;- Modified unknown_categories.json to include new entries and improve categorization.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MANTAGUARD.py" beforeDir="false" afterPath="$PROJECT_DIR$/MANTAGUARD.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/analysis_results/20250514_124842/prediction_results.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/analysis_results/20250514_124842/score_histogram.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/analysis_results/20250514_124842/time_series.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/analysis_results/20250514_125656/prediction_results.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/analysis_results/20250514_125656/score_histogram.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/analysis_results/20250514_125656/time_series.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/analysis_results/20250514_131435/prediction_results.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/analysis_results/20250514_131435/score_histogram.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/analysis_results/20250514_131435/time_series.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/analysis_results/20250514_131602/prediction_results.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/analysis_results/20250514_131602/score_histogram.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/analysis_results/20250514_131602/time_series.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/retrained_model/encoders_v2.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/output/retrained_model/encoders_v2.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/retrained_model/ocsvm_model_v2.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/output/retrained_model/ocsvm_model_v2.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/output/retrained_model/scaler_v2.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/output/retrained_model/scaler_v2.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/run_mantaguard.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/run_retrain_ocsvm.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/run_retrain_ocsvm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/timed_capture.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/timed_capture.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/training/retrain_ocsvm.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/training/retrain_ocsvm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +84,7 @@
       <workItem from="1747394307141" duration="11271000" />
       <workItem from="1747410881104" duration="350000" />
       <workItem from="1747467355455" duration="2824000" />
-      <workItem from="1747748303176" duration="278000" />
+      <workItem from="1747748303176" duration="432000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project structure and configuration files for the AI">
       <option name="closed" value="true" />
@@ -196,7 +174,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747400295466</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Enhance MantaGuard UI and session state management&#10;&#10;- Improved sidebar navigation to preserve user selections during reruns.&#10;- Added functionality to display scan completion messages and manage refresh behavior.&#10;- Updated retrain_ocsvm.py to allow optional labeled anomalies for model retraining.&#10;- Adjusted model directory paths in timed_capture.py for consistency.&#10;- Modified unknown_categories.json to include new entries and improve categorization.">
+      <option name="closed" value="true" />
+      <created>1747748648135</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1747748648135</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -256,6 +242,7 @@
     <MESSAGE value="Add initial AI model analysis and data processing scripts&#10;&#10;This commit adds foundational scripts for analyzing PCAP files, loading and preprocessing NSL-KDD datasets, and managing the MantaGuard AI model pipeline. Updates include `analyze_capture.py`, `check_dataset.py`, and `data_loader.py`, along with sample outputs and initial `.gitignore` configurations for clarity and efficiency." />
     <MESSAGE value="Remove unused Zeek log files and improve model file handling&#10;&#10;Deleted redundant Zeek output logs to declutter the repository. Enhanced model file detection logic in timed_capture.py with fallback warnings and included detailed error messages for missing model files." />
     <MESSAGE value="Remove large combined scan CSV file from repository&#10;&#10;The file `combined_scan_20250423_134837.csv` was removed due to its large size and potential redundancy. Keeping it in the repository could negatively impact performance and storage." />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove large combined scan CSV file from repository&#10;&#10;The file `combined_scan_20250423_134837.csv` was removed due to its large size and potential redundancy. Keeping it in the repository could negatively impact performance and storage." />
+    <MESSAGE value="Enhance MantaGuard UI and session state management&#10;&#10;- Improved sidebar navigation to preserve user selections during reruns.&#10;- Added functionality to display scan completion messages and manage refresh behavior.&#10;- Updated retrain_ocsvm.py to allow optional labeled anomalies for model retraining.&#10;- Adjusted model directory paths in timed_capture.py for consistency.&#10;- Modified unknown_categories.json to include new entries and improve categorization." />
+    <option name="LAST_COMMIT_MESSAGE" value="Enhance MantaGuard UI and session state management&#10;&#10;- Improved sidebar navigation to preserve user selections during reruns.&#10;- Added functionality to display scan completion messages and manage refresh behavior.&#10;- Updated retrain_ocsvm.py to allow optional labeled anomalies for model retraining.&#10;- Adjusted model directory paths in timed_capture.py for consistency.&#10;- Modified unknown_categories.json to include new entries and improve categorization." />
   </component>
 </project>
