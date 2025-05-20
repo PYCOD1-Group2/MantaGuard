@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# retrain_ocsvm.py - Retrain OneClassSVM model with labeled feedback and new categories
+# retrain_ocsvm.py - Retrain OneClassSVM model with normal data and optionally labeled feedback and new categories
 
 import os
 import sys
@@ -18,10 +18,10 @@ from parsers.zeek_loader import load_conn_log, zeek_to_features
 def parse_args():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description='Retrain OneClassSVM model with labeled feedback and new categories.'
+        description='Retrain OneClassSVM model with normal data and optionally labeled feedback and new categories.'
     )
     parser.add_argument('--base-normal', help='Path to Zeek conn.log file containing original normal traffic')
-    parser.add_argument('--labeled-anomalies', required=True, help='Path to CSV file with labeled anomalies')
+    parser.add_argument('--labeled-anomalies', required=False, help='Path to CSV file with labeled anomalies (optional)')
     parser.add_argument('--unknown-categories', required=True, help='Path to JSON file with unknown categories')
     parser.add_argument('--encoders', required=True, help='Path to original encoders.pkl file')
     parser.add_argument('--scaler', required=True, help='Path to original scaler.pkl file')
@@ -99,7 +99,11 @@ def main():
     args = parse_args()
 
     # Check if required files exist
-    for file_path in [args.labeled_anomalies, args.unknown_categories, args.encoders, args.scaler]:
+    required_files = [args.unknown_categories, args.encoders, args.scaler]
+    if args.labeled_anomalies:
+        required_files.append(args.labeled_anomalies)
+
+    for file_path in required_files:
         if not os.path.isfile(file_path):
             print(f"Error: File not found: {file_path}")
             sys.exit(1)
@@ -130,58 +134,66 @@ def main():
         joblib.dump(updated_encoders, encoders_v2_path)
         print(f"Saved updated encoders to: {encoders_v2_path}")
 
-        # Load labeled anomalies
-        print(f"Loading labeled anomalies from: {args.labeled_anomalies}")
-        labeled_df = load_labeled_anomalies(args.labeled_anomalies)
-        print(f"Loaded labeled anomalies with shape: {labeled_df.shape}")
+        # Initialize variables for labeled anomalies
+        X_labeled = None
+        unknown_values = {}
+        rows_from_labeled = 0
 
-        # Apply updated encoders to labeled anomalies
-        print("Processing labeled anomalies with updated encoders...")
+        # Load labeled anomalies if provided
+        if args.labeled_anomalies:
+            print(f"Loading labeled anomalies from: {args.labeled_anomalies}")
+            labeled_df = load_labeled_anomalies(args.labeled_anomalies)
+            print(f"Loaded labeled anomalies with shape: {labeled_df.shape}")
 
-        # Check if feature_vector column exists and use it directly
-        if 'feature_vector' in labeled_df.columns:
-            print("Using pre-computed feature vectors from labeled anomalies")
-            # Convert list of numpy arrays to a 2D numpy array
-            X_labeled = np.vstack(labeled_df['feature_vector'].values)
-            unknown_values = {}  # No unknown values when using pre-computed features
+            # Apply updated encoders to labeled anomalies
+            print("Processing labeled anomalies with updated encoders...")
 
-            # Load and process a sample of normal data to get feature dimensions
-            if args.base_normal and os.path.isfile(args.base_normal):
-                print(f"Loading sample of normal data to determine feature dimensions...")
-                # Load just a small sample to determine feature dimensions
-                normal_sample_df = load_conn_log(args.base_normal).head(1)
-                X_normal_sample, _, _ = zeek_to_features(normal_sample_df, updated_encoders)
-                normal_feature_dim = X_normal_sample.shape[1]
-                labeled_feature_dim = X_labeled.shape[1]
+            # Check if feature_vector column exists and use it directly
+            if 'feature_vector' in labeled_df.columns:
+                print("Using pre-computed feature vectors from labeled anomalies")
+                # Convert list of numpy arrays to a 2D numpy array
+                X_labeled = np.vstack(labeled_df['feature_vector'].values)
+                unknown_values = {}  # No unknown values when using pre-computed features
 
-                print(f"Normal data feature dimension: {normal_feature_dim}")
-                print(f"Labeled anomalies feature dimension: {labeled_feature_dim}")
+                # Load and process a sample of normal data to get feature dimensions
+                if args.base_normal and os.path.isfile(args.base_normal):
+                    print(f"Loading sample of normal data to determine feature dimensions...")
+                    # Load just a small sample to determine feature dimensions
+                    normal_sample_df = load_conn_log(args.base_normal).head(1)
+                    X_normal_sample, _, _ = zeek_to_features(normal_sample_df, updated_encoders)
+                    normal_feature_dim = X_normal_sample.shape[1]
+                    labeled_feature_dim = X_labeled.shape[1]
 
-                # If dimensions don't match, pad the labeled anomalies with zeros
-                if normal_feature_dim != labeled_feature_dim:
-                    print(f"Padding labeled anomalies features to match normal data dimension")
-                    if normal_feature_dim > labeled_feature_dim:
-                        # Pad with zeros
-                        padding = np.zeros((X_labeled.shape[0], normal_feature_dim - labeled_feature_dim))
-                        X_labeled = np.hstack((X_labeled, padding))
-                    else:
-                        # Truncate to match normal data dimension
-                        X_labeled = X_labeled[:, :normal_feature_dim]
+                    print(f"Normal data feature dimension: {normal_feature_dim}")
+                    print(f"Labeled anomalies feature dimension: {labeled_feature_dim}")
 
-                    print(f"Adjusted labeled anomalies feature dimension: {X_labeled.shape[1]}")
-        else:
-            # Fall back to zeek_to_features if feature_vector column doesn't exist
-            X_labeled, _, unknown_values = zeek_to_features(labeled_df, updated_encoders)
+                    # If dimensions don't match, pad the labeled anomalies with zeros
+                    if normal_feature_dim != labeled_feature_dim:
+                        print(f"Padding labeled anomalies features to match normal data dimension")
+                        if normal_feature_dim > labeled_feature_dim:
+                            # Pad with zeros
+                            padding = np.zeros((X_labeled.shape[0], normal_feature_dim - labeled_feature_dim))
+                            X_labeled = np.hstack((X_labeled, padding))
+                        else:
+                            # Truncate to match normal data dimension
+                            X_labeled = X_labeled[:, :normal_feature_dim]
 
-        # Check if there are still unknown values
-        has_unknown = False
-        for col, values in unknown_values.items():
-            if values:
-                has_unknown = True
-                print(f"Warning: New unknown values found in column '{col}': {values}")
+                        print(f"Adjusted labeled anomalies feature dimension: {X_labeled.shape[1]}")
+            else:
+                # Fall back to zeek_to_features if feature_vector column doesn't exist
+                X_labeled, _, unknown_values = zeek_to_features(labeled_df, updated_encoders)
+
+            # Check if there are still unknown values
+            has_unknown = False
+            for col, values in unknown_values.items():
+                if values:
+                    has_unknown = True
+                    print(f"Warning: New unknown values found in column '{col}': {values}")
+
+            rows_from_labeled = X_labeled.shape[0]
 
         # Initialize variables for combined dataset
-        X_combined = X_labeled
+        X_combined = None
         rows_from_normal = 0
 
         # Load and process original normal data if provided
@@ -193,10 +205,22 @@ def main():
             # Process normal data with updated encoders
             print("Processing normal data with updated encoders...")
             X_normal, _, _ = zeek_to_features(normal_df, updated_encoders)
-
-            # Combine with labeled data
-            X_combined = np.vstack((X_normal, X_labeled))
             rows_from_normal = X_normal.shape[0]
+
+            # Combine with labeled data if available
+            if X_labeled is not None:
+                print("Combining normal data with labeled anomalies...")
+                X_combined = np.vstack((X_normal, X_labeled))
+            else:
+                print("Using only normal data for training (no labeled anomalies provided)...")
+                X_combined = X_normal
+        elif X_labeled is not None:
+            # Use only labeled data if no normal data is provided
+            print("Using only labeled anomalies for training (no normal data provided)...")
+            X_combined = X_labeled
+        else:
+            print("Error: Either --base-normal or --labeled-anomalies must be provided")
+            sys.exit(1)
 
         # Check for and handle NaN values in the combined dataset
         print("Checking for NaN values in the combined dataset...")
@@ -239,7 +263,7 @@ def main():
         # Print summary
         print("\nRetraining Summary:")
         print(f"Rows from normal data: {rows_from_normal}")
-        print(f"Rows from labeled anomalies: {X_labeled.shape[0]}")
+        print(f"Rows from labeled anomalies: {rows_from_labeled}")
         print(f"Total rows in combined dataset: {X_combined.shape[0]}")
         print(f"Encoder categories added: {categories_added}")
         print(f"Model training shape: {X_combined_scaled.shape}")

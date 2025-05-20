@@ -67,10 +67,40 @@ if needs_rerun:
 
 # Sidebar navigation
 st.sidebar.title("🔧 MantaGuard Features")
+# Store the previous selection to detect changes
+if "previous_selection" not in st.session_state:
+    st.session_state.previous_selection = None
+
+# Store the current selection to preserve it during reruns
+if "current_selection" not in st.session_state:
+    st.session_state.current_selection = "Home"
+
+# Use the stored selection as the default value for the radio button
+options = ["Home", "Scanning", "Reports", "Vulnerabilities", "Fix & Patches"]
+index = options.index(st.session_state.current_selection) if st.session_state.current_selection in options else 0
 selected_option = st.sidebar.radio(
     "Navigate to:",
-    ("Home", "Scanning", "Reports", "Vulnerabilities", "Fix & Patches")
+    options,
+    index=index
 )
+
+# Always force a rerun for Reports, Vulnerabilities, and Fix & Patches to ensure proper page switching
+# This needs to be checked before the general selection change check
+if selected_option in ["Reports", "Vulnerabilities", "Fix & Patches"]:
+    # Make sure we preserve the current sidebar selection during rerun
+    st.session_state.current_selection = selected_option
+    # Only rerun if we haven't already scheduled a rerun and if the selection has changed
+    if not needs_rerun and st.session_state.previous_selection != selected_option:
+        st.session_state.previous_selection = selected_option
+        st.rerun()
+
+# Check if the selection has changed for other options
+if st.session_state.previous_selection != selected_option:
+    st.session_state.previous_selection = selected_option
+    # Update the current selection to preserve it during reruns
+    st.session_state.current_selection = selected_option
+    # Force a rerun to refresh the page when selection changes
+    st.rerun()
 
 # Page content based on selection
 if selected_option == "Home":
@@ -118,11 +148,40 @@ elif selected_option == "Scanning":
         st.session_state.processing = False
     if "pcap_path" not in st.session_state:
         st.session_state.pcap_path = None
+    if "scan_completed" not in st.session_state:
+        st.session_state.scan_completed = False
+    if "refreshed_after_scan" not in st.session_state:
+        st.session_state.refreshed_after_scan = False
+    if "refresh_count" not in st.session_state:
+        st.session_state.refresh_count = 0
+    if "success_message_displayed" not in st.session_state:
+        st.session_state.success_message_displayed = False
 
     # Create tabs for different scanning methods
-    scan_tab, upload_tab, results_tab = st.tabs(["Timed Capture", "Upload PCAP", "Results"])
+    # Initialize the active tab in session state if it doesn't exist
+    if "active_tab" not in st.session_state:
+        st.session_state.active_tab = 0
 
-    with scan_tab:
+    # Add a radio button to select the active tab
+    tab_options = ["Timed Capture", "Upload PCAP", "Results"]
+    selected_tab = st.radio("Select scanning method:", tab_options, index=st.session_state.active_tab, horizontal=True)
+
+    # Update the active tab in session state
+    current_tab_index = tab_options.index(selected_tab)
+
+    # Check if the tab has changed
+    if st.session_state.active_tab != current_tab_index:
+        st.session_state.active_tab = current_tab_index
+        # Make sure we preserve the current sidebar selection during rerun
+        if selected_option:
+            st.session_state.current_selection = selected_option
+            # Also preserve the previous selection to avoid triggering another rerun
+            st.session_state.previous_selection = selected_option
+        # Force a rerun to refresh the page when tab changes
+        st.rerun()
+
+    # Display content based on selected tab
+    if selected_tab == "Timed Capture":
         st.header("Timed Network Capture")
 
         # Network interface selection
@@ -142,6 +201,11 @@ elif selected_option == "Scanning":
                 if not st.session_state.scanning:
                     # Start a new capture
                     st.session_state.scanning = True
+                    # Reset scan_completed, refreshed_after_scan, refresh_count, and success_message_displayed flags
+                    st.session_state.scan_completed = False
+                    st.session_state.refreshed_after_scan = False
+                    st.session_state.refresh_count = 0
+                    st.session_state.success_message_displayed = False
 
                     # Create pcaps directory if it doesn't exist
                     pcap_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ai-model", "pcaps")
@@ -195,8 +259,8 @@ elif selected_option == "Scanning":
                             state_updates.put(("analysis_dir", analysis_dir))
                             state_updates.put(("predictions", results))
                             state_updates.put(("processing", False))
-                            # Add a flag to indicate that a rerun is needed
-                            state_updates.put(("needs_rerun", True))
+                            # Set scan_completed flag to True
+                            state_updates.put(("scan_completed", True))
                         except Exception as e:
                             # Use queue for thread-safe error reporting
                             error_q.put(f"Error during capture or analysis: {str(e)}")
@@ -220,7 +284,31 @@ elif selected_option == "Scanning":
             process_placeholder = st.empty()
             process_placeholder.info("Processing captured packets with Zeek and ML model...")
 
-    with upload_tab:
+        # Display scan completed message
+        if st.session_state.scan_completed:
+            st.success("✅ Scan Completed! All files have been generated successfully.")
+            st.info("You can view the results by clicking on the 'Results' tab above.")
+
+            # Set the success_message_displayed flag to True
+            st.session_state.success_message_displayed = True
+
+            # Trigger a page refresh twice after a scan
+            if st.session_state.refresh_count < 2:
+                # Increment the refresh count
+                st.session_state.refresh_count += 1
+                # Set refreshed_after_scan to True after the final refresh
+                if st.session_state.refresh_count >= 2:
+                    st.session_state.refreshed_after_scan = True
+
+                # Add a longer delay for the first refresh to ensure the success message is seen
+                if st.session_state.refresh_count == 1:
+                    time.sleep(3)  # 3 seconds for the first refresh
+                else:
+                    time.sleep(1)  # 1 second for subsequent refreshes
+
+                st.rerun()
+
+    elif selected_tab == "Upload PCAP":
         st.header("Upload PCAP File")
 
         # File uploader for PCAP files
@@ -243,6 +331,11 @@ elif selected_option == "Scanning":
             # Analyze button
             if st.button("Analyze PCAP"):
                 st.session_state.pcap_path = save_path
+                # Reset scan_completed, refreshed_after_scan, refresh_count, and success_message_displayed flags
+                st.session_state.scan_completed = False
+                st.session_state.refreshed_after_scan = False
+                st.session_state.refresh_count = 0
+                st.session_state.success_message_displayed = False
 
                 # Create local references to the queues
                 state_updates_queue = st.session_state.state_updates
@@ -285,8 +378,8 @@ elif selected_option == "Scanning":
                         state_updates.put(("analysis_dir", analysis_dir))
                         state_updates.put(("predictions", results))
                         state_updates.put(("processing", False))
-                        # Add a flag to indicate that a rerun is needed
-                        state_updates.put(("needs_rerun", True))
+                        # Set scan_completed flag to True
+                        state_updates.put(("scan_completed", True))
                     except Exception as e:
                         # Use queue for thread-safe error reporting
                         error_q.put(f"Error during analysis: {str(e)}")
@@ -300,7 +393,31 @@ elif selected_option == "Scanning":
                 process_placeholder = st.empty()
                 process_placeholder.info("Processing PCAP file with Zeek and ML model...")
 
-    with results_tab:
+            # Display scan completed message
+            if st.session_state.scan_completed:
+                st.success("✅ Scan Completed! All files have been generated successfully.")
+                st.info("You can view the results by clicking on the 'Results' tab above.")
+
+                # Set the success_message_displayed flag to True
+                st.session_state.success_message_displayed = True
+
+                # Trigger a page refresh twice after a scan
+                if st.session_state.refresh_count < 2:
+                    # Increment the refresh count
+                    st.session_state.refresh_count += 1
+                    # Set refreshed_after_scan to True after the final refresh
+                    if st.session_state.refresh_count >= 2:
+                        st.session_state.refreshed_after_scan = True
+
+                    # Add a longer delay for the first refresh to ensure the success message is seen
+                    if st.session_state.refresh_count == 1:
+                        time.sleep(3)  # 3 seconds for the first refresh
+                    else:
+                        time.sleep(1)  # 1 second for subsequent refreshes
+
+                    st.rerun()
+
+    elif selected_tab == "Results":
         st.header("Analysis Results")
 
         if st.session_state.predictions:

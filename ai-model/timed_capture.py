@@ -128,7 +128,7 @@ def update_unknown_categories(unknown_values, filename="ai-model/training/unknow
 
     return merged_unknown_values
 
-def analyze_pcap_with_zeek(pcap_path, model_dir='ai-model/output/ocsvm_model', model_version=None):
+def analyze_pcap_with_zeek(pcap_path, model_dir='ai-model/output/retrained_model', model_version='v2'):
     """
     Analyze a PCAP file with Zeek and pass the conn.log to the ML model for classification.
 
@@ -315,7 +315,7 @@ if __name__ == "__main__":
         print("  <duration>      : Duration in seconds to capture packets")
         print("  <output_path>   : Path where the PCAP file will be saved")
         print("  <model_dir>     : (Optional) Directory containing the AI model files")
-        print("                    Default: 'ai-model/output/ocsvm_model'")
+        print("                    Default: 'ai-model/output/retrained_model'")
         print("  <model_version> : (Optional) Version suffix for model files (e.g., 'v2' for ocsvm_model_v2.pkl)")
         print("                    Default: Auto-detect based on available files")
         print("")
@@ -333,14 +333,14 @@ if __name__ == "__main__":
     output_path = sys.argv[3]
 
     # Use the specified model directory if provided, otherwise use the default
-    model_dir = sys.argv[4] if len(sys.argv) > 4 else 'ai-model/output/ocsvm_model'
+    model_dir = sys.argv[4] if len(sys.argv) > 4 else 'ai-model/output/retrained_model'
 
     # If model_dir doesn't start with 'ai-model/' and doesn't start with '/', add 'ai-model/' prefix
     if model_dir and not model_dir.startswith('ai-model/') and not model_dir.startswith('/'):
         model_dir = os.path.join('ai-model', model_dir)
 
     # Use the specified model version if provided, otherwise auto-detect
-    model_version = sys.argv[5] if len(sys.argv) > 5 else None
+    model_version = sys.argv[5] if len(sys.argv) > 5 else 'v2'
 
     try:
         # Capture packets
