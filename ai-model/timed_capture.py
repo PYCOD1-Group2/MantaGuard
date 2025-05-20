@@ -135,7 +135,7 @@ def analyze_pcap_with_zeek(pcap_path, model_dir='ai-model/output/retrained_model
     Args:
         pcap_path (str): Path to the PCAP file to analyze
         model_dir (str, optional): Directory containing the ML model files.
-                                  Defaults to 'ai-model/output/ocsvm_model'.
+                                  Defaults to 'ai-model/output/retrained_model'.
         model_version (str, optional): Version suffix for model files (e.g., 'v2' for 
                                       ocsvm_model_v2.pkl). If None, will try to detect
                                       the available model files.

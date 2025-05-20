@@ -36,7 +36,7 @@ def parse_args():
 
 def load_models():
     """Load the trained model, scaler, and encoders."""
-    model_dir = 'ai-model/output/ocsvm_model'
+    model_dir = 'ai-model/output/retrained_model'
     try:
         model_path = os.path.join(model_dir, 'ocsvm_model.pkl')
         scaler_path = os.path.join(model_dir, 'scaler.pkl')

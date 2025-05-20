@@ -37,7 +37,7 @@ def main():
 
         # Step 2: Load the trained OneClassSVM model, scaler, and encoders using joblib
         print("Loading model, scaler, and encoders...")
-        model_dir = 'output/ocsvm_model'
+        model_dir = 'output/retrained_model'
         model_path = os.path.join(model_dir, 'ocsvm_model.pkl')
         scaler_path = os.path.join(model_dir, 'scaler.pkl')
         encoders_path = os.path.join(model_dir, 'encoders.pkl')

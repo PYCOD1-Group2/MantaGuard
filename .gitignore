@@ -11,6 +11,7 @@ wheels/
 ai-model/data
 ai-model/pcaps
 ai-model/output/analysis_results
+ai-model/test
 ai-model/training/unknown_categories.json
 zeek_output
 venv

@@ -5,7 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Enhance MantaGuard UI and session state management&#10;&#10;- Improved sidebar navigation to preserve user selections during reruns.&#10;- Added functionality to display scan completion messages and manage refresh behavior.&#10;- Updated retrain_ocsvm.py to allow optional labeled anomalies for model retraining.&#10;- Adjusted model directory paths in timed_capture.py for consistency.&#10;- Modified unknown_categories.json to include new entries and improve categorization.">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FirstScan.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MANTAGUARD.py" beforeDir="false" afterPath="$PROJECT_DIR$/MANTAGUARD.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/analyze_capture.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/analyze_capture.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/features/feature_engineering.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/realtime_detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/realtime_detector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/src/check_dataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/src/data_loader.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/src/evaluation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/src/incremental_knn.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/src/init_knn_model.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/src/knn_classifier.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/src/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/src/model.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/src/test_knn.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/src/train_nslkdd.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_offline_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/test/test_offline_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/test/test_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_realtime_detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/test/test_realtime_detector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_unknown_categories.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/test/test_unknown_categories.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/timed_capture.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/timed_capture.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/training/retrain_ocsvm.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/training/retrain_ocsvm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +107,7 @@
       <workItem from="1747394307141" duration="11271000" />
       <workItem from="1747410881104" duration="350000" />
       <workItem from="1747467355455" duration="2824000" />
-      <workItem from="1747748303176" duration="432000" />
+      <workItem from="1747748303176" duration="5998000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project structure and configuration files for the AI">
       <option name="closed" value="true" />
@@ -182,7 +205,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747748648135</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Enhance MantaGuard UI and session state management&#10;&#10;- Improved sidebar navigation to preserve user selections during reruns.&#10;- Added functionality to display scan completion messages and manage refresh behavior.&#10;- Updated retrain_ocsvm.py to allow optional labeled anomalies for model retraining.&#10;- Adjusted model directory paths in timed_capture.py for consistency.&#10;- Modified unknown_categories.json to include new entries and improve categorization.">
+      <option name="closed" value="true" />
+      <created>1747748787719</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1747748787719</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

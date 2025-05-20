@@ -30,7 +30,7 @@ def test_with_existing_file():
             f.write(original_content)
 
     # Load pre-trained encoders
-    model_dir = 'output/ocsvm_model'
+    model_dir = 'output/retrained_model'
     encoders_path = os.path.join(model_dir, 'encoders.pkl')
 
     try:

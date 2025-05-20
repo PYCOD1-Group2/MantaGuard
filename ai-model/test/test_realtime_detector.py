@@ -32,7 +32,7 @@ def test_feature_extraction_with_nan_handling():
     print(f"Loaded {len(df)} connections from conn.log")
 
     # Load the ML model, scaler, and encoders
-    model_dir = 'output/ocsvm_model'
+    model_dir = 'output/retrained_model'
     try:
         model_path = os.path.join(model_dir, 'ocsvm_model.pkl')
         scaler_path = os.path.join(model_dir, 'scaler.pkl')

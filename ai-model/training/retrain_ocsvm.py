@@ -25,7 +25,7 @@ def parse_args():
     parser.add_argument('--unknown-categories', required=True, help='Path to JSON file with unknown categories')
     parser.add_argument('--encoders', required=True, help='Path to original encoders.pkl file')
     parser.add_argument('--scaler', required=True, help='Path to original scaler.pkl file')
-    parser.add_argument('--output-dir', default='.', help='Directory to save updated model and files')
+    parser.add_argument('--output-dir', default='output/retrained_model', help='Directory to save updated model and files')
     return parser.parse_args()
 
 def load_labeled_anomalies(path):

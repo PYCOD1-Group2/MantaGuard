@@ -16,7 +16,7 @@ def main():
         print("Usage: python analyze_capture.py <pcap_path> [<model_dir> [<model_version>]]")
         print("  <pcap_path>     : Path to the existing PCAP file to analyze")
         print("  <model_dir>     : (Optional) Directory containing the AI model files")
-        print("                    Default: 'ai-model/output/ocsvm_model'")
+        print("                    Default: 'ai-model/output/retrained_model'")
         print("  <model_version> : (Optional) Version suffix for model files (e.g., 'v2' for ocsvm_model_v2.pkl)")
         print("                    Default: Auto-detect based on available files")
         print("")
@@ -37,7 +37,7 @@ def main():
         sys.exit(1)
 
     # Use the specified model directory if provided, otherwise use the default
-    model_dir = sys.argv[2] if len(sys.argv) > 2 else 'ai-model/output/ocsvm_model'
+    model_dir = sys.argv[2] if len(sys.argv) > 2 else 'ai-model/output/retrained_model'
 
     # If model_dir doesn't start with 'ai-model/' and doesn't start with '/', add 'ai-model/' prefix
     if model_dir and not model_dir.startswith('ai-model/') and not model_dir.startswith('/'):

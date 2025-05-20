@@ -319,14 +319,23 @@ elif selected_option == "Scanning":
             pcap_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ai-model", "pcaps")
             os.makedirs(pcap_dir, exist_ok=True)
 
-            # Save uploaded file
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            save_path = os.path.join(pcap_dir, f"uploaded_{timestamp}.pcap")
+            # Check if we already have a save_path for this file in session state
+            file_id = uploaded_file.name + str(uploaded_file.size)
+            if "uploaded_file_id" not in st.session_state or st.session_state.uploaded_file_id != file_id:
+                # This is a new file upload, generate a new save_path
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                save_path = os.path.join(pcap_dir, f"uploaded_{timestamp}.pcap")
 
-            with open(save_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
+                # Save the file
+                with open(save_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
 
-            st.success(f"File saved to {save_path}")
+                # Store the file ID and save_path in session state
+                st.session_state.uploaded_file_id = file_id
+                st.session_state.uploaded_file_path = save_path
+            else:
+                # Use the existing save_path for this file
+                save_path = st.session_state.uploaded_file_path
 
             # Analyze button
             if st.button("Analyze PCAP"):
@@ -346,18 +355,32 @@ elif selected_option == "Scanning":
                     try:
                         # Use queue for thread-safe state updates
                         state_updates.put(("processing", True))
-                        results = timed_capture.analyze_pcap_with_zeek(save_path)
 
-                        # Create date_time stamped folder for analysis results
-                        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                        analysis_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
-                                                  "ai-model", "output", "analysis_results", timestamp)
-                        os.makedirs(analysis_dir, exist_ok=True)
+                        # Use analyze_capture.py script instead of directly calling timed_capture.analyze_pcap_with_zeek
+                        analyze_script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ai-model", "analyze_capture.py")
+                        cmd = f"python {analyze_script_path} {save_path}"
+                        print(f"Running command: {cmd}")
 
-                        # Save results to CSV
-                        csv_path = os.path.join(analysis_dir, 'prediction_results.csv')
-                        results_df = pd.DataFrame(results)
-                        results_df.to_csv(csv_path, index=False)
+                        # Run the analyze_capture.py script
+                        process = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
+
+                        # Extract the CSV path from the output
+                        output_lines = process.stdout.splitlines()
+                        csv_path = None
+                        for line in output_lines:
+                            if "Results saved to CSV:" in line:
+                                csv_path = line.split("Results saved to CSV:")[1].strip()
+                                break
+
+                        if not csv_path or not os.path.exists(csv_path):
+                            raise Exception("Could not find CSV file with results")
+
+                        # Extract the analysis directory from the CSV path
+                        analysis_dir = os.path.dirname(csv_path)
+
+                        # Load the results from the CSV file
+                        results_df = pd.read_csv(csv_path)
+                        results = results_df.to_dict('records')
 
                         # Generate visualizations
                         try:
@@ -395,7 +418,6 @@ elif selected_option == "Scanning":
 
             # Display scan completed message
             if st.session_state.scan_completed:
-                st.success("✅ Scan Completed! All files have been generated successfully.")
                 st.info("You can view the results by clicking on the 'Results' tab above.")
 
                 # Set the success_message_displayed flag to True
