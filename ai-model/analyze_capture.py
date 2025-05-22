@@ -55,7 +55,7 @@ def main():
             print("Model version: Auto-detect")
 
         # Analyze the PCAP file
-        results = analyze_pcap_with_zeek(pcap_path, model_dir, model_version)
+        results, output_dir = analyze_pcap_with_zeek(pcap_path, model_dir, model_version)
 
         # Print results
         print("\nAnalysis Results:")
@@ -66,10 +66,6 @@ def main():
             print(f"UID: {result['uid']}, Score: {result['score']:.6f}, Prediction: {result['prediction']}")
 
         # Save results to CSV
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_dir = os.path.join('ai-model', 'output', 'analysis_results', timestamp)
-        os.makedirs(output_dir, exist_ok=True)
-
         csv_path = os.path.join(output_dir, 'prediction_results.csv')
         df = pd.DataFrame(results)
         df.to_csv(csv_path, index=False)

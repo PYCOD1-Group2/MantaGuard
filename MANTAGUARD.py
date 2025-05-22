@@ -227,13 +227,7 @@ elif selected_option == "Scanning":
                             # Process the PCAP file after capture
                             # Use queue for thread-safe state updates
                             state_updates.put(("processing", True))
-                            results = timed_capture.analyze_pcap_with_zeek(output_path)
-
-                            # Create date_time stamped folder for analysis results
-                            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                            analysis_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
-                                                      "ai-model", "output", "analysis_results", timestamp)
-                            os.makedirs(analysis_dir, exist_ok=True)
+                            results, analysis_dir = timed_capture.analyze_pcap_with_zeek(output_path)
 
                             # Save results to CSV
                             csv_path = os.path.join(analysis_dir, 'prediction_results.csv')
@@ -620,7 +614,130 @@ elif selected_option == "Reports":
                 st.subheader("Prediction Results Data")
                 try:
                     results_df = pd.read_csv(csv_path)
-                    st.dataframe(results_df)
+
+                    # Create a container for extracted PCAP status messages
+                    extract_status = st.empty()
+
+                    # Create a container for download links
+                    download_container = st.container()
+
+                    # Function to extract PCAP for a specific UID
+                    def extract_pcap_for_uid(uid, conn_log_path, pcap_path):
+                        try:
+                            # Create forensics directory if it doesn't exist
+                            forensics_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                                        "ai-model", "forensics")
+                            os.makedirs(forensics_dir, exist_ok=True)
+
+                            # Generate timestamp for the output file
+                            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                            output_filename = f"{uid}_{timestamp}.pcap"
+                            output_path = os.path.join(forensics_dir, output_filename)
+
+                            # Build the command to run extract_flow_by_uid.py
+                            extract_script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                                             "ai-model", "extract_flow_by_uid.py")
+                            cmd = [
+                                "python", extract_script_path,
+                                "--uid", uid,
+                                "--conn-log", conn_log_path,
+                                "--pcap", pcap_path
+                            ]
+
+                            # Run the script
+                            extract_status.info(f"Extracting flow for UID: {uid}...")
+                            process = subprocess.run(cmd, capture_output=True, text=True)
+
+                            if process.returncode != 0:
+                                extract_status.error(f"Error extracting flow: {process.stderr}")
+                                return None
+
+                            # Check if the output file was created
+                            if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
+                                extract_status.success(f"Flow extracted: {output_filename}")
+
+                                # Optional: Log the extraction for audit purposes
+                                log_path = os.path.join(forensics_dir, "extraction_log.csv")
+                                log_exists = os.path.exists(log_path)
+
+                                with open(log_path, 'a', newline='') as f:
+                                    writer = csv.writer(f)
+                                    if not log_exists:
+                                        writer.writerow(['timestamp', 'uid', 'output_file'])
+                                    writer.writerow([datetime.now().isoformat(), uid, output_filename])
+
+                                return output_path
+                            else:
+                                extract_status.error(f"No packets found for UID: {uid}")
+                                return None
+                        except Exception as e:
+                            extract_status.error(f"Error during extraction: {str(e)}")
+                            return None
+
+                    # Display the dataframe with an "Extract PCAP" button for each row
+                    st.write("Click 'Extract PCAP' for any anomalous connection to extract the raw network flow:")
+
+                    # Find the original PCAP file and conn.log file
+                    pcap_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ai-model", "pcaps")
+                    zeek_logs_dir = os.path.join(latest_analysis_dir, "zeek_logs")
+
+                    # Find the most recent PCAP file
+                    pcap_files = glob.glob(os.path.join(pcap_dir, "*.pcap"))
+                    pcap_path = max(pcap_files, key=os.path.getmtime) if pcap_files else None
+
+                    # Find the conn.log file
+                    conn_log_path = os.path.join(zeek_logs_dir, "conn.log") if os.path.exists(zeek_logs_dir) else None
+
+                    if not pcap_path or not conn_log_path or not os.path.exists(conn_log_path):
+                        st.warning("Cannot extract PCAPs: Missing original PCAP file or conn.log")
+                        st.dataframe(results_df)
+                    else:
+                        # Create expanders for each row in the dataframe
+                        for i, row in results_df.iterrows():
+                            uid = row['uid']
+                            # Check for both possible score column names
+                            score = row.get('score', row.get('anomaly_score', 0))
+                            proto = row.get('proto', 'unknown')
+                            service = row.get('service', 'unknown')
+                            prediction = row.get('prediction', 'unknown')
+
+                            # Format prediction label to capitalize first letter
+                            prediction_label = prediction.capitalize() if prediction else "Unknown"
+
+                            # Create an expander for this row with styling based on prediction
+                            expander_label = f"UID: {uid} | Prediction: {prediction_label} | Score: {score:.4f} | Proto: {proto} | Service: {service}"
+
+                            # Apply styling based on prediction
+                            if prediction == 'anomaly':
+                                # Add visual indicator for anomalies in the label itself
+                                expander_label = f"🚨 {expander_label}"
+
+                            # Create expander without border parameters which are not supported in this Streamlit version
+                            expander = st.expander(expander_label, expanded=False)
+
+                            # Use the expander context
+                            with expander:
+                                # Display all row data
+                                for col in results_df.columns:
+                                    st.write(f"**{col}:** {row[col]}")
+
+                                # Add Extract PCAP button
+                                if st.button(f"Extract PCAP", key=f"extract_{uid}"):
+                                    output_path = extract_pcap_for_uid(uid, conn_log_path, pcap_path)
+
+                                    if output_path:
+                                        # Read the file for download
+                                        with open(output_path, 'rb') as f:
+                                            pcap_data = f.read()
+
+                                        # Create a download button in the download container
+                                        with download_container:
+                                            st.download_button(
+                                                label=f"Download PCAP for {uid}",
+                                                data=pcap_data,
+                                                file_name=os.path.basename(output_path),
+                                                mime="application/vnd.tcpdump.pcap"
+                                            )
 
                     # Option to download the CSV
                     csv_data = results_df.to_csv(index=False)

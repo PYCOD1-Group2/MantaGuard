@@ -153,12 +153,17 @@ def analyze_pcap_with_zeek(pcap_path, model_dir='ai-model/output/retrained_model
 
     print(f"Analyzing PCAP file with Zeek: {pcap_path}")
 
-    # Create a temporary directory for Zeek output
-    temp_dir = os.path.join(os.path.dirname(pcap_path), "zeek_output")
-    if not os.path.exists(temp_dir):
-        os.makedirs(temp_dir)
+    # Create a timestamped directory for analysis results
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    analysis_dir = os.path.join('ai-model', 'output', 'analysis_results', timestamp)
+    os.makedirs(analysis_dir, exist_ok=True)
 
-    conn_log_path = os.path.join(temp_dir, "conn.log")
+    # Create a zeek_logs subfolder within the analysis directory
+    zeek_logs_dir = os.path.join(analysis_dir, "zeek_logs")
+    if not os.path.exists(zeek_logs_dir):
+        os.makedirs(zeek_logs_dir)
+
+    conn_log_path = os.path.join(zeek_logs_dir, "conn.log")
 
     try:
         # Run Zeek on the PCAP file
@@ -171,9 +176,9 @@ def analyze_pcap_with_zeek(pcap_path, model_dir='ai-model/output/retrained_model
         zeek_cmd = f"zeek -r {abs_pcap_path}"
         print(f"Running command: {zeek_cmd}")
 
-        # Change to the output directory before running Zeek
+        # Change to the zeek_logs directory before running Zeek
         current_dir = os.getcwd()
-        os.chdir(temp_dir)
+        os.chdir(zeek_logs_dir)
 
         try:
             subprocess.run(zeek_cmd, shell=True, check=True)
@@ -186,6 +191,9 @@ def analyze_pcap_with_zeek(pcap_path, model_dir='ai-model/output/retrained_model
             raise FileNotFoundError(f"Zeek did not generate conn.log at {conn_log_path}")
 
         print(f"Zeek analysis completed. Loading conn.log from {conn_log_path}")
+
+        # Store the analysis directory path to return it later
+        analysis_result_dir = analysis_dir
 
         # Load the conn.log file
         df = load_conn_log(conn_log_path)
@@ -292,7 +300,7 @@ def analyze_pcap_with_zeek(pcap_path, model_dir='ai-model/output/retrained_model
         print(f"Analysis complete. Found {sum(1 for r in results if r['prediction'] == 'anomaly')} anomalies "
               f"out of {len(results)} connections.")
 
-        return results
+        return results, analysis_result_dir
 
     except subprocess.CalledProcessError as e:
         print(f"Error running Zeek: {str(e)}")
@@ -301,10 +309,7 @@ def analyze_pcap_with_zeek(pcap_path, model_dir='ai-model/output/retrained_model
         print(f"Error during analysis: {str(e)}")
         raise
     finally:
-        # You might want to clean up the temporary directory here
-        # Commented out to keep logs for debugging
-        # import shutil
-        # shutil.rmtree(temp_dir)
+        # We're keeping the zeek_logs directory as part of the analysis results
         pass
 
 if __name__ == "__main__":
@@ -347,7 +352,7 @@ if __name__ == "__main__":
         pcap_file = run_capture(interface, duration, output_path)
 
         # Analyze the PCAP file
-        results = analyze_pcap_with_zeek(pcap_file, model_dir, model_version)
+        results, output_dir = analyze_pcap_with_zeek(pcap_file, model_dir, model_version)
 
         # Print results
         print("\nAnalysis Results:")
@@ -355,10 +360,6 @@ if __name__ == "__main__":
             print(f"UID: {result['uid']}, Score: {result['score']:.6f}, Prediction: {result['prediction']}")
 
         # Save results to CSV
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_dir = os.path.join('ai-model', 'output', 'analysis_results', timestamp)
-        os.makedirs(output_dir, exist_ok=True)
-
         csv_path = os.path.join(output_dir, 'prediction_results.csv')
         df = pd.DataFrame(results)
         df.to_csv(csv_path, index=False)
