@@ -27,6 +27,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--uid", required=True, help="Zeek UID to extract")
     parser.add_argument("--conn-log", required=True, help="Path to Zeek conn.log file")
     parser.add_argument("--pcap", required=True, help="Path to original PCAP file")
+    parser.add_argument("--analysis-dir", help="Path to the analysis directory (for organizing extracted files)")
 
     return parser.parse_args()
 
@@ -349,10 +350,22 @@ def main():
     forensics_dir = os.path.join("ai-model", "forensics")
     os.makedirs(forensics_dir, exist_ok=True)
 
-    # Generate the output filename with timestamp
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_filename = f"{args.uid}_{timestamp}.pcap"
-    output_path = os.path.join(forensics_dir, output_filename)
+    # If analysis directory is provided, extract the timestamp from it and create a matching subdirectory
+    if args.analysis_dir:
+        # Extract the timestamp from the analysis directory path
+        analysis_dir_name = os.path.basename(args.analysis_dir)
+        # Create a matching subdirectory in forensics
+        forensics_subdir = os.path.join(forensics_dir, analysis_dir_name)
+        os.makedirs(forensics_subdir, exist_ok=True)
+
+        # Generate the output filename with the UID
+        output_filename = f"{args.uid}.pcap"
+        output_path = os.path.join(forensics_subdir, output_filename)
+    else:
+        # If no analysis directory is provided, use the current timestamp
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_filename = f"{args.uid}_{timestamp}.pcap"
+        output_path = os.path.join(forensics_dir, output_filename)
 
     # Extract the packets
     print(f"\nExtracting packets from {args.pcap}...")

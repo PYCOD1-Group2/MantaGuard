@@ -9,13 +9,14 @@ wheels/
 # Virtual environments
 .venv
 ai-model/data
-ai-model/forensics
-ai-model/pcaps
-ai-model/output/analysis_results
+ai-model/forensics/*
+!ai-model/forensics/.gitkeep
+ai-model/pcaps/*
+!ai-model/pcaps/.gitkeep
+ai-model/output/analysis_results/*
+!ai-model/output/analysis_results/.gitkeep
 ai-model/test
 ai-model/training/unknown_categories.json
-zeek_output
 venv
 .python-version
-
 uv.lock

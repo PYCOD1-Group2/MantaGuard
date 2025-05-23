@@ -615,6 +615,24 @@ elif selected_option == "Reports":
                 try:
                     results_df = pd.read_csv(csv_path)
 
+                    # Add toggle to show only anomalies
+                    show_only_anomalies = st.checkbox("Show only anomalies", value=False)
+
+                    # Filter results if toggle is on
+                    if show_only_anomalies:
+                        # Filter for entries where prediction is 'anomaly' or -1
+                        filtered_df = results_df[
+                            (results_df['prediction'] == 'anomaly') | 
+                            (results_df['prediction'] == -1)
+                        ]
+                        # Show count of anomalies
+                        st.info(f"Showing {len(filtered_df)} anomalies")
+                        # Use filtered dataframe for display
+                        display_df = filtered_df
+                    else:
+                        # Use original dataframe for display
+                        display_df = results_df
+
                     # Create a container for extracted PCAP status messages
                     extract_status = st.empty()
 
@@ -629,10 +647,12 @@ elif selected_option == "Reports":
                                                         "ai-model", "forensics")
                             os.makedirs(forensics_dir, exist_ok=True)
 
-                            # Generate timestamp for the output file
-                            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                            output_filename = f"{uid}_{timestamp}.pcap"
-                            output_path = os.path.join(forensics_dir, output_filename)
+                            # Determine the output path based on the analysis directory
+                            analysis_dir_name = os.path.basename(latest_analysis_dir)
+                            forensics_subdir = os.path.join(forensics_dir, analysis_dir_name)
+                            os.makedirs(forensics_subdir, exist_ok=True)
+                            output_filename = f"{uid}.pcap"
+                            output_path = os.path.join(forensics_subdir, output_filename)
 
                             # Build the command to run extract_flow_by_uid.py
                             extract_script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
@@ -641,7 +661,8 @@ elif selected_option == "Reports":
                                 "python", extract_script_path,
                                 "--uid", uid,
                                 "--conn-log", conn_log_path,
-                                "--pcap", pcap_path
+                                "--pcap", pcap_path,
+                                "--analysis-dir", latest_analysis_dir
                             ]
 
                             # Run the script
@@ -657,14 +678,24 @@ elif selected_option == "Reports":
                                 extract_status.success(f"Flow extracted: {output_filename}")
 
                                 # Optional: Log the extraction for audit purposes
+                                # Determine the actual output path (which might be in a subdirectory)
+                                analysis_dir_name = os.path.basename(latest_analysis_dir)
+                                forensics_subdir = os.path.join(forensics_dir, analysis_dir_name)
+
+                                # Use the main forensics directory for the log
                                 log_path = os.path.join(forensics_dir, "extraction_log.csv")
                                 log_exists = os.path.exists(log_path)
 
                                 with open(log_path, 'a', newline='') as f:
                                     writer = csv.writer(f)
                                     if not log_exists:
-                                        writer.writerow(['timestamp', 'uid', 'output_file'])
-                                    writer.writerow([datetime.now().isoformat(), uid, output_filename])
+                                        writer.writerow(['timestamp', 'uid', 'output_file', 'analysis_dir'])
+                                    writer.writerow([
+                                        datetime.now().isoformat(), 
+                                        uid, 
+                                        os.path.join(analysis_dir_name, f"{uid}.pcap"),
+                                        analysis_dir_name
+                                    ])
 
                                 return output_path
                             else:
@@ -690,10 +721,10 @@ elif selected_option == "Reports":
 
                     if not pcap_path or not conn_log_path or not os.path.exists(conn_log_path):
                         st.warning("Cannot extract PCAPs: Missing original PCAP file or conn.log")
-                        st.dataframe(results_df)
+                        st.dataframe(display_df)
                     else:
                         # Create expanders for each row in the dataframe
-                        for i, row in results_df.iterrows():
+                        for i, row in display_df.iterrows():
                             uid = row['uid']
                             # Check for both possible score column names
                             score = row.get('score', row.get('anomaly_score', 0))
@@ -740,9 +771,10 @@ elif selected_option == "Reports":
                                             )
 
                     # Option to download the CSV
-                    csv_data = results_df.to_csv(index=False)
+                    csv_data = display_df.to_csv(index=False)
+                    download_label = "Download Anomalies CSV" if show_only_anomalies else "Download Results CSV"
                     st.download_button(
-                        label="Download Results CSV",
+                        label=download_label,
                         data=csv_data,
                         file_name=f"prediction_results_{os.path.basename(latest_analysis_dir)}.csv",
                         mime="text/csv"
