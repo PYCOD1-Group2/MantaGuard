@@ -115,28 +115,41 @@ if selected_option == "Home":
     It utilizes advanced algorithms and real-time data processing to ensure environmental security and safety.
     """)
 
+# Main page routing
+if selected_option == 'Home':
+    st.image('https://raw.githubusercontent.com/aaron789746/MANTAGUARD/main/MANTAGUAD.png', width=150)
+    st.title('Welcome to MantaGuard 🛡️')
+    st.subheader('Real-time Monitoring and Intrusion Detection using AI')
+    st.write('Get started by selecting an option from the sidebar.')
+    st.markdown('---')
+    st.write(
+        '**MantaGuard** is an AI-powered monitoring and intrusion detection system. ' 
+        'It utilizes advanced algorithms and real-time data processing to ensure environmental security and safety.'
+    )
+
     # Tools Showcase
-    st.subheader("🧰 Tools Used")
-
-    cols = st.columns(4)
-
+    st.subheader('🧰 Tools Used')
+    cols = st.columns(6)
     with cols[0]:
-        st.image("https://raw.githubusercontent.com/aaron789746/MANTAGUARD/main/streamlit.png", width=60)
-        st.caption("Streamlit")
-
+        st.image('https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Wireshark_Logo.svg/256px-Wireshark_Logo.svg.png', width=60)
+        st.caption('TShark')
     with cols[1]:
-        st.image("https://raw.githubusercontent.com/aaron789746/MANTAGUARD/main/Visual_Studio_Code_1.35_icon.svg.png", width=60)
-        st.caption("VS Code")
-
+        st.image('https://raw.githubusercontent.com/zeek/zeek/master/logo/zeek-logo-color.png', width=60)
+        st.caption('Zeek')
     with cols[2]:
-        st.image("https://raw.githubusercontent.com/aaron789746/MANTAGUARD/main/Python.svg.png", width=60)
-        st.caption("Python")
-
+        st.image('https://raw.githubusercontent.com/aaron789746/MANTAGUARD/main/OCSVM.png', width=60)
+        st.caption('OCSVM Model')
     with cols[3]:
-        st.image("https://raw.githubusercontent.com/aaron789746/MANTAGUARD/main/KNN.png", width=60)
-        st.caption("KNN AI")
+        st.image('https://raw.githubusercontent.com/aaron789746/MANTAGUARD/main/Python.svg.png', width=60)
+        st.caption('Python')
+    with cols[4]:
+        st.image('https://raw.githubusercontent.com/aaron789746/MANTAGUARD/main/streamlit.png', width=60)
+        st.caption('Streamlit')
+    with cols[5]:
+        st.image('https://suricata-ids.org/assets/img/suricata_logo.png', width=60)
+        st.caption('Suricata')
 
-elif selected_option == "Scanning":
+elif selected_option == 'Scanning':
     st.title("📡 Network Scanning")
 
     # Initialize section-specific session state variables
