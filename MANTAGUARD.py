@@ -127,7 +127,7 @@ if selected_option == 'Home':
         'It utilizes advanced algorithms and real-time data processing to ensure environmental security and safety.'
     )
 
-    # Tools Showcase
+    # Tools Showcase used
     st.subheader('🧰 Tools Used')
     cols = st.columns(6)
     with cols[0]:
