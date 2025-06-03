@@ -4,8 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Test">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="/">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MANTAGUARD.py" beforeDir="false" afterPath="$PROJECT_DIR$/MANTAGUARD.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/extract_flow_by_uid.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/extract_flow_by_uid.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/start.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
