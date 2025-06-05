@@ -279,8 +279,12 @@ if selected_option == "Home":
     }
     .tool-description {
         border-radius: 5px;
-        padding: 15px;
+        padding: 20px;
         height: 100%;
+        display: flex;
+        align-items: center;
+        font-size: 1rem;
+        line-height: 1.6;
     }
     /* CSS for bottom alignment */
     .stVerticalBlock {
@@ -294,17 +298,17 @@ if selected_option == "Home":
         align-items: flex-end;
     }
     /* CSS for tool images vertical centering */
-    .streamlit-image{
-        margin-top: 50px !important;
+    .tool-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 20px;
     }
-    .vscode-image {
-        margin-top: 50px !important;
-    }
-    .ocsvm-image {
-        margin-top: 50px !important;
-    }
-    .zeek-image {
-        margin-top: 90px !important;
+    .tool-image img {
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
     }
 
     /* Responsive styles */
@@ -452,8 +456,8 @@ if selected_option == "Home":
         tool_row = st.columns([1, 2])
 
         with tool_row[0]:
-            st.markdown('<div class="streamlit-image">', unsafe_allow_html=True)
-            st.image("content/streamlit.png", width=300)
+            st.markdown('<div class="tool-image">', unsafe_allow_html=True)
+            st.image("content/streamlit.png", width=150)
             st.markdown('</div>', unsafe_allow_html=True)
 
         with tool_row[1]:
@@ -470,8 +474,8 @@ if selected_option == "Home":
         tool_row = st.columns([1, 2])
 
         with tool_row[0]:
-            st.markdown('<div class="vscode-image">', unsafe_allow_html=True)
-            st.image("content/Visual_Studio_Code_1.35_icon.svg.png", width=300)
+            st.markdown('<div class="tool-image">', unsafe_allow_html=True)
+            st.image("content/Visual_Studio_Code_1.35_icon.svg.png", width=100)
             st.markdown('</div>', unsafe_allow_html=True)
 
         with tool_row[1]:
@@ -488,7 +492,9 @@ if selected_option == "Home":
         tool_row = st.columns([1, 2])
 
         with tool_row[0]:
-            st.image("content/Python.svg.png", width=300)
+            st.markdown('<div class="tool-image">', unsafe_allow_html=True)
+            st.image("content/Python.svg.png", width=100)
+            st.markdown('</div>', unsafe_allow_html=True)
 
         with tool_row[1]:
             st.markdown('<div class="tool-description">Python is a programming language that lets you work quickly and integrate systems more effectively. It is used extensively in data science, machine learning, and AI applications. In MantaGuard, Python serves as the core programming language, enabling rapid development and integration of various security components. Its rich ecosystem of libraries like pandas for data manipulation, scikit-learn for machine learning, and network analysis tools makes it perfect for implementing sophisticated intrusion detection algorithms and processing network traffic data efficiently.</div>', unsafe_allow_html=True)
@@ -504,7 +510,9 @@ if selected_option == "Home":
         tool_row = st.columns([1, 2])
 
         with tool_row[0]:
-            st.image("content/87ac3b54-afcc-40fe-84c2-515cc1415f3d.png", width=300)
+            st.markdown('<div class="tool-image">', unsafe_allow_html=True)
+            st.image("content/87ac3b54-afcc-40fe-84c2-515cc1415f3d.png", width=200)
+            st.markdown('</div>', unsafe_allow_html=True)
 
         with tool_row[1]:
             st.markdown('<div class="tool-description">One-Class Support Vector Machine (OCSVM) is an unsupervised learning algorithm that learns a decision boundary that achieves the maximum separation between the points and the origin. In MantaGuard, OCSVM serves as the primary anomaly detection engine, capable of identifying unusual network patterns without requiring labeled training data. This makes it ideal for detecting zero-day attacks and previously unknown threats. The algorithm works by learning the normal behavior of network traffic and flagging deviations from this pattern, allowing MantaGuard to detect sophisticated intrusion attempts that might bypass traditional signature-based detection systems.</div>', unsafe_allow_html=True)
@@ -520,8 +528,8 @@ if selected_option == "Home":
         tool_row = st.columns([1, 2])
 
         with tool_row[0]:
-            st.markdown('<div class="zeek-image">', unsafe_allow_html=True)
-            st.image("content/Zeek-Featured.png", width=300)
+            st.markdown('<div class="tool-image">', unsafe_allow_html=True)
+            st.image("content/Zeek-Featured.png", width=200)
             st.markdown('</div>', unsafe_allow_html=True)
 
         with tool_row[1]:
