@@ -59,6 +59,131 @@ def import_ai_modules():
     
     return timed_capture, visualize_results
 
+def get_security_analytics():
+    """Generate security analytics from historical data."""
+    try:
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        
+        # Get all analysis results directories
+        results_dir = os.path.join(project_root, "ai-model", "output", "analysis_results")
+        
+        analytics = {
+            'total_scans': 0,
+            'total_connections': 0,
+            'anomaly_count': 0,
+            'normal_count': 0,
+            'protocol_distribution': {},
+            'threat_timeline': [],
+            'recent_scans': [],
+            'top_threats': [],
+            'network_activity': {
+                'peak_hours': {},
+                'protocol_trends': {},
+                'anomaly_rate': 0
+            }
+        }
+        
+        if not os.path.exists(results_dir):
+            return analytics
+        
+        # Process each analysis directory
+        for scan_dir in sorted(os.listdir(results_dir), reverse=True):
+            scan_path = os.path.join(results_dir, scan_dir)
+            if not os.path.isdir(scan_path):
+                continue
+                
+            csv_file = os.path.join(scan_path, 'prediction_results.csv')
+            if not os.path.exists(csv_file):
+                continue
+                
+            try:
+                # Read prediction results
+                df = pd.read_csv(csv_file)
+                analytics['total_scans'] += 1
+                analytics['total_connections'] += len(df)
+                
+                # Count anomalies vs normal
+                anomalies = len(df[df['prediction'] == 'anomaly'])
+                normals = len(df[df['prediction'] == 'normal'])
+                analytics['anomaly_count'] += anomalies
+                analytics['normal_count'] += normals
+                
+                # Get scan timestamp from directory name
+                scan_time = scan_dir.replace('_', ' ')
+                analytics['recent_scans'].append({
+                    'timestamp': scan_time,
+                    'connections': len(df),
+                    'anomalies': anomalies,
+                    'anomaly_rate': round((anomalies / len(df)) * 100, 2) if len(df) > 0 else 0,
+                    'directory': scan_dir
+                })
+                
+                # Protocol analysis with conn.log
+                conn_log = os.path.join(scan_path, 'zeek_logs', 'conn.log')
+                if os.path.exists(conn_log):
+                    try:
+                        with open(conn_log, 'r') as f:
+                            lines = f.readlines()
+                        
+                        # Find fields line
+                        fields_line = None
+                        for line in lines:
+                            if line.startswith('#fields'):
+                                fields_line = line.strip()
+                                break
+                        
+                        if fields_line:
+                            field_names = fields_line.split('\t')[1:]
+                            data_lines = [line.strip() for line in lines 
+                                        if not line.startswith('#') and line.strip()]
+                            
+                            for line in data_lines:
+                                values = line.split('\t')
+                                if len(values) >= len(field_names):
+                                    proto = values[field_names.index('proto')] if 'proto' in field_names else 'unknown'
+                                    analytics['protocol_distribution'][proto] = analytics['protocol_distribution'].get(proto, 0) + 1
+                    except Exception:
+                        pass
+                        
+            except Exception as e:
+                print(f"Error processing scan {scan_dir}: {str(e)}")
+                continue
+        
+        # Calculate overall anomaly rate
+        total_connections = analytics['total_connections']
+        if total_connections > 0:
+            analytics['network_activity']['anomaly_rate'] = round(
+                (analytics['anomaly_count'] / total_connections) * 100, 2
+            )
+        
+        # Limit recent scans to last 10
+        analytics['recent_scans'] = analytics['recent_scans'][:10]
+        
+        # Generate threat timeline
+        for scan in analytics['recent_scans']:
+            if scan['anomalies'] > 0:
+                analytics['threat_timeline'].append({
+                    'timestamp': scan['timestamp'],
+                    'threat_count': scan['anomalies'],
+                    'severity': 'high' if scan['anomaly_rate'] > 50 else 'medium' if scan['anomaly_rate'] > 20 else 'low'
+                })
+        
+        return analytics
+        
+    except Exception as e:
+        print(f"Error generating analytics: {str(e)}")
+        return {
+            'total_scans': 0,
+            'total_connections': 0,
+            'anomaly_count': 0,
+            'normal_count': 0,
+            'protocol_distribution': {},
+            'threat_timeline': [],
+            'recent_scans': [],
+            'top_threats': [],
+            'network_activity': {'anomaly_rate': 0}
+        }
+
 def initialize_session():
     """Initialize session variables."""
     if 'scanning' not in session:
@@ -109,7 +234,9 @@ def scanning():
 @app.route('/reports')
 def reports():
     """Render the reports page."""
-    return render_template('reports.html')
+    # Get analytics data
+    analytics = get_security_analytics()
+    return render_template('reports.html', analytics=analytics)
 
 @app.route('/fix-patches')
 def fix_patches():
@@ -573,6 +700,137 @@ def serve_image(filename):
 def serve_content(filename):
     """Serve static content files."""
     return send_from_directory('content', filename)
+
+@app.route('/api/reports/analytics')
+def get_analytics_api():
+    """API endpoint for analytics data."""
+    analytics = get_security_analytics()
+    return jsonify(analytics)
+
+@app.route('/api/reports/scan/<scan_id>')
+def get_scan_details(scan_id):
+    """Get detailed information about a specific scan."""
+    try:
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        scan_path = os.path.join(project_root, "ai-model", "output", "analysis_results", scan_id)
+        
+        if not os.path.exists(scan_path):
+            return jsonify({'error': 'Scan not found'}), 404
+        
+        # Read prediction results
+        csv_file = os.path.join(scan_path, 'prediction_results.csv')
+        if not os.path.exists(csv_file):
+            return jsonify({'error': 'No results found for this scan'}), 404
+        
+        df = pd.read_csv(csv_file)
+        
+        # Get visualizations
+        visualizations = []
+        viz_files = glob.glob(os.path.join(scan_path, "*.png"))
+        for viz_file in viz_files:
+            visualizations.append(os.path.basename(viz_file))
+        
+        scan_details = {
+            'scan_id': scan_id,
+            'total_connections': len(df),
+            'anomalies': len(df[df['prediction'] == 'anomaly']),
+            'normal': len(df[df['prediction'] == 'normal']),
+            'anomaly_rate': round((len(df[df['prediction'] == 'anomaly']) / len(df)) * 100, 2) if len(df) > 0 else 0,
+            'visualizations': visualizations,
+            'connections': df.to_dict('records')[:100]  # Limit to first 100 for performance
+        }
+        
+        return jsonify(scan_details)
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/reports/extract_pcaps', methods=['POST'])
+def extract_pcaps():
+    """Extract individual connections as separate PCAP files."""
+    try:
+        data = request.get_json()
+        scan_id = data.get('scan_id')
+        connection_uids = data.get('connection_uids', [])
+        
+        if not scan_id or not connection_uids:
+            return jsonify({'error': 'Missing scan_id or connection_uids'}), 400
+        
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        scan_path = os.path.join(project_root, "ai-model", "output", "analysis_results", scan_id)
+        
+        if not os.path.exists(scan_path):
+            return jsonify({'error': 'Scan not found'}), 404
+        
+        # Create forensics directory with timestamp
+        forensics_dir = os.path.join(project_root, "ai-model", "forensics")
+        os.makedirs(forensics_dir, exist_ok=True)
+        
+        # Create timestamped subdirectory matching the scan
+        output_dir = os.path.join(forensics_dir, scan_id)
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # Find the original PCAP file for this scan
+        # Look for PCAP files in the pcaps directory that match the timestamp pattern
+        pcaps_dir = os.path.join(project_root, "ai-model", "pcaps")
+        original_pcap = None
+        
+        # Try to find PCAP file by matching timestamp pattern
+        for pcap_file in glob.glob(os.path.join(pcaps_dir, "*.pcap*")):
+            # Extract timestamp from PCAP filename
+            basename = os.path.basename(pcap_file)
+            if scan_id in basename or basename.startswith('capture_' + scan_id.split('_')[0]):
+                original_pcap = pcap_file
+                break
+        
+        if not original_pcap or not os.path.exists(original_pcap):
+            return jsonify({'error': 'Original PCAP file not found for this scan'}), 404
+        
+        # Use the extract_flow_by_uid.py script to extract connections
+        extract_script_path = os.path.join(project_root, "ai-model", "extract_flow_by_uid.py")
+        
+        if not os.path.exists(extract_script_path):
+            return jsonify({'error': 'PCAP extraction script not found'}), 500
+        
+        extracted_count = 0
+        extraction_errors = []
+        
+        for uid in connection_uids:
+            try:
+                # Find the conn.log file for this scan
+                conn_log_path = os.path.join(scan_path, 'zeek_logs', 'conn.log')
+                
+                # Run extraction script for this UID - it will create files in its own structure
+                cmd = f"uv run python {extract_script_path} --uid {uid} --conn-log {conn_log_path} --pcap {original_pcap} --analysis-dir {scan_path}"
+                result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
+                
+                # The script creates files in ai-model/forensics/{scan_id}/{uid}.pcap
+                expected_output = os.path.join(output_dir, f"{uid}.pcap")
+                
+                if result.returncode == 0 and os.path.exists(expected_output):
+                    extracted_count += 1
+                else:
+                    extraction_errors.append(f"UID {uid}: {result.stderr}")
+                    
+            except subprocess.TimeoutExpired:
+                extraction_errors.append(f"UID {uid}: Extraction timeout")
+            except Exception as e:
+                extraction_errors.append(f"UID {uid}: {str(e)}")
+        
+        response_data = {
+            'success': True,
+            'extracted_count': extracted_count,
+            'total_requested': len(connection_uids),
+            'output_path': output_dir
+        }
+        
+        if extraction_errors:
+            response_data['warnings'] = extraction_errors
+        
+        return jsonify(response_data)
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
