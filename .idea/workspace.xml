@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Add base HTML template and initial structure for Home, Reports, Scanning, and Fix &amp; Patches pages with placeholder content.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Add comprehensive security analytics, API endpoints, and professional styling for the reports page.">
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/reports.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/reports.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/scanning.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/scanning.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -265,7 +266,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749211274324</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Add comprehensive security analytics, API endpoints, and professional styling for the reports page.">
+      <option name="closed" value="true" />
+      <created>1749212767262</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1749212767262</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -346,6 +355,7 @@
     <MESSAGE value="Refractored the original MANTAGUARD.py into smaller separate files." />
     <MESSAGE value="Refactor pages and scripts: integrate session state caching for network interfaces, improve PCAP extraction flow, and reorganize path handling logic for consistency." />
     <MESSAGE value="Add base HTML template and initial structure for Home, Reports, Scanning, and Fix &amp; Patches pages with placeholder content." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add base HTML template and initial structure for Home, Reports, Scanning, and Fix &amp; Patches pages with placeholder content." />
+    <MESSAGE value="Add comprehensive security analytics, API endpoints, and professional styling for the reports page." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add comprehensive security analytics, API endpoints, and professional styling for the reports page." />
   </component>
 </project>

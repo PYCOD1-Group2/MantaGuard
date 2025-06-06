@@ -2,168 +2,509 @@
 
 {% block title %}Home{% endblock %}
 
-{% block content %}
-<div class="container">
-    <!-- Hero Banner -->
-    <div class="hero-banner" style="background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(data:image/png;base64,{{ hero_banner_base64 }});">
-        <div style="display: flex; flex-direction: column; align-items: center; z-index: 10; position: relative;">
-            <img src="data:image/png;base64,{{ logo_base64 }}" class="hero-logo" alt="MantaGuard Logo">
-            <h1 class="hero-title">Welcome to MantaGuard</h1>
-            <h2 class="hero-subtitle">Real-time Monitoring and Intrusion Detection using AI</h2>
-            <a href="{{ url_for('scanning') }}" class="btn btn-primary btn-lg mt-3">
-                <i class="fas fa-play me-2"></i>Get Started
-            </a>
-        </div>
-    </div>
+{% block extra_css %}
+<style>
+    /* Professional cybersecurity themed variables */
+    :root {
+        --cyber-primary: #00BFFF;
+        --cyber-secondary: #2196F3;
+        --cyber-accent: #F44336;
+        --cyber-warning: #FF9800;
+        --cyber-success: #00BFFF;
+        --cyber-bg-dark: #121212;
+        --cyber-bg-card: #1e1e1e;
+        --cyber-bg-hover: #2a2a2a;
+        --cyber-border: rgba(255, 255, 255, 0.12);
+        --cyber-border-accent: rgba(0, 191, 255, 0.3);
+        --cyber-text: #ffffff;
+        --cyber-text-secondary: #b0b0b0;
+        --cyber-text-dim: #757575;
+        --cyber-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        --cyber-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
 
-    <!-- Features Section -->
-    <div id="features" class="features-section">
-        <h2 class="features-title">Why MantaGuard?</h2>
-        <p class="features-subtitle">Our key features at a glance</p>
+    /* Override global background */
+    body {
+        background: var(--cyber-bg-dark);
+    }
+
+    /* Professional hero section */
+    .hero-section {
+        background: linear-gradient(135deg, var(--cyber-bg-dark) 0%, #1a1a1a 50%, var(--cyber-bg-dark) 100%);
+        padding: 80px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url(data:image/png;base64,{{ hero_banner_base64 }}) center/cover;
+        opacity: 0.1;
+        z-index: 1;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .hero-logo {
+        max-width: 120px;
+        margin-bottom: 30px;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--cyber-text);
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: var(--cyber-text-secondary);
+        margin-bottom: 40px;
+        font-weight: 400;
+    }
+    
+    .hero-cta {
+        background: linear-gradient(135deg, var(--cyber-primary), #1E90FF);
+        border: none;
+        padding: 16px 32px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        box-shadow: var(--cyber-shadow);
+    }
+    
+    .hero-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--cyber-shadow-hover);
+        background: linear-gradient(135deg, #1E90FF, var(--cyber-primary));
+    }
+
+    /* Professional features section */
+    .features-section {
+        padding: 80px 0;
+        background: var(--cyber-bg-dark);
+    }
+    
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 16px;
+        color: var(--cyber-text);
+    }
+    
+    .section-subtitle {
+        font-size: 1.125rem;
+        text-align: center;
+        color: var(--cyber-text-secondary);
+        margin-bottom: 60px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .feature-card {
+        background: var(--cyber-bg-card);
+        border-radius: 8px;
+        padding: 32px 24px;
+        text-align: center;
+        height: 100%;
+        border: 1px solid var(--cyber-border);
+        transition: all 0.3s ease;
+        box-shadow: var(--cyber-shadow);
+    }
+    
+    .feature-card:hover {
+        border-color: var(--cyber-border-accent);
+        transform: translateY(-4px);
+        box-shadow: var(--cyber-shadow-hover);
+        background: var(--cyber-bg-hover);
+    }
+    
+    .feature-icon {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, var(--cyber-primary), #1E90FF);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+        font-size: 24px;
+        color: white;
+    }
+    
+    .feature-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: var(--cyber-text);
+    }
+    
+    .feature-description {
+        color: var(--cyber-text-secondary);
+        line-height: 1.6;
+        font-size: 0.95rem;
+    }
+
+    /* Professional about section */
+    .about-section {
+        padding: 60px 0;
+        background: rgba(255, 255, 255, 0.02);
+    }
+    
+    .about-card {
+        background: var(--cyber-bg-card);
+        border: 1px solid var(--cyber-border);
+        border-radius: 8px;
+        padding: 40px;
+        box-shadow: var(--cyber-shadow);
+    }
+    
+    .about-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--cyber-text);
+    }
+    
+    .about-text {
+        color: var(--cyber-text-secondary);
+        line-height: 1.7;
+        font-size: 1rem;
+    }
+
+    /* Professional tools section */
+    .tools-section {
+        padding: 80px 0;
+        background: var(--cyber-bg-dark);
+    }
+    
+    .tool-card {
+        background: var(--cyber-bg-card);
+        border: 1px solid var(--cyber-border);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 24px;
+        transition: all 0.3s ease;
+        box-shadow: var(--cyber-shadow);
+    }
+    
+    .tool-card:hover {
+        border-color: var(--cyber-border-accent);
+        box-shadow: var(--cyber-shadow-hover);
+    }
+    
+    .tool-header {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--cyber-border);
+    }
+    
+    .tool-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--cyber-text);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .tool-content {
+        padding: 24px;
+    }
+    
+    .tool-grid {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 24px;
+        align-items: center;
+    }
+    
+    .tool-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 6px;
+        border: 1px solid var(--cyber-border);
+    }
+    
+    .tool-image img {
+        max-width: 100%;
+        max-height: 80px;
+        object-fit: contain;
+        filter: brightness(1.1);
+    }
+    
+    .tool-description {
+        color: var(--cyber-text-secondary);
+        line-height: 1.7;
+        font-size: 0.95rem;
+    }
+    
+    .tool-tech-badge {
+        display: inline-block;
+        background: rgba(0, 191, 255, 0.1);
+        color: var(--cyber-primary);
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 12px;
+    }
+
+    /* Section dividers */
+    .section-divider {
+        height: 1px;
+        background: var(--cyber-border);
+        margin: 0 auto;
+        max-width: 200px;
+        opacity: 0.5;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.25rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.125rem;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+        }
+        
+        .tool-grid {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+        
+        .tool-image {
+            max-width: 120px;
+            margin: 0 auto;
+        }
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <img src="data:image/png;base64,{{ logo_base64 }}" class="hero-logo" alt="MantaGuard Logo">
+        <h1 class="hero-title">Welcome to MantaGuard</h1>
+        <p class="hero-subtitle">Real-time Monitoring and Intrusion Detection using AI</p>
+        <a href="{{ url_for('scanning') }}" class="btn hero-cta">
+            <i class="fas fa-radar-chart me-2"></i>Start Scanning
+        </a>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">Why MantaGuard?</h2>
+        <p class="section-subtitle">Advanced cybersecurity capabilities at your fingertips</p>
         
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="feature-card">
-                    <div class="feature-icon">🧠</div>
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
                     <h3 class="feature-title">AI-Driven Anomaly Detection</h3>
-                    <p class="feature-description">Catches suspicious patterns in real time—24/7 monitoring.</p>
+                    <p class="feature-description">Advanced machine learning algorithms identify suspicious patterns in real-time with 24/7 continuous monitoring.</p>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="feature-card">
-                    <div class="feature-icon">🔔</div>
-                    <h3 class="feature-title">Customizable Alerting</h3>
-                    <p class="feature-description">Get notified instantly when potential threats are detected.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3 class="feature-title">Intelligent Alerting</h3>
+                    <p class="feature-description">Receive instant notifications with detailed threat analysis when potential security incidents are detected.</p>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3 class="feature-title">Easy Dashboard & Reporting</h3>
-                    <p class="feature-description">Visualize network activity and security insights at a glance.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Advanced Analytics</h3>
+                    <p class="feature-description">Comprehensive dashboards and reporting tools provide deep insights into network security trends.</p>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
-                    <h3 class="feature-title">Scalable & Secure</h3>
-                    <p class="feature-description">Enterprise-grade protection that grows with your network needs.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Enterprise Security</h3>
+                    <p class="feature-description">Scalable, professional-grade protection designed to grow with your organization's needs.</p>
                 </div>
             </div>
         </div>
     </div>
+</section>
 
-    <hr class="my-5" style="border-color: rgba(255, 255, 255, 0.1);">
-
-    <!-- Project Description -->
-    <div class="row mb-5">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title">About MantaGuard</h3>
-                    <p class="card-text">
-                        <strong>MantaGuard</strong> is an AI-powered monitoring and intrusion detection system. 
-                        It utilizes advanced algorithms and real-time data processing to ensure environmental security and safety.
+<!-- About Section -->
+<section class="about-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="about-card">
+                    <h3 class="about-title">About MantaGuard</h3>
+                    <p class="about-text">
+                        <strong>MantaGuard</strong> is a next-generation AI-powered monitoring and intrusion detection system designed for modern cybersecurity challenges. It leverages cutting-edge machine learning algorithms and real-time data processing to provide comprehensive network security monitoring, ensuring your digital infrastructure remains protected against emerging threats and sophisticated attack vectors.
                     </p>
                 </div>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- Tools Showcase -->
-    <div class="row">
-        <div class="col-12">
-            <h2 class="tool-title mb-4">🧰 Tools Used</h2>
+<!-- Tools Section -->
+<section class="tools-section">
+    <div class="container">
+        <h2 class="section-title">Technology Stack</h2>
+        <p class="section-subtitle">Powered by industry-leading tools and frameworks</p>
+        
+        <!-- Flask Tool -->
+        <div class="tool-card">
+            <div class="tool-header">
+                <h3 class="tool-title">
+                    <i class="fab fa-python"></i>
+                    Flask Web Framework
+                </h3>
+            </div>
+            <div class="tool-content">
+                <div class="tool-grid">
+                    <div class="tool-image">
+                        <img src="{{ url_for('serve_content', filename='flask.jpg') }}" alt="Flask">
+                    </div>
+                    <div>
+                        <div class="tool-tech-badge">Web Framework</div>
+                        <p class="tool-description">
+                            Flask powers MantaGuard's web interface, providing a lightweight yet powerful foundation for building scalable web applications. Its modular design and extensive ecosystem make it ideal for creating responsive, real-time security dashboards that integrate seamlessly with backend AI components and data processing pipelines.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VS Code Tool -->
+        <div class="tool-card">
+            <div class="tool-header">
+                <h3 class="tool-title">
+                    <i class="fas fa-code"></i>
+                    Visual Studio Code
+                </h3>
+            </div>
+            <div class="tool-content">
+                <div class="tool-grid">
+                    <div class="tool-image">
+                        <img src="{{ url_for('serve_content', filename='Visual_Studio_Code_1.35_icon.svg.png') }}" alt="VS Code">
+                    </div>
+                    <div>
+                        <div class="tool-tech-badge">Development Environment</div>
+                        <p class="tool-description">
+                            Visual Studio Code serves as the primary development environment for MantaGuard, offering advanced debugging capabilities, integrated Git version control, and extensive Python support. Its robust extension ecosystem and customizable interface streamline the development of complex cybersecurity applications.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Python Tool -->
+        <div class="tool-card">
+            <div class="tool-header">
+                <h3 class="tool-title">
+                    <i class="fab fa-python"></i>
+                    Python Ecosystem
+                </h3>
+            </div>
+            <div class="tool-content">
+                <div class="tool-grid">
+                    <div class="tool-image">
+                        <img src="{{ url_for('serve_content', filename='Python.svg.png') }}" alt="Python">
+                    </div>
+                    <div>
+                        <div class="tool-tech-badge">Core Language</div>
+                        <p class="tool-description">
+                            Python forms the backbone of MantaGuard's architecture, enabling rapid development and seamless integration of machine learning, data analysis, and network monitoring components. Its extensive library ecosystem, including pandas, scikit-learn, and specialized security tools, provides the foundation for sophisticated threat detection algorithms.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OCSVM Algorithm Tool -->
+        <div class="tool-card">
+            <div class="tool-header">
+                <h3 class="tool-title">
+                    <i class="fas fa-robot"></i>
+                    OCSVM Algorithm
+                </h3>
+            </div>
+            <div class="tool-content">
+                <div class="tool-grid">
+                    <div class="tool-image">
+                        <img src="{{ url_for('serve_content', filename='87ac3b54-afcc-40fe-84c2-515cc1415f3d.png') }}" alt="OCSVM Algorithm">
+                    </div>
+                    <div>
+                        <div class="tool-tech-badge">AI/ML Engine</div>
+                        <p class="tool-description">
+                            One-Class Support Vector Machine (OCSVM) powers MantaGuard's anomaly detection capabilities, using unsupervised learning to identify unusual network patterns without requiring pre-labeled training data. This approach enables detection of zero-day attacks and novel threats by learning normal network behavior and flagging significant deviations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zeek Network Monitor Tool -->
+        <div class="tool-card">
+            <div class="tool-header">
+                <h3 class="tool-title">
+                    <i class="fas fa-network-wired"></i>
+                    Zeek Network Monitor
+                </h3>
+            </div>
+            <div class="tool-content">
+                <div class="tool-grid">
+                    <div class="tool-image">
+                        <img src="{{ url_for('serve_content', filename='Zeek-Featured.png') }}" alt="Zeek Network Monitor">
+                    </div>
+                    <div>
+                        <div class="tool-tech-badge">Network Analysis</div>
+                        <p class="tool-description">
+                            Zeek (formerly Bro) serves as MantaGuard's network analysis engine, providing comprehensive traffic inspection and protocol analysis capabilities. Its powerful scripting language and extensive logging features enable deep packet inspection and detailed network forensics, feeding high-quality data to the AI detection algorithms.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <!-- Streamlit Tool -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="tool-title">Streamlit</div>
-        </div>
-        <div class="col-md-4">
-            <div class="tool-image">
-                <img src="{{ url_for('serve_content', filename='streamlit.png') }}" width="150" alt="Streamlit">
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="tool-description">
-                Streamlit is an open-source Python library that makes it easy to create and share beautiful, custom web apps for machine learning and data science. In MantaGuard, Streamlit powers the entire user interface, providing interactive components like buttons, sliders, and visualizations that make network monitoring and intrusion detection accessible and user-friendly. Its ability to update in real-time makes it perfect for displaying live network data and analysis results.
-            </div>
-        </div>
-    </div>
-    <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.1);">
-
-    <!-- VS Code Tool -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="tool-title">VS Code</div>
-        </div>
-        <div class="col-md-4">
-            <div class="tool-image">
-                <img src="{{ url_for('serve_content', filename='Visual_Studio_Code_1.35_icon.svg.png') }}" width="100" alt="VS Code">
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="tool-description">
-                Visual Studio Code is a lightweight but powerful source code editor which runs on your desktop and is available for Windows, macOS and Linux. For MantaGuard development, VS Code provides essential features like integrated Git version control, debugging capabilities, and Python extensions that enhance productivity. Its customizable interface and extensive marketplace of extensions make it ideal for developing complex security applications that integrate multiple technologies and libraries.
-            </div>
-        </div>
-    </div>
-    <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.1);">
-
-    <!-- Python Tool -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="tool-title">Python</div>
-        </div>
-        <div class="col-md-4">
-            <div class="tool-image">
-                <img src="{{ url_for('serve_content', filename='Python.svg.png') }}" width="100" alt="Python">
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="tool-description">
-                Python is a programming language that lets you work quickly and integrate systems more effectively. It is used extensively in data science, machine learning, and AI applications. In MantaGuard, Python serves as the core programming language, enabling rapid development and integration of various security components. Its rich ecosystem of libraries like pandas for data manipulation, scikit-learn for machine learning, and network analysis tools makes it perfect for implementing sophisticated intrusion detection algorithms and processing network traffic data efficiently.
-            </div>
-        </div>
-    </div>
-    <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.1);">
-
-    <!-- OCSVM Algorithm Tool -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="tool-title">OCSVM Algorithm</div>
-        </div>
-        <div class="col-md-4">
-            <div class="tool-image">
-                <img src="{{ url_for('serve_content', filename='87ac3b54-afcc-40fe-84c2-515cc1415f3d.png') }}" width="200" alt="OCSVM Algorithm">
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="tool-description">
-                One-Class Support Vector Machine (OCSVM) is an unsupervised learning algorithm that learns a decision boundary that achieves the maximum separation between the points and the origin. In MantaGuard, OCSVM serves as the primary anomaly detection engine, capable of identifying unusual network patterns without requiring labeled training data. This makes it ideal for detecting zero-day attacks and previously unknown threats. The algorithm works by learning the normal behavior of network traffic and flagging deviations from this pattern, allowing MantaGuard to detect sophisticated intrusion attempts that might bypass traditional signature-based detection systems.
-            </div>
-        </div>
-    </div>
-    <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.1);">
-
-    <!-- Zeek Network Monitor Tool -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="tool-title">Zeek Network Monitor</div>
-        </div>
-        <div class="col-md-4">
-            <div class="tool-image">
-                <img src="{{ url_for('serve_content', filename='Zeek-Featured.png') }}" width="200" alt="Zeek Network Monitor">
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="tool-description">
-                Zeek (formerly Bro) is a powerful network analysis framework that is much different from the typical IDS you may know. It provides a comprehensive platform for network traffic analysis. In MantaGuard, Zeek serves as the primary data collection engine, capturing and parsing network traffic into structured logs that can be analyzed by the OCSVM algorithm. Its ability to extract detailed protocol-specific information from network flows enables MantaGuard to perform deep packet inspection and identify subtle patterns that might indicate malicious activity. Zeek's flexible scripting language also allows for customized detection rules tailored to specific network environments and threat landscapes.
-            </div>
-        </div>
-    </div>
-</div>
+</section>
 {% endblock %}

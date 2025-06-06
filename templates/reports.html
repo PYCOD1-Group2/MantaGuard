@@ -424,6 +424,71 @@
         color: var(--cyber-text-dim) !important;
     }
     
+    /* Professional tab styling for visualizations */
+    .nav-tabs {
+        border-bottom: 1px solid var(--cyber-border);
+    }
+    
+    .nav-tabs .nav-link {
+        background: transparent;
+        border: 1px solid transparent;
+        color: var(--cyber-text-secondary);
+        font-weight: 500;
+        padding: 8px 16px;
+        margin-right: 2px;
+        border-radius: 6px 6px 0 0;
+        transition: all 0.2s ease;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--cyber-text);
+        border-color: var(--cyber-border);
+    }
+    
+    .nav-tabs .nav-link.active {
+        background: var(--cyber-bg-card);
+        color: var(--cyber-primary);
+        border-color: var(--cyber-border) var(--cyber-border) var(--cyber-bg-card);
+        border-bottom-color: var(--cyber-bg-card);
+    }
+    
+    .tab-content {
+        border: 1px solid var(--cyber-border);
+        border-top: none;
+        border-radius: 0 6px 6px 6px;
+        background: var(--cyber-bg-card);
+        min-height: 400px;
+    }
+    
+    .tab-pane {
+        padding: 20px;
+    }
+    
+    .visualization-container {
+        text-align: center;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .visualization-container img {
+        max-width: 100%;
+        max-height: 350px;
+        object-fit: contain;
+        border-radius: 4px;
+        box-shadow: var(--cyber-shadow);
+    }
+    
+    .no-visualization {
+        color: var(--cyber-text-dim);
+        font-style: italic;
+        text-align: center;
+        padding: 60px 20px;
+    }
+    
     /* Professional badge styling */
     .badge {
         font-weight: 600;
@@ -642,7 +707,7 @@
 
 <!-- Scan Details Modal -->
 <div class="modal fade" id="scanDetailsModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog" style="max-width: 95vw; width: 95vw;">
         <div class="modal-content" style="background-color: #1E1E1E; border: 1px solid rgba(255, 255, 255, 0.1);">
             <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
                 <h5 class="modal-title" id="scanDetailsTitle">Scan Details</h5>
@@ -819,6 +884,30 @@ function viewScanDetails(scanId) {
             return;
         }
         
+        // Generate visualization tabs
+        const vizTabs = data.visualizations.length > 0 ? 
+            data.visualizations.map((viz, index) => {
+                const vizName = viz.replace('.png', '').replace(/_/g, ' ');
+                const isActive = index === 0 ? 'active' : '';
+                return `<li class="nav-item" role="presentation">
+                    <button class="nav-link ${isActive}" id="viz-${index}-tab" data-bs-toggle="tab" data-bs-target="#viz-${index}" type="button" role="tab">
+                        ${vizName}
+                    </button>
+                </li>`;
+            }).join('') : 
+            '<li class="nav-item"><span class="nav-link disabled">No Visualizations</span></li>';
+
+        const vizContent = data.visualizations.length > 0 ? 
+            data.visualizations.map((viz, index) => {
+                const isActive = index === 0 ? 'show active' : '';
+                return `<div class="tab-pane fade ${isActive}" id="viz-${index}" role="tabpanel">
+                    <div class="visualization-container">
+                        <img src="/images/${viz}" alt="${viz}" loading="lazy" />
+                    </div>
+                </div>`;
+            }).join('') : 
+            '<div class="tab-pane fade show active"><div class="no-visualization">No visualizations available for this scan</div></div>';
+
         modalBody.innerHTML = `
             <div class="row mb-4">
                 <div class="col-md-3">
@@ -848,7 +937,7 @@ function viewScanDetails(scanId) {
             </div>
             
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-6">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h6>Connection Details</h6>
                         <div class="form-check form-switch">
@@ -858,7 +947,7 @@ function viewScanDetails(scanId) {
                             </label>
                         </div>
                     </div>
-                    <div style="max-height: 300px; overflow-y: auto;">
+                    <div style="max-height: 400px; overflow-y: auto;">
                         <table class="table table-dark table-sm">
                             <thead>
                                 <tr>
@@ -866,6 +955,7 @@ function viewScanDetails(scanId) {
                                         <input type="checkbox" id="selectAll" onchange="toggleSelectAll('${scanId}')">
                                     </th>
                                     <th>UID</th>
+                                    <th>Protocol</th>
                                     <th>Score</th>
                                     <th>Prediction</th>
                                 </tr>
@@ -875,6 +965,7 @@ function viewScanDetails(scanId) {
                                     <tr data-prediction="${conn.prediction}">
                                         <td><input type="checkbox" class="connection-checkbox" value="${conn.uid}"></td>
                                         <td>${conn.uid}</td>
+                                        <td>${conn.proto || 'unknown'}</td>
                                         <td>${parseFloat(conn.score).toFixed(4)}</td>
                                         <td><span class="badge ${conn.prediction === 'anomaly' ? 'bg-danger' : 'bg-success'}">${conn.prediction}</span></td>
                                     </tr>
@@ -889,18 +980,14 @@ function viewScanDetails(scanId) {
                         <span class="ms-2 text-muted" id="selectedCount">0 connections selected</span>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <h6>Available Visualizations</h6>
-                    ${data.visualizations.length > 0 ? 
-                        data.visualizations.map(viz => `
-                            <div class="mb-2">
-                                <button class="btn btn-outline-primary btn-sm" onclick="viewVisualization('${scanId}', '${viz}')">
-                                    <i class="fas fa-chart-bar me-1"></i>${viz.replace('.png', '').replace(/_/g, ' ')}
-                                </button>
-                            </div>
-                        `).join('') : 
-                        '<p class="text-muted">No visualizations available</p>'
-                    }
+                <div class="col-md-6">
+                    <h6 class="mb-3">Visualizations</h6>
+                    <ul class="nav nav-tabs" id="visualizationTabs" role="tablist">
+                        ${vizTabs}
+                    </ul>
+                    <div class="tab-content" id="visualizationTabContent">
+                        ${vizContent}
+                    </div>
                 </div>
             </div>
         `;
@@ -916,10 +1003,6 @@ function viewScanDetails(scanId) {
     });
 }
 
-function viewVisualization(scanId, filename) {
-    const imageUrl = `/images/${filename}`;
-    window.open(imageUrl, '_blank');
-}
 
 // Filter connections based on anomaly toggle
 function filterConnections(scanId) {

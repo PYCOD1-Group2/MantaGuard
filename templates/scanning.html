@@ -20,7 +20,14 @@
     .nav-tabs .nav-link.active {
         background-color: #00BFFF;
         border-color: #00BFFF;
-        color: white;
+        color: white !important;
+        font-weight: 600;
+        z-index: 1;
+        position: relative;
+    }
+    
+    .nav-tabs .nav-link.active i {
+        color: white !important;
     }
     
     .upload-area {
@@ -131,6 +138,58 @@
     .visualization-item img {
         max-width: 100%;
         border-radius: 4px;
+    }
+    
+    /* Professional Toast Styling */
+    .toast-container {
+        z-index: 1060;
+    }
+    
+    .toast {
+        background: #1e1e1e;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(8px);
+        min-width: 350px;
+    }
+    
+    .toast.border-success {
+        border-color: #4CAF50;
+        border-left: 4px solid #4CAF50;
+    }
+    
+    .toast.border-danger {
+        border-color: #F44336;
+        border-left: 4px solid #F44336;
+    }
+    
+    .toast-header {
+        background: rgba(255, 255, 255, 0.03);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        font-weight: 600;
+        border-radius: 8px 8px 0 0;
+    }
+    
+    .toast-body {
+        color: #ffffff;
+        padding: 16px;
+        font-weight: 400;
+    }
+    
+    .toast-body code {
+        background: rgba(255, 255, 255, 0.05);
+        color: #4CAF50;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.85em;
+    }
+    
+    .btn-close {
+        filter: invert(1) brightness(0.8);
     }
 </style>
 {% endblock %}
@@ -274,13 +333,24 @@
                         <!-- Results Table -->
                         <div class="card mb-4">
                             <div class="card-header">
-                                <h5><i class="fas fa-table me-2"></i>Prediction Results</h5>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5><i class="fas fa-table me-2"></i>Prediction Results</h5>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="anomalyFilterResults" onchange="filterResultsConnections()">
+                                        <label class="form-check-label" for="anomalyFilterResults">
+                                            Show only anomalies
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div class="results-table">
                                     <table class="table table-dark table-striped" id="results-table">
                                         <thead>
                                             <tr>
+                                                <th width="40px">
+                                                    <input type="checkbox" id="selectAllResults" onchange="toggleSelectAllResults()">
+                                                </th>
                                                 <th>UID</th>
                                                 <th>Timestamp</th>
                                                 <th>Protocol</th>
@@ -292,6 +362,12 @@
                                         <tbody id="results-table-body">
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="mt-3">
+                                    <button class="btn btn-primary" onclick="extractSelectedConnectionsResults()" id="extractBtnResults" disabled>
+                                        <i class="fas fa-download me-1"></i>Extract Selected PCAPs
+                                    </button>
+                                    <span class="ms-2 text-muted" id="selectedCountResults">0 connections selected</span>
                                 </div>
                             </div>
                         </div>
@@ -354,6 +430,20 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1060">
+    <div id="extractionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="fas fa-download me-2 text-primary"></i>
+            <strong class="me-auto">PCAP Extraction</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastBody">
+            <!-- Toast message will be set dynamically -->
         </div>
     </div>
 </div>
@@ -431,7 +521,7 @@ document.getElementById('capture-button').addEventListener('click', function() {
                 document.getElementById('capture-success').classList.add('d-none');
                 
                 // Start status polling
-                captureInterval = setInterval(checkCaptureStatus, 1000);
+                captureInterval = setInterval(checkCaptureStatus, 100);
             }
         });
     }
@@ -618,7 +708,9 @@ function loadResults() {
             
             data.predictions.forEach(prediction => {
                 const row = document.createElement('tr');
+                row.setAttribute('data-prediction', prediction.prediction);
                 row.innerHTML = `
+                    <td><input type="checkbox" class="connection-checkbox-results" value="${prediction.uid}"></td>
                     <td>${prediction.uid}</td>
                     <td>${prediction.timestamp || 'N/A'}</td>
                     <td>${prediction.proto || 'unknown'}</td>
@@ -636,6 +728,12 @@ function loadResults() {
             
             // Load visualizations
             loadVisualizations(data.visualizations);
+            
+            // Store current scan ID from session state (will be used for extraction)
+            window.currentResultsScanId = data.scan_id;
+            
+            // Add event listeners for checkboxes and update counts
+            updateSelectedCountResults();
         }
     });
 }
@@ -705,5 +803,185 @@ document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
         }
     });
 });
+
+// Filter connections based on anomaly toggle in results tab
+function filterResultsConnections() {
+    const showOnlyAnomalies = document.getElementById('anomalyFilterResults').checked;
+    const tableBody = document.getElementById('results-table-body');
+    const rows = tableBody.querySelectorAll('tr');
+    
+    rows.forEach(row => {
+        const prediction = row.getAttribute('data-prediction');
+        if (showOnlyAnomalies) {
+            row.style.display = prediction === 'anomaly' ? '' : 'none';
+        } else {
+            row.style.display = '';
+        }
+    });
+    
+    // Reset checkboxes when filtering
+    document.getElementById('selectAllResults').checked = false;
+    document.querySelectorAll('.connection-checkbox-results').forEach(cb => cb.checked = false);
+    updateSelectedCountResults();
+}
+
+// Toggle select all checkboxes in results tab
+function toggleSelectAllResults() {
+    const selectAll = document.getElementById('selectAllResults');
+    const checkboxes = document.querySelectorAll('.connection-checkbox-results');
+    const visibleCheckboxes = Array.from(checkboxes).filter(cb => 
+        cb.closest('tr').style.display !== 'none'
+    );
+    
+    visibleCheckboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+    });
+    
+    updateSelectedCountResults();
+}
+
+// Update selected count and extract button state in results tab
+function updateSelectedCountResults() {
+    // Add event listeners to connection checkboxes
+    document.querySelectorAll('.connection-checkbox-results').forEach(checkbox => {
+        checkbox.removeEventListener('change', updateSelectedCountResults); // Remove existing listener
+        checkbox.addEventListener('change', updateSelectedCountResults);
+    });
+    
+    const selectedCheckboxes = document.querySelectorAll('.connection-checkbox-results:checked');
+    const count = selectedCheckboxes.length;
+    
+    const selectedCountElement = document.getElementById('selectedCountResults');
+    const extractBtnElement = document.getElementById('extractBtnResults');
+    
+    if (selectedCountElement) {
+        selectedCountElement.textContent = `${count} connection${count !== 1 ? 's' : ''} selected`;
+    }
+    if (extractBtnElement) {
+        extractBtnElement.disabled = count === 0;
+    }
+    
+    // Update select all checkbox state
+    const allCheckboxes = Array.from(document.querySelectorAll('.connection-checkbox-results')).filter(cb => 
+        cb.closest('tr').style.display !== 'none'
+    );
+    const checkedBoxes = Array.from(document.querySelectorAll('.connection-checkbox-results:checked')).filter(cb => 
+        cb.closest('tr').style.display !== 'none'
+    );
+    
+    const selectAllCheckbox = document.getElementById('selectAllResults');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.indeterminate = checkedBoxes.length > 0 && checkedBoxes.length < allCheckboxes.length;
+        selectAllCheckbox.checked = allCheckboxes.length > 0 && checkedBoxes.length === allCheckboxes.length;
+    }
+}
+
+// Show toast notification
+function showToast(message, isSuccess = true) {
+    const toast = document.getElementById('extractionToast');
+    const toastBody = document.getElementById('toastBody');
+    const toastHeader = toast.querySelector('.toast-header');
+    const icon = toastHeader.querySelector('i');
+    
+    // Update toast styling based on success/error
+    if (isSuccess) {
+        toast.className = 'toast border-success';
+        icon.className = 'fas fa-check-circle me-2 text-success';
+        toastHeader.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
+    } else {
+        toast.className = 'toast border-danger';
+        icon.className = 'fas fa-exclamation-circle me-2 text-danger';
+        toastHeader.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
+    }
+    
+    toastBody.innerHTML = message;
+    
+    // Show the toast
+    const bsToast = new bootstrap.Toast(toast, {
+        autohide: true,
+        delay: 5000
+    });
+    bsToast.show();
+}
+
+// Extract selected connections as separate PCAPs in results tab
+function extractSelectedConnectionsResults() {
+    const selectedCheckboxes = document.querySelectorAll('.connection-checkbox-results:checked');
+    const selectedUIDs = Array.from(selectedCheckboxes).map(cb => cb.value);
+    
+    if (selectedUIDs.length === 0) {
+        showToast('Please select at least one connection to extract.', false);
+        return;
+    }
+    
+    // We need to get the current scan ID - for now we'll need to get it from the session
+    fetch('/api/capture_status')
+    .then(response => response.json())
+    .then(statusData => {
+        // Get scan ID from analysis directory path or generate one from timestamp
+        const analysisDir = statusData.analysis_dir || window.currentResultsScanId;
+        const scanId = analysisDir ? analysisDir.split('/').pop() : generateCurrentScanId();
+        
+        if (!scanId) {
+            showToast('Unable to determine scan ID for extraction.', false);
+            return;
+        }
+        
+        // Show loading state
+        const extractBtn = document.getElementById('extractBtnResults');
+        const originalText = extractBtn.innerHTML;
+        extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Extracting...';
+        extractBtn.disabled = true;
+        
+        fetch('/api/reports/extract_pcaps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                scan_id: scanId,
+                connection_uids: selectedUIDs
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let message = `Successfully extracted ${data.extracted_count} PCAP file${data.extracted_count !== 1 ? 's' : ''} to:<br><code>${data.output_path}</code>`;
+                
+                if (data.warnings && data.warnings.length > 0) {
+                    message += `<br><br><small class="text-warning">Some extractions had warnings - check console for details.</small>`;
+                    console.warn('Extraction warnings:', data.warnings);
+                }
+                
+                showToast(message, true);
+                
+                // Reset selections
+                document.querySelectorAll('.connection-checkbox-results').forEach(cb => cb.checked = false);
+                document.getElementById('selectAllResults').checked = false;
+                updateSelectedCountResults();
+            } else {
+                showToast(`Error extracting PCAPs: ${data.error}`, false);
+            }
+        })
+        .catch(error => {
+            showToast(`Error extracting PCAPs: ${error.message}`, false);
+        })
+        .finally(() => {
+            extractBtn.innerHTML = originalText;
+            extractBtn.disabled = document.querySelectorAll('.connection-checkbox-results:checked').length === 0;
+        });
+    })
+    .catch(error => {
+        showToast('Error getting scan information for extraction.', false);
+    });
+}
+
+// Helper function to generate scan ID from current analysis if not available
+function generateCurrentScanId() {
+    // This would be called if we can't get the scan ID from the API
+    // Generate a timestamp-based ID as fallback
+    const now = new Date();
+    return now.toISOString().slice(0, 19).replace(/[-:T]/g, '_');
+}
 </script>
 {% endblock %}

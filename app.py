@@ -644,10 +644,16 @@ def get_results():
     except Exception as e:
         return jsonify({'error': f'Failed to load results: {str(e)}'}), 500
     
+    # Extract scan ID from analysis directory path
+    scan_id = None
+    if session['analysis_dir']:
+        scan_id = os.path.basename(session['analysis_dir'])
+    
     results = {
         'predictions': predictions,
         'analysis_dir': session['analysis_dir'],
-        'graphs_available': session['graphs_generated']
+        'graphs_available': session['graphs_generated'],
+        'scan_id': scan_id
     }
     
     # Get available visualization files
@@ -723,6 +729,41 @@ def get_scan_details(scan_id):
             return jsonify({'error': 'No results found for this scan'}), 404
         
         df = pd.read_csv(csv_file)
+        
+        # Try to read the original conn.log to get protocol information
+        conn_log_path = os.path.join(scan_path, 'zeek_logs', 'conn.log')
+        if os.path.exists(conn_log_path):
+            try:
+                # Read conn.log with proper column parsing
+                with open(conn_log_path, 'r') as f:
+                    for line in f:
+                        if line.startswith('#fields'):
+                            column_names = line.strip().split('\t')[1:]
+                            break
+                
+                conn_df = pd.read_csv(
+                    conn_log_path,
+                    sep='\t',
+                    comment='#',
+                    names=column_names,
+                    na_values='-',
+                    low_memory=False
+                )
+                
+                # Join with prediction results on uid to get protocol info
+                if 'uid' in conn_df.columns and 'uid' in df.columns:
+                    # Select only uid and proto columns from conn.log
+                    conn_subset = conn_df[['uid', 'proto']].copy()
+                    # Merge with prediction results
+                    df = df.merge(conn_subset, on='uid', how='left')
+                    
+            except Exception as e:
+                print(f"Warning: Could not load protocol data from conn.log: {e}")
+                # Add empty protocol column if merge failed
+                df['proto'] = 'unknown'
+        else:
+            # Add empty protocol column if conn.log not found
+            df['proto'] = 'unknown'
         
         # Get visualizations
         visualizations = []
