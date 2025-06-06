@@ -23,30 +23,55 @@
         --cyber-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.2);
     }
 
-    /* Override global background */
+    /* Override global background with fixed parallax banner */
     body {
         background: var(--cyber-bg-dark);
     }
 
-    /* Professional hero section */
-    .hero-section {
-        background: linear-gradient(135deg, var(--cyber-bg-dark) 0%, #1a1a1a 50%, var(--cyber-bg-dark) 100%);
-        padding: 80px 0;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
+    /* Fixed parallax background for whole page */
+    .parallax-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 120vh;
+        background: url(data:image/png;base64,{{ hero_banner_base64 }}) center/cover;
+        background-attachment: fixed;
+        z-index: -2;
+        opacity: 0.8;
+        will-change: transform;
     }
-    
-    .hero-section::before {
+
+    .parallax-bg::before {
         content: '';
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: url(data:image/png;base64,{{ hero_banner_base64 }}) center/cover;
-        opacity: 0.1;
+        background: linear-gradient(135deg, rgba(18, 18, 18, 0.4) 0%, rgba(26, 26, 26, 0.5) 50%, rgba(18, 18, 18, 0.4) 100%);
         z-index: 1;
+    }
+
+    /* Main content container with scrolling effects */
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+        background: transparent;
+        min-height: 100vh;
+    }
+
+    /* Professional hero section with transparent background */
+    .hero-section {
+        background: transparent;
+        padding: 80px 0 120px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     .hero-content {
@@ -55,24 +80,26 @@
         max-width: 800px;
         margin: 0 auto;
         padding: 0 20px;
+        transform: translateY(-80px);
+        transition: transform 0.3s ease;
     }
     
     .hero-logo {
-        max-width: 120px;
-        margin-bottom: 30px;
+        max-width: 360px;
+        margin-bottom: 45px;
         filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
     }
     
     .hero-title {
-        font-size: 3rem;
+        font-size: 4.5rem;
         font-weight: 700;
         color: var(--cyber-text);
-        margin-bottom: 20px;
+        margin-bottom: 30px;
         line-height: 1.2;
     }
     
     .hero-subtitle {
-        font-size: 1.25rem;
+        font-size: 1.875rem;
         color: var(--cyber-text-secondary);
         margin-bottom: 40px;
         font-weight: 400;
@@ -98,7 +125,10 @@
     /* Professional features section */
     .features-section {
         padding: 80px 0;
-        background: var(--cyber-bg-dark);
+        background: rgba(18, 18, 18, 0.75);
+        backdrop-filter: blur(3px);
+        border-top: 1px solid var(--cyber-border);
+        will-change: transform;
     }
     
     .section-title {
@@ -166,7 +196,9 @@
     /* Professional about section */
     .about-section {
         padding: 60px 0;
-        background: rgba(255, 255, 255, 0.02);
+        background: rgba(30, 30, 30, 0.7);
+        backdrop-filter: blur(3px);
+        will-change: transform;
     }
     
     .about-card {
@@ -193,7 +225,9 @@
     /* Professional tools section */
     .tools-section {
         padding: 80px 0;
-        background: var(--cyber-bg-dark);
+        background: rgba(18, 18, 18, 0.75);
+        backdrop-filter: blur(3px);
+        will-change: transform;
     }
     
     .tool-card {
@@ -283,12 +317,20 @@
 
     /* Responsive design */
     @media (max-width: 768px) {
+        .hero-content {
+            transform: translateY(-60px);
+        }
+        
+        .hero-logo {
+            max-width: 270px;
+        }
+        
         .hero-title {
-            font-size: 2.25rem;
+            font-size: 3.375rem;
         }
         
         .hero-subtitle {
-            font-size: 1.125rem;
+            font-size: 1.6875rem;
         }
         
         .section-title {
@@ -306,21 +348,128 @@
         }
     }
 
+    /* Parallax scroll effects */
+    @media (prefers-reduced-motion: no-preference) {
+        .parallax-scroll {
+            transition: transform 0.1s ease-out;
+        }
+    }
+
 </style>
 {% endblock %}
 
+{% block extra_js %}
+<script>
+// Enhanced parallax scrolling effect for all elements
+document.addEventListener('DOMContentLoaded', function() {
+    const parallaxBg = document.querySelector('.parallax-bg');
+    const heroContent = document.querySelector('.hero-content');
+    const featuresSection = document.querySelector('.features-section');
+    const aboutSection = document.querySelector('.about-section');
+    const toolsSection = document.querySelector('.tools-section');
+    const featureCards = document.querySelectorAll('.feature-card');
+    const toolCards = document.querySelectorAll('.tool-card');
+    
+    function updateParallax() {
+        const scrolled = window.pageYOffset;
+        const windowHeight = window.innerHeight;
+        
+        // Background parallax - moves slower than scroll
+        if (parallaxBg) {
+            const bgRate = scrolled * -0.3;
+            parallaxBg.style.transform = `translateY(${bgRate}px)`;
+        }
+        
+        // Hero content parallax and fade
+        if (heroContent) {
+            const heroRate = scrolled * 0.2;
+            const heroOpacity = Math.max(0, 1 - scrolled / (windowHeight * 0.7));
+            heroContent.style.transform = `translateY(${heroRate}px)`;
+            heroContent.style.opacity = heroOpacity;
+        }
+        
+        // Section parallax effects
+        const sections = [featuresSection, aboutSection, toolsSection];
+        sections.forEach((section, index) => {
+            if (section) {
+                const rect = section.getBoundingClientRect();
+                const sectionTop = rect.top + scrolled;
+                const sectionHeight = rect.height;
+                
+                // Only apply parallax when section is in viewport
+                if (rect.top < windowHeight && rect.bottom > 0) {
+                    const sectionScrolled = scrolled - sectionTop + windowHeight;
+                    const rate = sectionScrolled * -0.1 * (index + 1) * 0.5;
+                    section.style.transform = `translateY(${rate}px)`;
+                }
+            }
+        });
+        
+        // Card parallax effects
+        const allCards = [...featureCards, ...toolCards];
+        allCards.forEach((card, index) => {
+            if (card) {
+                const rect = card.getBoundingClientRect();
+                
+                // Only apply parallax when card is in viewport
+                if (rect.top < windowHeight && rect.bottom > 0) {
+                    const cardCenter = rect.top + rect.height / 2;
+                    const distanceFromCenter = (windowHeight / 2) - cardCenter;
+                    const rate = distanceFromCenter * 0.02;
+                    
+                    // Stagger the effect based on card index
+                    const delay = index * 0.01;
+                    const finalRate = rate * (1 - delay);
+                    
+                    card.style.transform = `translateY(${finalRate}px)`;
+                }
+            }
+        });
+    }
+    
+    // Throttle scroll events for better performance
+    let ticking = false;
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(updateParallax);
+            ticking = true;
+        }
+    }
+    
+    function handleScroll() {
+        ticking = false;
+        requestTick();
+    }
+    
+    // Use passive event listener for better performance
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Initial call
+    updateParallax();
+    
+    // Handle resize to recalculate positions
+    window.addEventListener('resize', updateParallax, { passive: true });
+});
+</script>
+{% endblock %}
+
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-section">
-    <div class="hero-content">
-        <img src="data:image/png;base64,{{ logo_base64 }}" class="hero-logo" alt="MantaGuard Logo">
-        <h1 class="hero-title">Welcome to MantaGuard</h1>
-        <p class="hero-subtitle">Real-time Monitoring and Intrusion Detection using AI</p>
-        <a href="{{ url_for('scanning') }}" class="btn hero-cta">
-            <i class="fas fa-radar-chart me-2"></i>Start Scanning
-        </a>
-    </div>
-</section>
+<!-- Fixed Parallax Background -->
+<div class="parallax-bg"></div>
+
+<!-- Content Wrapper -->
+<div class="content-wrapper">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <img src="data:image/png;base64,{{ logo_base64 }}" class="hero-logo" alt="MantaGuard Logo">
+            <h1 class="hero-title">Welcome to MantaGuard</h1>
+            <p class="hero-subtitle">Real-time Monitoring and Intrusion Detection using AI</p>
+            <a href="{{ url_for('scanning') }}" class="btn hero-cta">
+                <i class="fas fa-radar-chart me-2"></i>Start Scanning
+            </a>
+        </div>
+    </section>
 
 <!-- Features Section -->
 <section class="features-section">
@@ -507,4 +656,5 @@
         </div>
     </div>
 </section>
+</div> <!-- End Content Wrapper -->
 {% endblock %}

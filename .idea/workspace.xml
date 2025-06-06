@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Add comprehensive security analytics, API endpoints, and professional styling for the reports page.">
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Revamp Home and Scanning pages with professional design: added advanced styling, interactive components, and enhanced UX elements.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/scanning.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/scanning.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -274,7 +272,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749212767262</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Revamp Home and Scanning pages with professional design: added advanced styling, interactive components, and enhanced UX elements.">
+      <option name="closed" value="true" />
+      <created>1749215939655</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1749215939655</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -356,6 +362,7 @@
     <MESSAGE value="Refactor pages and scripts: integrate session state caching for network interfaces, improve PCAP extraction flow, and reorganize path handling logic for consistency." />
     <MESSAGE value="Add base HTML template and initial structure for Home, Reports, Scanning, and Fix &amp; Patches pages with placeholder content." />
     <MESSAGE value="Add comprehensive security analytics, API endpoints, and professional styling for the reports page." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add comprehensive security analytics, API endpoints, and professional styling for the reports page." />
+    <MESSAGE value="Revamp Home and Scanning pages with professional design: added advanced styling, interactive components, and enhanced UX elements." />
+    <option name="LAST_COMMIT_MESSAGE" value="Revamp Home and Scanning pages with professional design: added advanced styling, interactive components, and enhanced UX elements." />
   </component>
 </project>

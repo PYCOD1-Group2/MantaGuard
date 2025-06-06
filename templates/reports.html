@@ -261,28 +261,6 @@
         box-shadow: var(--cyber-shadow);
     }
     
-    /* Professional refresh button - scoped to reports page only */
-    .container-fluid .refresh-btn {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        z-index: 10;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--cyber-border);
-        border-radius: 6px;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--cyber-text-secondary);
-    }
-    
-    .container-fluid .refresh-btn:hover {
-        background: var(--cyber-bg-hover);
-        color: var(--cyber-primary);
-        border-color: var(--cyber-border-accent);
-    }
     
     /* Professional loading spinner */
     .loading-spinner {
@@ -533,7 +511,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1><i class="fas fa-chart-bar me-2"></i>Security Reports & Analytics</h1>
-                <button class="btn btn-outline-primary refresh-btn" onclick="refreshReports()">
+                <button class="btn btn-outline-primary" onclick="refreshReports()">
                     <i class="fas fa-sync-alt me-2"></i>Refresh Data
                 </button>
             </div>
