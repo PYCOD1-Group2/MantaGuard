@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Clean up `.idea/workspace.xml` to remove redundant changes and reformat properties.">
+    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Refractored the original MANTAGUARD.py into smaller separate files.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MANTAGUARD.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/analyze_capture.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/analyze_capture.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/timed_capture.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/timed_capture.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/reports_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/reports_page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/scanning_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/scanning_page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/session_state.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/session_state.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,7 +107,7 @@
       <workItem from="1749104150988" duration="123000" />
       <workItem from="1749104280831" duration="8112000" />
       <workItem from="1749114945870" duration="4833000" />
-      <workItem from="1749197080593" duration="769000" />
+      <workItem from="1749197080593" duration="8929000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project structure and configuration files for the AI">
       <option name="closed" value="true" />
@@ -249,7 +253,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749118980081</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Refractored the original MANTAGUARD.py into smaller separate files.">
+      <option name="closed" value="true" />
+      <created>1749198059913</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1749198059913</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -296,7 +308,19 @@
         </entry>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="refactor" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -315,6 +339,7 @@
     <MESSAGE value="/" />
     <MESSAGE value="Push" />
     <MESSAGE value="Clean up `.idea/workspace.xml` to remove redundant changes and reformat properties." />
-    <option name="LAST_COMMIT_MESSAGE" value="Clean up `.idea/workspace.xml` to remove redundant changes and reformat properties." />
+    <MESSAGE value="Refractored the original MANTAGUARD.py into smaller separate files." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refractored the original MANTAGUARD.py into smaller separate files." />
   </component>
 </project>

@@ -41,6 +41,8 @@ def initialize_session_state():
         st.session_state.uploaded_file_id = None
     if "uploaded_file_path" not in st.session_state:
         st.session_state.uploaded_file_path = None
+    if "upload_successful" not in st.session_state:
+        st.session_state.upload_successful = False
     
     # Analysis state
     if "analysis_dir" not in st.session_state:

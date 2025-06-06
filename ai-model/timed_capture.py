@@ -12,9 +12,24 @@ import joblib
 import json
 from datetime import datetime
 
-# Add parent directory to path to import custom modules
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'ai-model'))
-from parsers.zeek_loader import load_conn_log, zeek_to_features
+# Add current directory to path to import custom modules
+current_script_dir = os.path.dirname(os.path.abspath(__file__))
+if current_script_dir not in sys.path:
+    sys.path.insert(0, current_script_dir)
+
+# Try importing with error handling
+try:
+    from parsers.zeek_loader import load_conn_log, zeek_to_features
+except ImportError as e:
+    print(f"Import error: {e}")
+    # Try alternative import path
+    import importlib.util
+    zeek_loader_path = os.path.join(current_script_dir, 'parsers', 'zeek_loader.py')
+    spec = importlib.util.spec_from_file_location("zeek_loader", zeek_loader_path)
+    zeek_loader = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(zeek_loader)
+    load_conn_log = zeek_loader.load_conn_log
+    zeek_to_features = zeek_loader.zeek_to_features
 
 def run_capture(interface, duration, output_path):
     """
@@ -78,7 +93,7 @@ def run_capture(interface, duration, output_path):
             print(f"Error during pyshark fallback: {str(pyshark_error)}")
             raise
 
-def update_unknown_categories(unknown_values, filename="ai-model/training/unknown_categories.json"):
+def update_unknown_categories(unknown_values, filename=None):
     """
     Update the unknown categories file with new unknown values.
 
@@ -90,6 +105,11 @@ def update_unknown_categories(unknown_values, filename="ai-model/training/unknow
     Returns:
         dict: Merged unknown values
     """
+    # Set default filename if not provided
+    if filename is None:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        filename = os.path.join(script_dir, 'training', 'unknown_categories.json')
+    
     # Initialize with current unknown values
     merged_unknown_values = unknown_values
 
@@ -128,7 +148,7 @@ def update_unknown_categories(unknown_values, filename="ai-model/training/unknow
 
     return merged_unknown_values
 
-def analyze_pcap_with_zeek(pcap_path, model_dir='ai-model/output/retrained_model', model_version='v2'):
+def analyze_pcap_with_zeek(pcap_path, model_dir=None, model_version='v2'):
     """
     Analyze a PCAP file with Zeek and pass the conn.log to the ML model for classification.
 
@@ -151,11 +171,18 @@ def analyze_pcap_with_zeek(pcap_path, model_dir='ai-model/output/retrained_model
     if not os.path.exists(pcap_path):
         raise FileNotFoundError(f"PCAP file not found: {pcap_path}")
 
+    # Set default model directory if not provided
+    if model_dir is None:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        model_dir = os.path.join(script_dir, 'output', 'retrained_model')
+
     print(f"Analyzing PCAP file with Zeek: {pcap_path}")
 
     # Create a timestamped directory for analysis results
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    analysis_dir = os.path.join('ai-model', 'output', 'analysis_results', timestamp)
+    # Use absolute path to avoid directory resolution issues
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    analysis_dir = os.path.join(script_dir, 'output', 'analysis_results', timestamp)
     os.makedirs(analysis_dir, exist_ok=True)
 
     # Create a zeek_logs subfolder within the analysis directory
@@ -172,19 +199,17 @@ def analyze_pcap_with_zeek(pcap_path, model_dir='ai-model/output/retrained_model
         # Convert to absolute paths to avoid directory issues
         abs_pcap_path = os.path.abspath(pcap_path)
 
-        # Use the most minimal command possible with absolute paths
-        zeek_cmd = f"zeek -r {abs_pcap_path}"
+        # Use absolute path and run from zeek_logs directory without changing working directory globally
+        zeek_cmd = f"cd {zeek_logs_dir} && zeek -r {abs_pcap_path}"
         print(f"Running command: {zeek_cmd}")
 
-        # Change to the zeek_logs directory before running Zeek
-        current_dir = os.getcwd()
-        os.chdir(zeek_logs_dir)
-
-        try:
-            subprocess.run(zeek_cmd, shell=True, check=True)
-        finally:
-            # Change back to the original directory
-            os.chdir(current_dir)
+        # Run command with proper error handling
+        result = subprocess.run(zeek_cmd, shell=True, capture_output=True, text=True)
+        
+        if result.returncode != 0:
+            print(f"Zeek stdout: {result.stdout}")
+            print(f"Zeek stderr: {result.stderr}")
+            raise subprocess.CalledProcessError(result.returncode, zeek_cmd, result.stderr)
 
         # Check if conn.log was created
         if not os.path.exists(conn_log_path):
@@ -368,7 +393,10 @@ if __name__ == "__main__":
         # Generate visualizations
         try:
             import subprocess
-            vis_cmd = f"python ai-model/visualize_results.py {csv_path} {output_dir}"
+            # Use absolute path for visualize_results.py
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            vis_script_path = os.path.join(script_dir, "visualize_results.py")
+            vis_cmd = f"{sys.executable} {vis_script_path} {csv_path} {output_dir}"
             print(f"\nGenerating visualizations with command: {vis_cmd}")
             subprocess.run(vis_cmd, shell=True, check=True)
             print(f"Visualizations saved to: {output_dir}")

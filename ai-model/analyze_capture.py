@@ -6,9 +6,23 @@ import sys
 import pandas as pd
 from datetime import datetime
 
-# Add parent directory to path to import custom modules
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'ai-model'))
-from timed_capture import analyze_pcap_with_zeek
+# Add current directory to path to import custom modules
+current_script_dir = os.path.dirname(os.path.abspath(__file__))
+if current_script_dir not in sys.path:
+    sys.path.insert(0, current_script_dir)
+
+# Try importing with error handling
+try:
+    from timed_capture import analyze_pcap_with_zeek
+except ImportError as e:
+    print(f"Import error: {e}")
+    # Try alternative import path
+    import importlib.util
+    timed_capture_path = os.path.join(current_script_dir, 'timed_capture.py')
+    spec = importlib.util.spec_from_file_location("timed_capture", timed_capture_path)
+    timed_capture = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(timed_capture)
+    analyze_pcap_with_zeek = timed_capture.analyze_pcap_with_zeek
 
 def main():
     # Parse command-line arguments
@@ -37,11 +51,16 @@ def main():
         sys.exit(1)
 
     # Use the specified model directory if provided, otherwise use the default
-    model_dir = sys.argv[2] if len(sys.argv) > 2 else 'ai-model/output/retrained_model'
-
-    # If model_dir doesn't start with 'ai-model/' and doesn't start with '/', add 'ai-model/' prefix
-    if model_dir and not model_dir.startswith('ai-model/') and not model_dir.startswith('/'):
-        model_dir = os.path.join('ai-model', model_dir)
+    if len(sys.argv) > 2:
+        model_dir = sys.argv[2]
+        # If not absolute path, make it relative to script directory
+        if not os.path.isabs(model_dir):
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            model_dir = os.path.join(script_dir, model_dir)
+    else:
+        # Set default model directory using absolute path
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        model_dir = os.path.join(script_dir, 'output', 'retrained_model')
 
     # Use the specified model version if provided, otherwise auto-detect
     model_version = sys.argv[3] if len(sys.argv) > 3 else None
@@ -74,7 +93,10 @@ def main():
         # Generate visualizations
         try:
             import subprocess
-            vis_cmd = f"python ai-model/visualize_results.py {csv_path} {output_dir}"
+            # Use absolute path for visualize_results.py
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            vis_script_path = os.path.join(script_dir, "visualize_results.py")
+            vis_cmd = f"{sys.executable} {vis_script_path} {csv_path} {output_dir}"
             print(f"\nGenerating visualizations with command: {vis_cmd}")
             subprocess.run(vis_cmd, shell=True, check=True)
             print(f"Visualizations saved to: {output_dir}")

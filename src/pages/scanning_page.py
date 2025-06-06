@@ -56,8 +56,21 @@ def render_timed_capture_tab():
     timed_capture, visualize_results = import_ai_modules()
 
     # Network interface selection
-    available_interfaces = get_network_interfaces()
-    interface = st.selectbox("Network Interface", available_interfaces, help="Select your network interface")
+    col1, col2 = st.columns([4, 1])
+    
+    with col1:
+        # Get interfaces, using session state to cache and allow refresh
+        if 'network_interfaces' not in st.session_state:
+            st.session_state.network_interfaces = get_network_interfaces()
+        
+        interface = st.selectbox("Network Interface", st.session_state.network_interfaces, help="Select your network interface")
+    
+    with col2:
+        st.markdown('<div style="margin-top: 31px;"></div>', unsafe_allow_html=True)
+        if st.button("🔄 Refresh", help="Refresh network interfaces", type="secondary", use_container_width=True):
+            with st.spinner("Refreshing..."):
+                st.session_state.network_interfaces = get_network_interfaces()
+            st.rerun()
 
     # Duration selection
     duration = st.slider("Capture Duration (seconds)", 5, 300, 60, 5)

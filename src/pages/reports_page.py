@@ -10,8 +10,9 @@ from datetime import datetime
 
 def import_visualize_results():
     """Import visualize_results module dynamically."""
-    visualize_results_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                        'ai-model', 'visualize_results.py')
+    # Get the project root directory (three levels up from src/pages/)
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    visualize_results_path = os.path.join(project_root, 'ai-model', 'visualize_results.py')
     spec = importlib.util.spec_from_file_location("visualize_results", visualize_results_path)
     visualize_results = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(visualize_results)
@@ -21,8 +22,8 @@ def extract_pcap_for_uid(uid, conn_log_path, pcap_path, latest_analysis_dir):
     """Extract PCAP for a specific UID."""
     try:
         # Create forensics directory if it doesn't exist
-        forensics_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                    "ai-model", "forensics")
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        forensics_dir = os.path.join(project_root, "ai-model", "forensics")
         os.makedirs(forensics_dir, exist_ok=True)
 
         # Determine the output path based on the analysis directory
@@ -33,8 +34,7 @@ def extract_pcap_for_uid(uid, conn_log_path, pcap_path, latest_analysis_dir):
         output_path = os.path.join(forensics_subdir, output_filename)
 
         # Build the command to run extract_flow_by_uid.py
-        extract_script_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                         "ai-model", "extract_flow_by_uid.py")
+        extract_script_path = os.path.join(project_root, "ai-model", "extract_flow_by_uid.py")
         cmd = [
             "python", extract_script_path,
             "--uid", uid,
@@ -52,8 +52,6 @@ def extract_pcap_for_uid(uid, conn_log_path, pcap_path, latest_analysis_dir):
 
         # Check if the output file was created
         if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
-            st.success(f"Flow extracted: {output_filename}")
-
             # Optional: Log the extraction for audit purposes
             analysis_dir_name = os.path.basename(latest_analysis_dir)
             forensics_subdir = os.path.join(forensics_dir, analysis_dir_name)
@@ -84,8 +82,8 @@ def extract_pcap_for_uid(uid, conn_log_path, pcap_path, latest_analysis_dir):
 def render_latest_analysis_results():
     """Render the latest analysis results section."""
     # Find the most recent analysis results directory
-    analysis_results_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                      "ai-model", "output", "analysis_results")
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    analysis_results_dir = os.path.join(project_root, "ai-model", "output", "analysis_results")
     analysis_dirs = glob.glob(os.path.join(analysis_results_dir, "*"))
 
     # Sort by modification time (most recent first)
@@ -159,8 +157,8 @@ def render_csv_results(latest_analysis_dir):
             download_container = st.container()
 
             # Find the original PCAP file and conn.log file
-            pcap_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                  "ai-model", "pcaps")
+            project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            pcap_dir = os.path.join(project_root, "ai-model", "pcaps")
             zeek_logs_dir = os.path.join(latest_analysis_dir, "zeek_logs")
 
             # Find the most recent PCAP file
@@ -170,62 +168,113 @@ def render_csv_results(latest_analysis_dir):
             # Find the conn.log file
             conn_log_path = os.path.join(zeek_logs_dir, "conn.log") if os.path.exists(zeek_logs_dir) else None
 
-            if not pcap_path or not conn_log_path or not os.path.exists(conn_log_path):
-                st.warning("Cannot extract PCAPs: Missing original PCAP file or conn.log")
-                st.dataframe(display_df)
-            else:
-                # Display the results with extraction capability
-                st.write("Click 'Extract PCAP' for any anomalous connection to extract the raw network flow:")
+            # Always show the dataframe first for quick overview
+            st.subheader("Analysis Results")
+            
+            # Add selection column to dataframe for interactive selection
+            selection_df = display_df.copy()
+            selection_df.insert(0, "Select", False)
+            
+            # Use data_editor to allow row selection
+            edited_df = st.data_editor(
+                selection_df,
+                use_container_width=True,
+                hide_index=True,
+                column_config={
+                    "Select": st.column_config.CheckboxColumn("Select", width="small"),
+                    "uid": st.column_config.TextColumn("UID", width="medium"),
+                    "prediction": st.column_config.TextColumn("Prediction", width="small"),
+                    "score": st.column_config.NumberColumn("Score", format="%.4f", width="small") if "score" in display_df.columns else None,
+                    "anomaly_score": st.column_config.NumberColumn("Score", format="%.4f", width="small") if "anomaly_score" in display_df.columns else None,
+                    "proto": st.column_config.TextColumn("Protocol", width="small"),
+                    "service": st.column_config.TextColumn("Service", width="small")
+                },
+                disabled=[col for col in selection_df.columns if col != "Select"],  # Only allow editing Select column
+                key="results_selector"
+            )
+            
+            if pcap_path and conn_log_path and os.path.exists(conn_log_path):
+                # PCAP extraction section
+                st.subheader("PCAP Extraction")
                 
-                # Create expanders for each row in the dataframe
-                for i, row in display_df.iterrows():
-                    uid = row['uid']
-                    # Check for both possible score column names
-                    score = row.get('score', row.get('anomaly_score', 0))
-                    proto = row.get('proto', 'unknown')
-                    service = row.get('service', 'unknown')
-                    prediction = row.get('prediction', 'unknown')
-
-                    # Format prediction label to capitalize first letter
-                    prediction_label = prediction.capitalize() if prediction else "Unknown"
-
-                    # Create an expander for this row with styling based on prediction
-                    expander_label = f"UID: {uid} | Prediction: {prediction_label} | Score: {score:.4f} | Proto: {proto} | Service: {service}"
-
-                    # Apply styling based on prediction
-                    if prediction == 'anomaly':
-                        # Add visual indicator for anomalies in the label itself
-                        expander_label = f"🚨 {expander_label}"
-
-                    # Create expander
-                    expander = st.expander(expander_label, expanded=False)
-
-                    # Use the expander context
-                    with expander:
-                        # Display all row data
-                        for col in results_df.columns:
-                            st.write(f"**{col}:** {row[col]}")
-
-                        # Add Extract PCAP button
-                        if st.button(f"Extract PCAP", key=f"extract_{uid}"):
-                            with extract_status:
-                                st.info(f"Extracting flow for UID: {uid}...")
+                # Find selected rows
+                selected_rows = edited_df[edited_df["Select"] == True]
+                
+                if len(selected_rows) > 0:
+                    # Show selected connections info
+                    num_selected = len(selected_rows)
+                    selected_uids = selected_rows['uid'].tolist()
+                    
+                    if num_selected == 1:
+                        selected_row = selected_rows.iloc[0]
+                        prediction = selected_row.get('prediction', 'unknown')
+                        score = selected_row.get('score', selected_row.get('anomaly_score', 0))
+                        st.info(f"Selected connection: UID {selected_uids[0]} | Prediction: {prediction} | Score: {score:.4f}")
+                    else:
+                        st.info(f"Selected {num_selected} connections: {', '.join(selected_uids[:3])}{' ...' if num_selected > 3 else ''}")
+                    
+                    # Extract PCAP button
+                    extract_label = f"Extract PCAP{'s' if num_selected > 1 else ''}"
+                    if st.button(extract_label, key="extract_selected_pcap"):
+                        # Extract all selected PCAPs
+                        extracted_files = []
+                        progress_bar = st.progress(0)
+                        status_text = st.empty()
+                        
+                        for i, (_, row) in enumerate(selected_rows.iterrows()):
+                            uid = row['uid']
+                            status_text.text(f"Extracting PCAP {i+1}/{num_selected}: {uid}")
+                            progress_bar.progress((i) / num_selected)
                             
                             output_path = extract_pcap_for_uid(uid, conn_log_path, pcap_path, latest_analysis_dir)
-
                             if output_path:
-                                # Read the file for download
-                                with open(output_path, 'rb') as f:
+                                extracted_files.append((uid, output_path))
+                        
+                        progress_bar.progress(1.0)
+                        status_text.text("Extraction complete!")
+                        
+                        if extracted_files:
+                            st.success(f"Successfully extracted {len(extracted_files)} PCAP file{'s' if len(extracted_files) > 1 else ''}")
+                            
+                            # Download buttons section
+                            st.write("**Download extracted PCAPs:**")
+                            for uid, file_path in extracted_files:
+                                with open(file_path, 'rb') as f:
                                     pcap_data = f.read()
-
-                                # Create a download button in the download container
-                                with download_container:
-                                    st.download_button(
-                                        label=f"Download PCAP for {uid}",
-                                        data=pcap_data,
-                                        file_name=os.path.basename(output_path),
-                                        mime="application/vnd.tcpdump.pcap"
-                                    )
+                                
+                                st.download_button(
+                                    label=f"📁 Download {uid}.pcap",
+                                    data=pcap_data,
+                                    file_name=os.path.basename(file_path),
+                                    mime="application/vnd.tcpdump.pcap",
+                                    key=f"download_{uid}"
+                                )
+                            
+                            # Optional: Create a ZIP file with all PCAPs for batch download
+                            if len(extracted_files) > 1:
+                                import zipfile
+                                import io
+                                
+                                zip_buffer = io.BytesIO()
+                                with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                                    for uid, file_path in extracted_files:
+                                        zip_file.write(file_path, os.path.basename(file_path))
+                                
+                                zip_buffer.seek(0)
+                                
+                                st.download_button(
+                                    label=f"📦 Download All PCAPs as ZIP ({len(extracted_files)} files)",
+                                    data=zip_buffer.getvalue(),
+                                    file_name=f"extracted_pcaps_{len(extracted_files)}_files.zip",
+                                    mime="application/zip",
+                                    key="download_all_pcaps_zip"
+                                )
+                        else:
+                            st.error("No PCAP files could be extracted. Check that the connections exist in the original capture.")
+                else:
+                    st.info("👆 Check the 'Select' checkbox for any connection in the table above to extract its PCAP.")
+            else:
+                st.info("PCAP extraction not available - missing original PCAP file or Zeek logs.")
 
             # Option to download the CSV
             csv_data = display_df.to_csv(index=False)
@@ -241,8 +290,8 @@ def render_csv_results(latest_analysis_dir):
 
 def render_legacy_graphs():
     """Render legacy graphs from the graphs directory."""
-    graphs_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                            "ai-model", "graphs")
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    graphs_dir = os.path.join(project_root, "ai-model", "graphs")
     graph_files = glob.glob(os.path.join(graphs_dir, "*.png")) if os.path.exists(graphs_dir) else []
 
     if graph_files:
@@ -297,8 +346,6 @@ def render_legacy_graphs():
 
                         # Use queue for thread-safe state updates
                         state_updates.put(("graphs_generated", True))
-                        # Add a flag to indicate that a rerun is needed
-                        state_updates.put(("needs_rerun", True))
                     except Exception as e:
                         # Use queue for thread-safe error reporting
                         error_q.put(f"Error generating graphs: {str(e)}")
@@ -315,8 +362,8 @@ def render_legacy_graphs():
 
 def render_labeled_anomalies():
     """Render labeled anomalies section."""
-    labeled_anomalies_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                        "ai-model", "labeled_anomalies.csv")
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    labeled_anomalies_path = os.path.join(project_root, "ai-model", "labeled_anomalies.csv")
 
     if os.path.exists(labeled_anomalies_path):
         st.subheader("Labeled Anomalies")
@@ -340,6 +387,10 @@ def render_labeled_anomalies():
 def render_reports_page():
     """Render the complete reports and visualizations page."""
     st.title("📊 Reports and Visualizations")
+    
+    # Process any pending state updates (but don't trigger reruns)
+    from src.utils.session_state import process_state_updates
+    process_state_updates()
 
     # Try to render latest analysis results first
     has_analysis_results = render_latest_analysis_results()
