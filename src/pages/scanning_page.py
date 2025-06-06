@@ -10,19 +10,33 @@ import importlib.util
 from datetime import datetime
 import csv
 import queue
+import netifaces
+
+def get_network_interfaces():
+    """Get available network interfaces on the system."""
+    try:
+        interfaces = netifaces.interfaces()
+        # Filter out loopback interface for better UX
+        filtered_interfaces = [iface for iface in interfaces if iface != 'lo']
+        # If no interfaces after filtering, return all
+        return filtered_interfaces if filtered_interfaces else interfaces
+    except Exception:
+        # Fallback to common interface names if netifaces fails
+        return ['eth0', 'wlan0', 'enp0s3', 'wlp3s0']
 
 def import_ai_modules():
     """Import AI model modules dynamically."""
+    # Get the project root directory (two levels up from src/pages/)
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    
     # Import timed_capture module
-    timed_capture_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                    'ai-model', 'timed_capture.py')
+    timed_capture_path = os.path.join(project_root, 'ai-model', 'timed_capture.py')
     spec = importlib.util.spec_from_file_location("timed_capture", timed_capture_path)
     timed_capture = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(timed_capture)
 
     # Import visualize_results module
-    visualize_results_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                        'ai-model', 'visualize_results.py')
+    visualize_results_path = os.path.join(project_root, 'ai-model', 'visualize_results.py')
     spec = importlib.util.spec_from_file_location("visualize_results", visualize_results_path)
     visualize_results = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(visualize_results)
@@ -33,10 +47,17 @@ def render_timed_capture_tab():
     """Render the timed capture tab content."""
     st.header("Timed Network Capture")
     
+    # Process any pending state updates from background threads at the start of rendering
+    from src.utils.session_state import process_state_updates
+    needs_rerun = process_state_updates()
+    if needs_rerun:
+        st.rerun()
+    
     timed_capture, visualize_results = import_ai_modules()
 
     # Network interface selection
-    interface = st.text_input("Network Interface", "eth0", help="Enter your network interface (e.g., eth0, wlan0)")
+    available_interfaces = get_network_interfaces()
+    interface = st.selectbox("Network Interface", available_interfaces, help="Select your network interface")
 
     # Duration selection
     duration = st.slider("Capture Duration (seconds)", 5, 300, 60, 5)
@@ -57,10 +78,14 @@ def render_timed_capture_tab():
                 st.session_state.refreshed_after_scan = False
                 st.session_state.refresh_count = 0
                 st.session_state.success_message_displayed = False
+                
+                # Initialize capture timer
+                st.session_state.capture_start_time = time.time()
+                st.session_state.capture_duration = duration
 
                 # Create pcaps directory if it doesn't exist
-                pcap_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                      "ai-model", "pcaps")
+                project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                pcap_dir = os.path.join(project_root, "ai-model", "pcaps")
                 os.makedirs(pcap_dir, exist_ok=True)
 
                 # Generate output path
@@ -75,18 +100,44 @@ def render_timed_capture_tab():
                 # Run capture in a separate thread to keep UI responsive
                 def run_capture_thread(state_updates, error_q):
                     try:
+                        # Ensure we're in the project root directory
+                        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                        original_cwd = os.getcwd()
+                        os.chdir(project_root)
+                        
+                        # Step 1: Network capture
+                        state_updates.put(("capture_progress", 0.1))
+                        state_updates.put(("capture_status", "Starting network capture..."))
+                        
+                        # Start capture timer
+                        start_time = time.time()
+                        state_updates.put(("capture_timer_start", start_time))
+                        
                         timed_capture.run_capture(interface, duration, output_path)
-                        # Process the PCAP file after capture
-                        # Use queue for thread-safe state updates
+                        
+                        # Step 2: Capture completed, starting analysis
+                        state_updates.put(("capture_progress", 0.3))
+                        state_updates.put(("capture_status", "Network capture completed. Starting analysis..."))
                         state_updates.put(("processing", True))
+                        
+                        # Step 3: Zeek processing
+                        state_updates.put(("capture_progress", 0.5))
+                        state_updates.put(("capture_status", "Processing packets with Zeek..."))
+                        
                         results, analysis_dir = timed_capture.analyze_pcap_with_zeek(output_path)
 
-                        # Save results to CSV
+                        # Step 4: Save results to CSV
+                        state_updates.put(("capture_progress", 0.7))
+                        state_updates.put(("capture_status", "Running ML analysis..."))
+                        
                         csv_path = os.path.join(analysis_dir, 'prediction_results.csv')
                         results_df = pd.DataFrame(results)
                         results_df.to_csv(csv_path, index=False)
 
-                        # Generate visualizations
+                        # Step 5: Generate visualizations
+                        state_updates.put(("capture_progress", 0.85))
+                        state_updates.put(("capture_status", "Generating visualizations..."))
+                        
                         try:
                             # Create visualizations using the imported module
                             data, has_true_label = visualize_results.load_data(csv_path)
@@ -101,16 +152,26 @@ def render_timed_capture_tab():
                         except Exception as vis_error:
                             error_q.put(f"Warning: Failed to generate visualizations: {str(vis_error)}")
 
+                        # Step 6: Complete
+                        state_updates.put(("capture_progress", 1.0))
+                        state_updates.put(("capture_status", "Analysis completed successfully!"))
+                        
                         # Store the analysis directory path in session state
                         state_updates.put(("analysis_dir", analysis_dir))
                         state_updates.put(("predictions", results))
                         state_updates.put(("processing", False))
                         # Set scan_completed flag to True
                         state_updates.put(("scan_completed", True))
+                        # Trigger a rerun to display the success message immediately
+                        state_updates.put(("needs_rerun", True))
                     except Exception as e:
                         # Use queue for thread-safe error reporting
                         error_q.put(f"Error during capture or analysis: {str(e)}")
+                        state_updates.put(("capture_progress", 0))
+                        state_updates.put(("capture_status", ""))
                     finally:
+                        # Restore original working directory
+                        os.chdir(original_cwd)
                         state_updates.put(("scanning", False))
 
                 thread = threading.Thread(target=run_capture_thread, args=(state_updates_queue, error_queue))
@@ -120,105 +181,133 @@ def render_timed_capture_tab():
                 # Stop the current capture
                 st.session_state.scanning = False
 
-    # Scanning animation
-    if st.session_state.scanning:
-        scan_placeholder = st.empty()
-        scan_placeholder.info(f"Capturing packets on {interface} for {duration} seconds...")
-
-    # Processing animation
-    if st.session_state.processing:
-        process_placeholder = st.empty()
-        process_placeholder.info("Processing captured packets with Zeek and ML model...")
+    # Progress tracking during capture and analysis
+    if st.session_state.scanning or st.session_state.processing:
+        # Show progress bar and status
+        progress = st.session_state.get('capture_progress', 0)
+        status = st.session_state.get('capture_status', 'Starting...')
+        
+        # Show countdown timer during capture phase
+        if st.session_state.scanning and hasattr(st.session_state, 'capture_start_time'):
+            elapsed_time = time.time() - st.session_state.capture_start_time
+            remaining_time = max(0, st.session_state.capture_duration - elapsed_time)
+            
+            # Calculate timer progress (separate from analysis progress)
+            timer_progress = min(elapsed_time / st.session_state.capture_duration, 1.0)
+            
+            # Display countdown info
+            minutes, seconds = divmod(int(remaining_time), 60)
+            if remaining_time > 0:
+                st.info(f"📡 Capturing packets on {interface} - {minutes:02d}:{seconds:02d} remaining")
+                # Timer progress bar
+                capture_progress_bar = st.progress(timer_progress)
+            else:
+                st.info("📡 Capture completed, processing data...")
+                capture_progress_bar = st.progress(1.0)
+        else:
+            st.info(status)
+        
+        # Analysis progress bar (shown during processing phase)
+        if st.session_state.processing:
+            analysis_progress_bar = st.progress(progress)
+        
+        # Auto-refresh more frequently during scanning for smoother timer, less frequently during processing
+        if st.session_state.scanning:
+            time.sleep(0.1)  # Update every 100ms for smooth timer progress
+        else:
+            time.sleep(1)    # Update every 1 second during processing
+        st.rerun()
 
     # Display scan completed message
     if st.session_state.scan_completed:
-        st.success("✅ Scan Completed! All files have been generated successfully.")
-        st.info("You can view the results by clicking on the 'Results' tab above.")
-
-        # Set the success_message_displayed flag to True
-        st.session_state.success_message_displayed = True
-
-        # Trigger a page refresh twice after a scan
-        if st.session_state.refresh_count < 2:
-            # Increment the refresh count
-            st.session_state.refresh_count += 1
-            # Set refreshed_after_scan to True after the final refresh
-            if st.session_state.refresh_count >= 2:
-                st.session_state.refreshed_after_scan = True
-
-            # Add a longer delay for the first refresh to ensure the success message is seen
-            if st.session_state.refresh_count == 1:
-                time.sleep(3)  # 3 seconds for the first refresh
-            else:
-                time.sleep(1)  # 1 second for subsequent refreshes
-
-            st.rerun()
+        if not st.session_state.success_message_displayed:
+            st.success("✅ Scan Completed! All files have been generated successfully.")
+            st.info("You can view the results by clicking on the 'Results' tab above.")
+            # Set the success_message_displayed flag to True to prevent repeated displays
+            st.session_state.success_message_displayed = True
+        else:
+            # Keep showing the success message even after it's been displayed once
+            st.success("✅ Scan Completed! All files have been generated successfully.")
+            st.info("You can view the results by clicking on the 'Results' tab above.")
 
 def render_upload_pcap_tab():
     """Render the upload PCAP tab content."""
     st.header("Upload PCAP File")
     
-    visualize_results = import_ai_modules()[1]
-
+    # Process any pending state updates from background threads
+    from src.utils.session_state import process_state_updates
+    process_state_updates()
+    
     # File uploader for PCAP files
     uploaded_file = st.file_uploader("Upload a PCAP file", type=["pcap", "pcapng"])
 
     if uploaded_file is not None:
         # Create pcaps directory if it doesn't exist
-        pcap_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                              "ai-model", "pcaps")
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        pcap_dir = os.path.join(project_root, "ai-model", "pcaps")
         os.makedirs(pcap_dir, exist_ok=True)
 
-        # Check if we already have a save_path for this file in session state
-        file_id = uploaded_file.name + str(uploaded_file.size)
-        if "uploaded_file_id" not in st.session_state or st.session_state.uploaded_file_id != file_id:
-            # This is a new file upload, generate a new save_path
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            save_path = os.path.join(pcap_dir, f"uploaded_{timestamp}.pcap")
+        # Generate save path
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_path = os.path.join(pcap_dir, f"uploaded_{timestamp}_{uploaded_file.name}")
 
-            # Save the file
-            with open(save_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
-
-            # Store the file ID and save_path in session state
-            st.session_state.uploaded_file_id = file_id
-            st.session_state.uploaded_file_path = save_path
-        else:
-            # Use the existing save_path for this file
-            save_path = st.session_state.uploaded_file_path
+        # Show upload progress
+        upload_progress = st.progress(0)
+        upload_status = st.empty()
+        
+        # Save the file with progress tracking
+        upload_status.text("Uploading file...")
+        upload_progress.progress(0.3)
+        
+        with open(save_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        
+        upload_progress.progress(1.0)
+        upload_status.text("Upload completed!")
+        
+        st.success(f"✅ PCAP file '{uploaded_file.name}' uploaded successfully!")
 
         # Analyze button
-        if st.button("Analyze PCAP"):
-            st.session_state.pcap_path = save_path
-            # Reset scan_completed, refreshed_after_scan, refresh_count, and success_message_displayed flags
+        if st.button("Analyze PCAP", key="analyze_uploaded_pcap"):
+            # Reset states
             st.session_state.scan_completed = False
-            st.session_state.refreshed_after_scan = False
-            st.session_state.refresh_count = 0
             st.session_state.success_message_displayed = False
+            st.session_state.processing = True
+            st.session_state.pcap_path = save_path
 
-            # Create local references to the queues
+            # Start analysis in background thread
             state_updates_queue = st.session_state.state_updates
             error_queue = st.session_state.error_queue
 
-            # Run analysis in a separate thread to keep UI responsive
-            def analyze_thread(state_updates, error_q):
+            def analyze_thread(pcap_path, state_updates, error_q):
                 try:
-                    # Use queue for thread-safe state updates
-                    state_updates.put(("processing", True))
+                    # Ensure we're in the project root directory
+                    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                    original_cwd = os.getcwd()
+                    os.chdir(project_root)
+                    
+                    # Step 1: Starting analysis
+                    state_updates.put(("upload_progress", 0.1))
+                    state_updates.put(("upload_status", "Starting PCAP analysis..."))
+                    
+                    # Run analyze_capture.py script
+                    analyze_script_path = os.path.join(project_root, "ai-model", "analyze_capture.py")
+                    cmd = f"python {analyze_script_path} {pcap_path}"
 
-                    # Use analyze_capture.py script instead of directly calling timed_capture.analyze_pcap_with_zeek
-                    analyze_script_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                                     "ai-model", "analyze_capture.py")
-                    cmd = f"python {analyze_script_path} {save_path}"
-                    print(f"Running command: {cmd}")
-
-                    # Run the analyze_capture.py script
+                    # Step 2: Processing with Zeek
+                    state_updates.put(("upload_progress", 0.3))
+                    state_updates.put(("upload_status", "Processing PCAP with Zeek..."))
+                    
+                    # Run the analysis
                     process = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
 
-                    # Extract the CSV path from the output
-                    output_lines = process.stdout.splitlines()
+                    # Step 3: ML Analysis
+                    state_updates.put(("upload_progress", 0.6))
+                    state_updates.put(("upload_status", "Running ML analysis..."))
+                    
+                    # Extract CSV path from output
                     csv_path = None
-                    for line in output_lines:
+                    for line in process.stdout.splitlines():
                         if "Results saved to CSV:" in line:
                             csv_path = line.split("Results saved to CSV:")[1].strip()
                             break
@@ -226,21 +315,20 @@ def render_upload_pcap_tab():
                     if not csv_path or not os.path.exists(csv_path):
                         raise Exception("Could not find CSV file with results")
 
-                    # Extract the analysis directory from the CSV path
+                    # Load results
                     analysis_dir = os.path.dirname(csv_path)
-
-                    # Load the results from the CSV file
                     results_df = pd.read_csv(csv_path)
                     results = results_df.to_dict('records')
 
-                    # Generate visualizations
+                    # Step 4: Generate visualizations
+                    state_updates.put(("upload_progress", 0.8))
+                    state_updates.put(("upload_status", "Generating visualizations..."))
+                    
                     try:
-                        # Create visualizations using the imported module
+                        visualize_results = import_ai_modules()[1]
                         data, has_true_label = visualize_results.load_data(csv_path)
                         visualize_results.create_score_histogram(data, analysis_dir)
                         visualize_results.create_time_series(data, analysis_dir)
-
-                        # Only create these if we have true labels
                         if has_true_label:
                             visualize_results.create_roc_curve(data, has_true_label, analysis_dir)
                             visualize_results.create_precision_recall_curve(data, has_true_label, analysis_dir)
@@ -248,51 +336,59 @@ def render_upload_pcap_tab():
                     except Exception as vis_error:
                         error_q.put(f"Warning: Failed to generate visualizations: {str(vis_error)}")
 
-                    # Store the analysis directory path in session state
+                    # Step 5: Complete
+                    state_updates.put(("upload_progress", 1.0))
+                    state_updates.put(("upload_status", "Analysis completed successfully!"))
+                    
+                    # Update session state
                     state_updates.put(("analysis_dir", analysis_dir))
                     state_updates.put(("predictions", results))
-                    state_updates.put(("processing", False))
-                    # Set scan_completed flag to True
                     state_updates.put(("scan_completed", True))
-                except Exception as e:
-                    # Use queue for thread-safe error reporting
-                    error_q.put(f"Error during analysis: {str(e)}")
+                    state_updates.put(("processing", False))
+                    state_updates.put(("needs_rerun", True))
 
-            thread = threading.Thread(target=analyze_thread, args=(state_updates_queue, error_queue))
+                except Exception as e:
+                    error_q.put(f"Error during analysis: {str(e)}")
+                    state_updates.put(("upload_progress", 0))
+                    state_updates.put(("upload_status", ""))
+                    state_updates.put(("processing", False))
+                finally:
+                    # Restore original working directory
+                    os.chdir(original_cwd)
+
+            thread = threading.Thread(target=analyze_thread, args=(save_path, state_updates_queue, error_queue))
             thread.daemon = True
             thread.start()
+            st.rerun()
 
-        # Processing animation
-        if st.session_state.processing:
-            process_placeholder = st.empty()
-            process_placeholder.info("Processing PCAP file with Zeek and ML model...")
+    # Show processing status with progress bar
+    if st.session_state.processing:
+        # Show progress bar and status for upload analysis
+        progress = st.session_state.get('upload_progress', 0)
+        status = st.session_state.get('upload_status', 'Processing PCAP file...')
+        
+        st.info(status)
+        progress_bar = st.progress(progress)
+        
+        # Auto-refresh every 1 second during processing to check for updates
+        time.sleep(1)
+        st.rerun()
 
-        # Display scan completed message
-        if st.session_state.scan_completed:
-            st.info("You can view the results by clicking on the 'Results' tab above.")
-
-            # Set the success_message_displayed flag to True
-            st.session_state.success_message_displayed = True
-
-            # Trigger a page refresh twice after a scan
-            if st.session_state.refresh_count < 2:
-                # Increment the refresh count
-                st.session_state.refresh_count += 1
-                # Set refreshed_after_scan to True after the final refresh
-                if st.session_state.refresh_count >= 2:
-                    st.session_state.refreshed_after_scan = True
-
-                # Add a longer delay for the first refresh to ensure the success message is seen
-                if st.session_state.refresh_count == 1:
-                    time.sleep(3)  # 3 seconds for the first refresh
-                else:
-                    time.sleep(1)  # 1 second for subsequent refreshes
-
-                st.rerun()
+    # Show completion notification
+    if st.session_state.scan_completed and not st.session_state.success_message_displayed:
+        st.success("✅ Analysis Complete! Results are ready.")
+        st.info("Click on the 'Results' tab to view the analysis results.")
+        st.session_state.success_message_displayed = True
 
 def render_results_tab():
     """Render the results tab content."""
     st.header("Analysis Results")
+    
+    # Process any pending state updates from background threads at the start of rendering
+    from src.utils.session_state import process_state_updates
+    needs_rerun = process_state_updates()
+    if needs_rerun:
+        st.rerun()
     
     visualize_results = import_ai_modules()[1]
 
@@ -328,8 +424,8 @@ def render_results_tab():
             selected_row['user_label'] = label
 
             # Append to labeled_anomalies.csv
-            csv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                  "ai-model", "labeled_anomalies.csv")
+            project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            csv_path = os.path.join(project_root, "ai-model", "labeled_anomalies.csv")
 
             # Check if file exists to determine if we need to write headers
             file_exists = os.path.isfile(csv_path)
@@ -374,8 +470,8 @@ def render_results_tab():
             # Generate graphs button (legacy support)
             if st.button("Generate Graphs"):
                 # Create output directory for graphs
-                graphs_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                        "ai-model", "graphs")
+                project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                graphs_dir = os.path.join(project_root, "ai-model", "graphs")
                 os.makedirs(graphs_dir, exist_ok=True)
 
                 # Save predictions to CSV for visualization
@@ -425,8 +521,8 @@ def render_results_tab():
             if st.session_state.get('graphs_generated', False):
                 st.subheader("Visualization Graphs")
 
-                graphs_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                        "ai-model", "graphs")
+                project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                graphs_dir = os.path.join(project_root, "ai-model", "graphs")
 
                 # Find all PNG files in the graphs directory
                 graph_files = glob.glob(os.path.join(graphs_dir, "*.png"))
@@ -442,6 +538,12 @@ def render_results_tab():
 def render_scanning_page():
     """Render the complete scanning page with tabs."""
     st.title("📡 Network Scanning")
+    
+    # Process any pending state updates from background threads
+    from src.utils.session_state import process_state_updates
+    needs_rerun = process_state_updates()
+    if needs_rerun:
+        st.rerun()
 
     # Create tabs for different scanning methods
     tab_options = ["Timed Capture", "Upload PCAP", "Results"]
@@ -453,10 +555,11 @@ def render_scanning_page():
     # Check if the tab has changed
     if st.session_state.active_tab != current_tab_index:
         st.session_state.active_tab = current_tab_index
-        # Make sure we preserve the current sidebar selection during rerun
-        if hasattr(st.session_state, 'current_selection'):
-            # Also preserve the previous selection to avoid triggering another rerun
-            st.session_state.previous_selection = st.session_state.current_selection
+        # Process any pending state updates before rerunning - do this multiple times to catch all updates
+        from src.utils.session_state import process_state_updates
+        for _ in range(3):  # Process multiple times to catch all pending updates
+            process_state_updates()
+            time.sleep(0.05)  # Small delay to allow updates to settle
         # Force a rerun to refresh the page when tab changes
         st.rerun()
 
