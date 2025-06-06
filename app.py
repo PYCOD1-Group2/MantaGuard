@@ -1,55 +1,578 @@
 import sys
 import os
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify, send_from_directory
+import threading
+import queue
+from datetime import datetime
+import pandas as pd
+import subprocess
+import glob
+import importlib.util
+import time
+import csv
+import netifaces
+
+# Set matplotlib backend to non-GUI to prevent threading warnings
+import matplotlib
+matplotlib.use('Agg')
 
 # Add the current directory to the Python path so we can import from src
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from src.utils.config import setup_page_config, ensure_directories
-from src.utils.session_state import initialize_session_state, process_state_updates, process_error_messages
-from src.utils.navigation import setup_sidebar_navigation, handle_navigation_change
-from src.pages.home_page import render_home_page
-from src.pages.scanning_page import render_scanning_page
-from src.pages.reports_page import render_reports_page
-from src.pages.fix_patches_page import render_fix_patches_page
+from src.utils.config import ensure_directories, get_base64_of_bin_file
 
-import streamlit as st
+app = Flask(__name__)
+app.secret_key = 'mantaguard_secret_key_change_in_production'  # Change this in production!
 
-def main():
-    """Main application entry point."""
-    # Setup page configuration
-    setup_page_config()
+# Global queues for thread communication
+state_updates_queue = queue.Queue()
+error_queue = queue.Queue()
+
+def get_network_interfaces():
+    """Get available network interfaces on the system."""
+    try:
+        interfaces = netifaces.interfaces()
+        # Filter out loopback interface for better UX
+        filtered_interfaces = [iface for iface in interfaces if iface != 'lo']
+        # If no interfaces after filtering, return all
+        return filtered_interfaces if filtered_interfaces else interfaces
+    except Exception:
+        # Fallback to common interface names if netifaces fails
+        return ['eth0', 'wlan0', 'enp0s3', 'wlp3s0']
+
+def import_ai_modules():
+    """Import AI model modules dynamically."""
+    # Get the project root directory
+    project_root = os.path.dirname(os.path.abspath(__file__))
     
-    # Ensure required directories exist
+    # Import timed_capture module
+    timed_capture_path = os.path.join(project_root, 'ai-model', 'timed_capture.py')
+    spec = importlib.util.spec_from_file_location("timed_capture", timed_capture_path)
+    timed_capture = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(timed_capture)
+
+    # Import visualize_results module
+    visualize_results_path = os.path.join(project_root, 'ai-model', 'visualize_results.py')
+    spec = importlib.util.spec_from_file_location("visualize_results", visualize_results_path)
+    visualize_results = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(visualize_results)
+    
+    return timed_capture, visualize_results
+
+def initialize_session():
+    """Initialize session variables."""
+    if 'scanning' not in session:
+        session['scanning'] = False
+    if 'processing' not in session:
+        session['processing'] = False
+    if 'predictions_file' not in session:
+        session['predictions_file'] = None
+    if 'analysis_dir' not in session:
+        session['analysis_dir'] = None
+    if 'scan_completed' not in session:
+        session['scan_completed'] = False
+    if 'success_message_displayed' not in session:
+        session['success_message_displayed'] = False
+    if 'active_tab' not in session:
+        session['active_tab'] = 0
+    if 'graphs_generated' not in session:
+        session['graphs_generated'] = False
+    if 'network_interfaces' not in session:
+        session['network_interfaces'] = get_network_interfaces()
+
+@app.before_request
+def before_request():
+    """Initialize session before each request."""
+    initialize_session()
     ensure_directories()
-    
-    # Initialize session state variables
-    initialize_session_state()
-    
-    # Process any pending state updates from threads
-    needs_rerun = process_state_updates()
-    
-    # Process any pending error messages from threads
-    process_error_messages()
-    
-    # Rerun the app if needed
-    if needs_rerun:
-        st.rerun()
-    
-    # Setup sidebar navigation
-    selected_option = setup_sidebar_navigation()
-    
-    # Handle navigation changes
-    handle_navigation_change(selected_option, needs_rerun)
-    
-    # Render the selected page
-    if selected_option == "Home":
-        render_home_page()
-    elif selected_option == "Scanning":
-        render_scanning_page()
-    elif selected_option == "Reports":
-        render_reports_page()
-    elif selected_option == "Fix & Patches":
-        render_fix_patches_page()
 
-if __name__ == "__main__":
-    main()
+@app.route('/')
+def home():
+    """Render the home page."""
+    hero_banner_base64 = get_base64_of_bin_file('content/hero-banner.png')
+    logo_base64 = get_base64_of_bin_file('content/Group3.png')
+    
+    return render_template('home.html', 
+                         hero_banner_base64=hero_banner_base64,
+                         logo_base64=logo_base64)
+
+@app.route('/scanning')
+def scanning():
+    """Render the scanning page."""
+    return render_template('scanning.html', 
+                         interfaces=session['network_interfaces'],
+                         scanning=session['scanning'],
+                         processing=session['processing'],
+                         scan_completed=session['scan_completed'],
+                         active_tab=session['active_tab'])
+
+@app.route('/reports')
+def reports():
+    """Render the reports page."""
+    return render_template('reports.html')
+
+@app.route('/fix-patches')
+def fix_patches():
+    """Render the fix & patches page."""
+    return render_template('fix_patches.html')
+
+@app.route('/api/refresh_interfaces', methods=['POST'])
+def refresh_interfaces():
+    """Refresh network interfaces."""
+    session['network_interfaces'] = get_network_interfaces()
+    return jsonify({'interfaces': session['network_interfaces']})
+
+@app.route('/api/start_capture', methods=['POST'])
+def start_capture():
+    """Start network capture."""
+    data = request.get_json()
+    interface = data.get('interface')
+    duration = data.get('duration', 60)
+    
+    if session['scanning']:
+        return jsonify({'error': 'Capture already in progress'}), 400
+    
+    # Reset session state
+    session['scanning'] = True
+    session['scan_completed'] = False
+    session['success_message_displayed'] = False
+    session['processing'] = False
+    
+    # Create pcaps directory if it doesn't exist
+    project_root = os.path.dirname(os.path.abspath(__file__))
+    pcap_dir = os.path.join(project_root, "ai-model", "pcaps")
+    os.makedirs(pcap_dir, exist_ok=True)
+
+    # Generate output path
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_path = os.path.join(pcap_dir, f"capture_{timestamp}.pcap")
+    session['pcap_path'] = output_path
+    session['capture_start_time'] = time.time()
+    session['capture_duration'] = duration
+
+    # Run capture in separate thread
+    def run_capture_thread():
+        try:
+            project_root = os.path.dirname(os.path.abspath(__file__))
+            original_cwd = os.getcwd()
+            os.chdir(project_root)
+            
+            timed_capture, visualize_results = import_ai_modules()
+            
+            # Network capture
+            timed_capture.run_capture(interface, duration, output_path)
+            
+            # Zeek processing
+            results, analysis_dir = timed_capture.analyze_pcap_with_zeek(output_path)
+
+            # Save results to CSV
+            csv_path = os.path.join(analysis_dir, 'prediction_results.csv')
+            results_df = pd.DataFrame(results)
+            results_df.to_csv(csv_path, index=False)
+
+            # Generate visualizations
+            try:
+                data, has_true_label = visualize_results.load_data(csv_path)
+                visualize_results.create_score_histogram(data, analysis_dir)
+                visualize_results.create_time_series(data, analysis_dir)
+
+                if has_true_label:
+                    visualize_results.create_roc_curve(data, has_true_label, analysis_dir)
+                    visualize_results.create_precision_recall_curve(data, has_true_label, analysis_dir)
+                    visualize_results.create_confusion_matrix(data, has_true_label, analysis_dir)
+            except Exception as vis_error:
+                print(f"Warning: Failed to generate visualizations: {str(vis_error)}")
+            
+            # Store results in global variables (thread-safe)
+            with app.app_context():
+                app.analysis_results = {
+                    'analysis_dir': analysis_dir,
+                    'predictions_file': csv_path,
+                    'processing': False,
+                    'scan_completed': True,
+                    'scanning': False
+                }
+            
+        except Exception as e:
+            print(f"Error during capture or analysis: {str(e)}")
+            with app.app_context():
+                app.analysis_results = {
+                    'processing': False,
+                    'scanning': False,
+                    'error': str(e)
+                }
+        finally:
+            os.chdir(original_cwd)
+
+    thread = threading.Thread(target=run_capture_thread)
+    thread.daemon = True
+    thread.start()
+    
+    return jsonify({'success': True, 'message': 'Capture started'})
+
+@app.route('/api/stop_capture', methods=['POST'])
+def stop_capture():
+    """Stop network capture."""
+    session['scanning'] = False
+    return jsonify({'success': True, 'message': 'Capture stopped'})
+
+@app.route('/api/capture_status')
+def capture_status():
+    """Get current capture status."""
+    status = {
+        'scanning': session['scanning'],
+        'processing': session['processing'],
+        'scan_completed': session['scan_completed'],
+        'remaining_time': 0,
+        'progress': 0,
+        'status_text': ''
+    }
+    
+    # Check if we have analysis progress from background thread
+    if hasattr(app, 'analysis_progress'):
+        status['progress'] = app.analysis_progress.get('progress', 0)
+        status['status_text'] = app.analysis_progress.get('status', '')
+        status['processing'] = app.analysis_progress.get('processing', False)
+        session['processing'] = status['processing']
+        
+        
+        # Only clear progress when analysis is completely done
+        if not status['processing'] and status['progress'] >= 1.0:
+            delattr(app, 'analysis_progress')
+    
+    # Check if we have analysis results from background thread
+    if hasattr(app, 'analysis_results'):
+        if 'scan_completed' in app.analysis_results:
+            session['scan_completed'] = app.analysis_results['scan_completed']
+            status['scan_completed'] = True
+        if 'processing' in app.analysis_results:
+            session['processing'] = app.analysis_results['processing']
+            status['processing'] = False
+        if 'scanning' in app.analysis_results:
+            session['scanning'] = app.analysis_results['scanning']
+            status['scanning'] = False
+        if 'analysis_dir' in app.analysis_results:
+            session['analysis_dir'] = app.analysis_results['analysis_dir']
+        if 'predictions_file' in app.analysis_results:
+            session['predictions_file'] = app.analysis_results['predictions_file']
+        # Clear the results after updating session
+        delattr(app, 'analysis_results')
+    
+    if session['scanning'] and 'capture_start_time' in session:
+        elapsed_time = time.time() - session['capture_start_time']
+        remaining_time = max(0, session['capture_duration'] - elapsed_time)
+        status['remaining_time'] = remaining_time
+        status['progress'] = min(elapsed_time / session['capture_duration'], 1.0)
+    
+    return jsonify(status)
+
+@app.route('/api/upload_pcap', methods=['POST'])
+def upload_pcap():
+    """Handle PCAP file upload."""
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file provided'}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+    
+    # Create pcaps directory if it doesn't exist
+    project_root = os.path.dirname(os.path.abspath(__file__))
+    pcap_dir = os.path.join(project_root, "ai-model", "pcaps")
+    os.makedirs(pcap_dir, exist_ok=True)
+
+    # Generate save path
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    save_path = os.path.join(pcap_dir, f"uploaded_{timestamp}_{file.filename}")
+    
+    # Save the file
+    file.save(save_path)
+    
+    return jsonify({'success': True, 'path': save_path, 'filename': file.filename})
+
+@app.route('/api/analyze_pcap', methods=['POST'])
+def analyze_pcap():
+    """Analyze uploaded PCAP file."""
+    data = request.get_json()
+    pcap_path = data.get('path')
+    
+    if not pcap_path or not os.path.exists(pcap_path):
+        return jsonify({'error': 'Invalid PCAP file path'}), 400
+    
+    # Reset session state
+    session['scan_completed'] = False
+    session['success_message_displayed'] = False
+    session['processing'] = True
+    session['pcap_path'] = pcap_path
+
+    # Start analysis in background thread
+    def analyze_thread():
+        try:
+            project_root = os.path.dirname(os.path.abspath(__file__))
+            original_cwd = os.getcwd()
+            os.chdir(project_root)
+            
+            # Step 1: Starting analysis (10%)
+            time.sleep(0.5)  # Small delay to ensure frontend has started polling
+            with app.app_context():
+                app.analysis_progress = {
+                    'progress': 0.1,
+                    'status': 'Starting PCAP analysis...',
+                    'processing': True
+                }
+            
+            # Step 2: Running Zeek analysis (30%)
+            time.sleep(1)  # Give time for the status to be read
+            with app.app_context():
+                app.analysis_progress = {
+                    'progress': 0.3,
+                    'status': 'Processing PCAP with Zeek...',
+                    'processing': True
+                }
+            
+            # Run analyze_capture.py script
+            analyze_script_path = os.path.join(project_root, "ai-model", "analyze_capture.py")
+            cmd = f"python {analyze_script_path} {pcap_path}"
+            
+            process = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
+
+            # Step 3: ML Analysis (60%)
+            with app.app_context():
+                app.analysis_progress = {
+                    'progress': 0.6,
+                    'status': 'Running ML analysis...',
+                    'processing': True
+                }
+
+            # Extract CSV path from output
+            csv_path = None
+            for line in process.stdout.splitlines():
+                if "Results saved to CSV:" in line:
+                    csv_path = line.split("Results saved to CSV:")[1].strip()
+                    break
+
+            if not csv_path or not os.path.exists(csv_path):
+                raise Exception("Could not find CSV file with results")
+
+            # Load results
+            analysis_dir = os.path.dirname(csv_path)
+            results_df = pd.read_csv(csv_path)
+            results = results_df.to_dict('records')
+
+            # Step 4: Generate visualizations (80%)
+            with app.app_context():
+                app.analysis_progress = {
+                    'progress': 0.8,
+                    'status': 'Generating visualizations...',
+                    'processing': True
+                }
+
+            # Generate visualizations
+            try:
+                visualize_results = import_ai_modules()[1]
+                data, has_true_label = visualize_results.load_data(csv_path)
+                visualize_results.create_score_histogram(data, analysis_dir)
+                visualize_results.create_time_series(data, analysis_dir)
+                if has_true_label:
+                    visualize_results.create_roc_curve(data, has_true_label, analysis_dir)
+                    visualize_results.create_precision_recall_curve(data, has_true_label, analysis_dir)
+                    visualize_results.create_confusion_matrix(data, has_true_label, analysis_dir)
+            except Exception as vis_error:
+                print(f"Warning: Failed to generate visualizations: {str(vis_error)}")
+
+            # Step 5: Complete (100%)
+            with app.app_context():
+                app.analysis_progress = {
+                    'progress': 1.0,
+                    'status': 'Analysis completed successfully!',
+                    'processing': False
+                }
+
+            # Store results in global variables (thread-safe)
+            with app.app_context():
+                # Use a global storage mechanism since we can't access session from thread
+                app.analysis_results = {
+                    'analysis_dir': analysis_dir,
+                    'predictions_file': csv_path,
+                    'scan_completed': True,
+                    'processing': False
+                }
+
+        except Exception as e:
+            print(f"Error during analysis: {str(e)}")
+            with app.app_context():
+                app.analysis_progress = {
+                    'progress': 0,
+                    'status': f'Error: {str(e)}',
+                    'processing': False
+                }
+                app.analysis_results = {
+                    'processing': False,
+                    'error': str(e)
+                }
+        finally:
+            os.chdir(original_cwd)
+
+    thread = threading.Thread(target=analyze_thread)
+    thread.daemon = True
+    thread.start()
+    
+    return jsonify({'success': True, 'message': 'Analysis started'})
+
+@app.route('/api/results')
+def get_results():
+    """Get analysis results."""
+    if not session['predictions_file'] or not os.path.exists(session['predictions_file']):
+        return jsonify({'error': 'No results available'}), 404
+    
+    # Load predictions from file
+    try:
+        results_df = pd.read_csv(session['predictions_file'])
+        predictions = results_df.to_dict('records')
+        
+        # Try to enrich with protocol data from conn.log if available
+        analysis_dir = session.get('analysis_dir')
+        if analysis_dir:
+            conn_log_path = os.path.join(analysis_dir, 'zeek_logs', 'conn.log')
+            if os.path.exists(conn_log_path):
+                try:
+                    # Read conn.log with proper handling of Zeek format
+                    with open(conn_log_path, 'r') as f:
+                        lines = f.readlines()
+                    
+                    # Find the fields line to get proper column names
+                    fields_line = None
+                    for line in lines:
+                        if line.startswith('#fields'):
+                            fields_line = line.strip()
+                            break
+                    
+                    if fields_line:
+                        # Extract field names from the fields line
+                        field_names = fields_line.split('\t')[1:]  # Skip '#fields'
+                        
+                        # Read data lines (skip comments and empty lines)
+                        data_lines = [line.strip() for line in lines 
+                                    if not line.startswith('#') and line.strip()]
+                        
+                        if data_lines:
+                            # Parse data into DataFrame
+                            data = []
+                            for line in data_lines:
+                                values = line.split('\t')
+                                # Handle variable number of fields gracefully
+                                if len(values) >= len(field_names):
+                                    # Take only the expected number of fields
+                                    values = values[:len(field_names)]
+                                elif len(values) < len(field_names):
+                                    # Pad with empty values if needed
+                                    values.extend(['-'] * (len(field_names) - len(values)))
+                                
+                                data.append(dict(zip(field_names, values)))
+                            
+                            conn_df = pd.DataFrame(data)
+                            
+                            # Create protocol lookup dict
+                            protocol_dict = dict(zip(conn_df['uid'], conn_df['proto']))
+                            service_dict = dict(zip(conn_df['uid'], conn_df.get('service', ['-'] * len(conn_df))))
+                            port_dict = dict(zip(conn_df['uid'], conn_df['id.resp_p']))
+                            
+                            # Add protocol info to predictions
+                            for prediction in predictions:
+                                uid = prediction['uid']
+                                proto = protocol_dict.get(uid, 'not_found')
+                                service = service_dict.get(uid, '-')
+                                port = port_dict.get(uid, '-')
+                                
+                                # Use transport protocol (tcp/udp/icmp) - this should never be "-"
+                                prediction['proto'] = proto
+                                prediction['service'] = service if service != '-' else 'undetected'
+                                prediction['dest_port'] = port
+                        else:
+                            # Fallback if no data found
+                            for prediction in predictions:
+                                prediction['proto'] = 'no_data'
+                                prediction['service'] = 'no_data'
+                                prediction['dest_port'] = 'no_data'
+                    else:
+                        # Fallback if no fields line found
+                        for prediction in predictions:
+                            prediction['proto'] = 'no_fields'
+                            prediction['service'] = 'no_fields'
+                            prediction['dest_port'] = 'no_fields'
+                        
+                except Exception as proto_error:
+                    # Add default values if we can't load protocol data
+                    for prediction in predictions:
+                        prediction['proto'] = 'error'
+                        prediction['service'] = 'error'
+                        prediction['dest_port'] = 'error'
+            else:
+                # Add default values if conn.log doesn't exist
+                for prediction in predictions:
+                    prediction['proto'] = 'no_conn_log'
+                    prediction['service'] = 'no_conn_log'
+                    prediction['dest_port'] = 'no_conn_log'
+        
+    except Exception as e:
+        return jsonify({'error': f'Failed to load results: {str(e)}'}), 500
+    
+    results = {
+        'predictions': predictions,
+        'analysis_dir': session['analysis_dir'],
+        'graphs_available': session['graphs_generated']
+    }
+    
+    # Get available visualization files
+    if session['analysis_dir']:
+        graph_files = glob.glob(os.path.join(session['analysis_dir'], "*.png"))
+        results['visualizations'] = [os.path.basename(f) for f in graph_files]
+    
+    return jsonify(results)
+
+@app.route('/api/label_prediction', methods=['POST'])
+def label_prediction():
+    """Label a prediction."""
+    data = request.get_json()
+    uid = data.get('uid')
+    label = data.get('label')
+    
+    if not session['predictions_file'] or not os.path.exists(session['predictions_file']):
+        return jsonify({'error': 'No predictions available'}), 400
+    
+    try:
+        # Load predictions from file
+        df = pd.read_csv(session['predictions_file'])
+        selected_row = df[df['uid'] == uid].iloc[0].to_dict()
+        selected_row['user_label'] = label
+        
+        # Append to labeled_anomalies.csv
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        csv_path = os.path.join(project_root, "ai-model", "labeled_anomalies.csv")
+        
+        file_exists = os.path.isfile(csv_path)
+        
+        with open(csv_path, 'a', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=selected_row.keys())
+            if not file_exists:
+                writer.writeheader()
+            writer.writerow(selected_row)
+        
+        return jsonify({'success': True, 'message': f'Label "{label}" added for UID {uid}'})
+    except Exception as e:
+        return jsonify({'error': f'Failed to label prediction: {str(e)}'}), 500
+
+@app.route('/images/<path:filename>')
+def serve_image(filename):
+    """Serve analysis images."""
+    if session['analysis_dir']:
+        return send_from_directory(session['analysis_dir'], filename)
+    return "Image not found", 404
+
+@app.route('/content/<path:filename>')
+def serve_content(filename):
+    """Serve static content files."""
+    return send_from_directory('content', filename)
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)

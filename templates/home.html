@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner" style="background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(data:image/png;base64,{{ hero_banner_base64 }});">
+        <div style="display: flex; flex-direction: column; align-items: center; z-index: 10; position: relative;">
+            <img src="data:image/png;base64,{{ logo_base64 }}" class="hero-logo" alt="MantaGuard Logo">
+            <h1 class="hero-title">Welcome to MantaGuard</h1>
+            <h2 class="hero-subtitle">Real-time Monitoring and Intrusion Detection using AI</h2>
+            <a href="{{ url_for('scanning') }}" class="btn btn-primary btn-lg mt-3">
+                <i class="fas fa-play me-2"></i>Get Started
+            </a>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div id="features" class="features-section">
+        <h2 class="features-title">Why MantaGuard?</h2>
+        <p class="features-subtitle">Our key features at a glance</p>
+        
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3 class="feature-title">AI-Driven Anomaly Detection</h3>
+                    <p class="feature-description">Catches suspicious patterns in real time—24/7 monitoring.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3 class="feature-title">Customizable Alerting</h3>
+                    <p class="feature-description">Get notified instantly when potential threats are detected.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Easy Dashboard & Reporting</h3>
+                    <p class="feature-description">Visualize network activity and security insights at a glance.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3 class="feature-title">Scalable & Secure</h3>
+                    <p class="feature-description">Enterprise-grade protection that grows with your network needs.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-5" style="border-color: rgba(255, 255, 255, 0.1);">
+
+    <!-- Project Description -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">About MantaGuard</h3>
+                    <p class="card-text">
+                        <strong>MantaGuard</strong> is an AI-powered monitoring and intrusion detection system. 
+                        It utilizes advanced algorithms and real-time data processing to ensure environmental security and safety.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tools Showcase -->
+    <div class="row">
+        <div class="col-12">
+            <h2 class="tool-title mb-4">🧰 Tools Used</h2>
+        </div>
+    </div>
+
+    <!-- Streamlit Tool -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="tool-title">Streamlit</div>
+        </div>
+        <div class="col-md-4">
+            <div class="tool-image">
+                <img src="{{ url_for('serve_content', filename='streamlit.png') }}" width="150" alt="Streamlit">
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="tool-description">
+                Streamlit is an open-source Python library that makes it easy to create and share beautiful, custom web apps for machine learning and data science. In MantaGuard, Streamlit powers the entire user interface, providing interactive components like buttons, sliders, and visualizations that make network monitoring and intrusion detection accessible and user-friendly. Its ability to update in real-time makes it perfect for displaying live network data and analysis results.
+            </div>
+        </div>
+    </div>
+    <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.1);">
+
+    <!-- VS Code Tool -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="tool-title">VS Code</div>
+        </div>
+        <div class="col-md-4">
+            <div class="tool-image">
+                <img src="{{ url_for('serve_content', filename='Visual_Studio_Code_1.35_icon.svg.png') }}" width="100" alt="VS Code">
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="tool-description">
+                Visual Studio Code is a lightweight but powerful source code editor which runs on your desktop and is available for Windows, macOS and Linux. For MantaGuard development, VS Code provides essential features like integrated Git version control, debugging capabilities, and Python extensions that enhance productivity. Its customizable interface and extensive marketplace of extensions make it ideal for developing complex security applications that integrate multiple technologies and libraries.
+            </div>
+        </div>
+    </div>
+    <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.1);">
+
+    <!-- Python Tool -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="tool-title">Python</div>
+        </div>
+        <div class="col-md-4">
+            <div class="tool-image">
+                <img src="{{ url_for('serve_content', filename='Python.svg.png') }}" width="100" alt="Python">
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="tool-description">
+                Python is a programming language that lets you work quickly and integrate systems more effectively. It is used extensively in data science, machine learning, and AI applications. In MantaGuard, Python serves as the core programming language, enabling rapid development and integration of various security components. Its rich ecosystem of libraries like pandas for data manipulation, scikit-learn for machine learning, and network analysis tools makes it perfect for implementing sophisticated intrusion detection algorithms and processing network traffic data efficiently.
+            </div>
+        </div>
+    </div>
+    <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.1);">
+
+    <!-- OCSVM Algorithm Tool -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="tool-title">OCSVM Algorithm</div>
+        </div>
+        <div class="col-md-4">
+            <div class="tool-image">
+                <img src="{{ url_for('serve_content', filename='87ac3b54-afcc-40fe-84c2-515cc1415f3d.png') }}" width="200" alt="OCSVM Algorithm">
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="tool-description">
+                One-Class Support Vector Machine (OCSVM) is an unsupervised learning algorithm that learns a decision boundary that achieves the maximum separation between the points and the origin. In MantaGuard, OCSVM serves as the primary anomaly detection engine, capable of identifying unusual network patterns without requiring labeled training data. This makes it ideal for detecting zero-day attacks and previously unknown threats. The algorithm works by learning the normal behavior of network traffic and flagging deviations from this pattern, allowing MantaGuard to detect sophisticated intrusion attempts that might bypass traditional signature-based detection systems.
+            </div>
+        </div>
+    </div>
+    <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.1);">
+
+    <!-- Zeek Network Monitor Tool -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="tool-title">Zeek Network Monitor</div>
+        </div>
+        <div class="col-md-4">
+            <div class="tool-image">
+                <img src="{{ url_for('serve_content', filename='Zeek-Featured.png') }}" width="200" alt="Zeek Network Monitor">
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="tool-description">
+                Zeek (formerly Bro) is a powerful network analysis framework that is much different from the typical IDS you may know. It provides a comprehensive platform for network traffic analysis. In MantaGuard, Zeek serves as the primary data collection engine, capturing and parsing network traffic into structured logs that can be analyzed by the OCSVM algorithm. Its ability to extract detailed protocol-specific information from network flows enables MantaGuard to perform deep packet inspection and identify subtle patterns that might indicate malicious activity. Zeek's flexible scripting language also allows for customized detection rules tailored to specific network environments and threat landscapes.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

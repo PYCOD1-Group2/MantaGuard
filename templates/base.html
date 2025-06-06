@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MantaGuard - {% block title %}{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom CSS */
+        body {
+            background-color: #0e1117;
+            color: white;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+        
+        .navbar {
+            background-color: #262730 !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-weight: bold;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: #00BFFF !important;
+        }
+        
+        .btn-primary {
+            background-color: #00BFFF;
+            border-color: #00BFFF;
+        }
+        
+        .btn-primary:hover {
+            background-color: #00A0E0;
+            border-color: #00A0E0;
+        }
+        
+        .card {
+            background-color: #1E1E1E;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .alert-info {
+            background-color: rgba(0, 191, 255, 0.1);
+            border-color: #00BFFF;
+            color: #00BFFF;
+        }
+        
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            border-color: #28a745;
+            color: #28a745;
+        }
+        
+        .alert-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            border-color: #ffc107;
+            color: #ffc107;
+        }
+        
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+        
+        .form-control, .form-select {
+            background-color: #262730;
+            border-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background-color: #262730;
+            border-color: #00BFFF;
+            color: white;
+            box-shadow: 0 0 0 0.2rem rgba(0, 191, 255, 0.25);
+        }
+        
+        .form-control option, .form-select option {
+            background-color: #262730;
+            color: white;
+        }
+        
+        .table-dark {
+            --bs-table-bg: #1E1E1E;
+            --bs-table-color: #ffffff;
+        }
+        
+        .table-dark th, .table-dark td {
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .table-dark thead th {
+            background-color: #262730;
+            border-bottom: 2px solid #00BFFF;
+        }
+        
+        /* Fix text visibility issues */
+        .card-body, .card-header, .card-title, .card-text {
+            color: #ffffff !important;
+        }
+        
+        .form-label, label {
+            color: #ffffff !important;
+        }
+        
+        .form-check-label {
+            color: #ffffff !important;
+        }
+        
+        .text-muted {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+        
+        p, div, span, small {
+            color: inherit;
+        }
+        
+        /* Ensure all text in cards is visible */
+        .card * {
+            color: #ffffff;
+        }
+        
+        .card .badge {
+            color: #ffffff !important;
+        }
+        
+        .progress {
+            background-color: #262730;
+        }
+        
+        .progress-bar {
+            background-color: #00BFFF;
+        }
+        
+        /* Hero banner styles */
+        .hero-banner {
+            width: 100%;
+            min-height: 500px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .hero-logo {
+            max-width: 200px;
+            margin-bottom: 30px;
+        }
+        
+        .hero-title {
+            font-size: 3rem !important;
+            font-weight: 700 !important;
+            color: white !important;
+            margin-bottom: 20px !important;
+            line-height: 1.2 !important;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem !important;
+            color: rgba(255, 255, 255, 0.8) !important;
+            margin-bottom: 40px !important;
+            max-width: 720px;
+        }
+        
+        .features-section {
+            padding: 80px 20px;
+            max-width: 1080px;
+            margin: 0 auto;
+        }
+        
+        .features-title {
+            font-size: 2.5rem !important;
+            font-weight: 700 !important;
+            text-align: center;
+            margin-bottom: 10px !important;
+        }
+        
+        .features-subtitle {
+            font-size: 1.25rem !important;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8) !important;
+            margin-bottom: 50px !important;
+        }
+        
+        .feature-card {
+            background-color: #1E1E1E;
+            border-radius: 8px;
+            padding: 30px 20px;
+            text-align: center;
+            height: 100%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #00BFFF;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+            margin-bottom: 15px !important;
+        }
+        
+        .feature-description {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .tool-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .tool-description {
+            border-radius: 5px;
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .tool-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 20px;
+        }
+        
+        .tool-image img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem !important;
+            }
+            .hero-subtitle {
+                font-size: 1.2rem !important;
+            }
+            .features-title {
+                font-size: 2rem !important;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <i class="fas fa-shield-alt me-2"></i>MantaGuard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="{{ url_for('home') }}">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'scanning' %}active{% endif %}" href="{{ url_for('scanning') }}">
+                            <i class="fas fa-radar-chart me-1"></i>Scanning
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'reports' %}active{% endif %}" href="{{ url_for('reports') }}">
+                            <i class="fas fa-chart-bar me-1"></i>Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'fix_patches' %}active{% endif %}" href="{{ url_for('fix_patches') }}">
+                            <i class="fas fa-tools me-1"></i>Fix & Patches
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid py-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
