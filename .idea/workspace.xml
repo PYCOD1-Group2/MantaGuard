@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Revamp Home and Scanning pages with professional design: added advanced styling, interactive components, and enhanced UX elements.">
+    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/home.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,23 +43,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "flask-rewrite",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/home/skam/github/MantaGuard/ai-model/pcaps",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;flask-rewrite&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/skam/github/MantaGuard/ai-model/pcaps&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/ai-model/pcaps" />
@@ -70,6 +69,24 @@
       <recent name="$PROJECT_DIR$/ai-model/training" />
       <recent name="$PROJECT_DIR$/ai-model/test" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="MantaGuard" type="Python.FlaskServer">
+      <module name="MantaGuard" />
+      <option name="target" value="$PROJECT_DIR$/app.py" />
+      <option name="targetType" value="PATH" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <method v="2" />
+    </configuration>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -280,7 +297,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749215939655</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience.">
+      <option name="closed" value="true" />
+      <created>1749217196464</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1749217196464</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -363,6 +388,7 @@
     <MESSAGE value="Add base HTML template and initial structure for Home, Reports, Scanning, and Fix &amp; Patches pages with placeholder content." />
     <MESSAGE value="Add comprehensive security analytics, API endpoints, and professional styling for the reports page." />
     <MESSAGE value="Revamp Home and Scanning pages with professional design: added advanced styling, interactive components, and enhanced UX elements." />
-    <option name="LAST_COMMIT_MESSAGE" value="Revamp Home and Scanning pages with professional design: added advanced styling, interactive components, and enhanced UX elements." />
+    <MESSAGE value="Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience." />
+    <option name="LAST_COMMIT_MESSAGE" value="Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience." />
   </component>
 </project>
