@@ -1,0 +1,382 @@
+Index: ai-model/training/unknown_categories.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\n  \"proto\": [\n    \"unknown_transport\",\n    \"icmp\"\n  ],\n  \"service\": [\n    \"quic,ssl\",\n    \"ntp\",\n    \"ayiya\",\n    \"unknown\",\n    \"dhcp\"\n  ],\n  \"history\": [\n    \"^cCcC\",\n    \"^hCacdfR\",\n    \"^hCadfC\",\n    \"^hCacdcC\",\n    \"^dCtCtCa\",\n    \"^hCacf\",\n    \"CdaC\",\n    \"CdaCtC\",\n    \"^dCaCCt\",\n    \"CdCC\",\n    \"^hCadCcCt\",\n    \"^hCadtCCC\",\n    \"^dCat\",\n    \"Hc\",\n    \"CaCdfR\",\n    \"^hCadCCtf\",\n    \"^hCadfCAr\",\n    \"^f\",\n    \"CadCCCC\",\n    \"^hCacdcCf\",\n    \"^dfCr\",\n    \"^hCadftR\",\n    \"HcAD\",\n    \"HcADF\",\n    \"^hCadCCCC\",\n    \"^d\",\n    \"ShADadFRfr\",\n    \"^hCadCCCCt\",\n    \"CadCCCDC\",\n    \"^dCaf\",\n    \"^hCdCtaCf\",\n    \"^hCacdfr\",\n    \"HcADC\",\n    \"^hCacdCC\",\n    \"^hCacdCcft\",\n    \"^hCadc\",\n    \"HcADCc\",\n    \"^dCarR\",\n    \"^dADa\",\n    \"D\",\n    \"^hCadC\",\n    \"CadRfR\",\n    \"^dCa\",\n    \"^hCadcRf\",\n    \"^hCdRfR\",\n    \"^dCCCC\",\n    \"^dCaCtC\",\n    \"^hCdaCtCf\",\n    \"^hCacdf\",\n    \"CaCdC\",\n    \"^hCdCaf\",\n    \"Cf\",\n    \"^dfCa\",\n    \"^hCadf\",\n    \"^dCaCD\",\n    \"^hCadcC\",\n    \"CaC\",\n    \"^dC\",\n    \"CaCd\",\n    \"Cad\",\n    \"^hCacdCfA\",\n    \"^hCadCRf\",\n    \"DadA\",\n    \"^hCdaCf\",\n    \"^hCadCc\",\n    \"CadCCCCw\",\n    \"^hCdf\",\n    \"^hCadCf\",\n    \"^hCadtCf\",\n    \"unknown\",\n    \"CdaCCt\",\n    \"A\",\n    \"^hCadRf\",\n    \"^hCda\",\n    \"CaCdCDCC\",\n    \"^dCf\",\n    \"^hCadcfC\",\n    \"CadcC\",\n    \"Ca\",\n    \"CadCt\",\n    \"Sr\",\n    \"CaCdCCC\",\n    \"^hCad\",\n    \"^hCadCtf\",\n    \"CadtC\",\n    \"ShADFadRr\",\n    \"^cCCc\",\n    \"ShADadFRRf\",\n    \"^dCaRf\",\n    \"^hCacd\",\n    \"CadC\",\n    \"^cC\",\n    \"CadCCC\",\n    \"ShADaFdRr\",\n    \"^hCadCCt\",\n    \"Cadf\",\n    \"^a\",\n    \"^hCdCaCf\",\n    \"CadCtC\",\n    \"CfRdtaR\",\n    \"CdaCt\",\n    \"S\",\n    \"^adtC\",\n    \"^hCacdCc\",\n    \"^hCadCC\",\n    \"^dCafR\",\n    \"^dDa\",\n    \"HcADc\",\n    \"HcF\",\n    \"CadCC\",\n    \"CdCa\",\n    \"CdCCC\",\n    \"Aa\",\n    \"^dCfr\",\n    \"^dfC\",\n    \"^hCdaf\",\n    \"Cr\",\n    \"^hCdaCCt\",\n    \"CaCcdC\",\n    \"AD\",\n    \"CaCdCC\",\n    \"CadCCDC\",\n    \"^dCfa\",\n    \"^hCacdC\",\n    \"Cadt\",\n    \"^hCcdtCafR\",\n    \"^cCcCa\",\n    \"^hCadCCtR\",\n    \"^hCac\",\n    \"Caf\",\n    \"^dADFaRf\",\n    \"CdCat\",\n    \"CdRfaR\",\n    \"Cd\",\n    \"ShADad\",\n    \"DT\",\n    \"^hCdCatf\",\n    \"CafA\",\n    \"CdC\",\n    \"CdaCc\",\n    \"^dCaCCtt\",\n    \"^hCadfCr\",\n    \"^hCacdCf\",\n    \"Cda\",\n    \"^dA\",\n    \"CC\",\n    \"^hCadCCCDGGGGCG\",\n    \"CCd\",\n    \"CadCRf\",\n    \"^hCdaCAGtf\",\n    \"C\",\n    \"CaCdCCCD\",\n    \"^hCadcCc\",\n    \"Cc\",\n    \"^hR\",\n    \"Cdta\",\n    \"^cCr\",\n    \"CacdCC\",\n    \"^dCaC\"\n  ]\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ai-model/training/unknown_categories.json b/ai-model/training/unknown_categories.json
+--- a/ai-model/training/unknown_categories.json	(revision 5594855b94b501d9ecc2e3758dd1742615e13ebd)
++++ b/ai-model/training/unknown_categories.json	(date 1749299136469)
+@@ -1,174 +1,175 @@
+ {
+   "proto": [
+-    "unknown_transport",
+-    "icmp"
++    "icmp",
++    "unknown_transport"
+   ],
+   "service": [
+-    "quic,ssl",
+     "ntp",
++    "quic,ssl",
++    "dhcp",
+     "ayiya",
+-    "unknown",
+-    "dhcp"
++    "unknown"
+   ],
+   "history": [
+-    "^cCcC",
+-    "^hCacdfR",
+-    "^hCadfC",
+-    "^hCacdcC",
+-    "^dCtCtCa",
+-    "^hCacf",
+-    "CdaC",
+-    "CdaCtC",
+-    "^dCaCCt",
+-    "CdCC",
++    "^d",
++    "CadcC",
++    "AD",
++    "^hCadcC",
++    "Sr",
++    "^dCaC",
++    "^hCadCc",
++    "unknown",
++    "^hCadCf",
++    "^hCadc",
++    "^hCadCCCCt",
+     "^hCadCcCt",
+-    "^hCadtCCC",
+-    "^dCat",
+-    "Hc",
+-    "CaCdfR",
+     "^hCadCCtf",
+-    "^hCadfCAr",
++    "Cf",
++    "^dADa",
++    "CdaCCt",
++    "^hCdf",
++    "CdCC",
++    "CdaCtC",
+     "^f",
+-    "CadCCCC",
+-    "^hCacdcCf",
+-    "^dfCr",
+-    "^hCadftR",
++    "DT",
++    "Cr",
++    "CadCCDC",
++    "Aa",
++    "Cc",
+     "HcAD",
+-    "HcADF",
+-    "^hCadCCCC",
+-    "^d",
+-    "ShADadFRfr",
+-    "^hCadCCCCt",
+-    "CadCCCDC",
+-    "^dCaf",
+-    "^hCdCtaCf",
+-    "^hCacdfr",
+-    "HcADC",
++    "^hCadtCCC",
++    "^hCadCC",
+     "^hCacdCC",
+-    "^hCacdCcft",
+-    "^hCadc",
+-    "HcADCc",
+-    "^dCarR",
+-    "^dADa",
+-    "D",
+-    "^hCadC",
+-    "CadRfR",
+-    "^dCa",
+-    "^hCadcRf",
+-    "^hCdRfR",
+-    "^dCCCC",
+-    "^dCaCtC",
++    "^dCf",
++    "^hCacdfr",
++    "^dA",
++    "CdRfaR",
++    "^dCtCtCa",
++    "^hCacdcCf",
++    "^hCcdtCafR",
++    "^adtC",
++    "Cda",
++    "CaCdfR",
++    "^hCadf",
++    "CdaCt",
++    "^hCad",
++    "^dCfa",
++    "CadCt",
++    "CdaC",
++    "^hCda",
++    "CadCCCC",
++    "CadCRf",
++    "CaCd",
++    "ShADadFRfr",
++    "CaCdCCCD",
++    "^a",
++    "Cdta",
++    "CadCCCCw",
++    "Cad",
++    "^hCdaCCt",
++    "^dfC",
++    "CadCC",
++    "CadCtC",
+     "^hCdaCtCf",
++    "Cadt",
+     "^hCacdf",
+-    "CaCdC",
+-    "^hCdCaf",
+-    "Cf",
+-    "^dfCa",
+-    "^hCadf",
++    "^hCdRfR",
++    "^hCdCatf",
++    "^hCadfCAr",
++    "CdCat",
++    "^hCdCtaCf",
+     "^dCaCD",
+-    "^hCadcC",
+-    "CaC",
+-    "^dC",
+-    "CaCd",
+-    "Cad",
+-    "^hCacdCfA",
++    "^hCadcCc",
++    "HcADC",
+     "^hCadCRf",
++    "^hCdaCf",
++    "A",
++    "S",
++    "^hCadfC",
++    "^hCacdfR",
+     "DadA",
+-    "^hCdaCf",
+-    "^hCadCc",
+-    "CadCCCCw",
+-    "^hCdf",
+-    "^hCadCf",
++    "^dCaCCt",
++    "CadCCC",
++    "CfRdtaR",
++    "ShADFadRr",
+     "^hCadtCf",
+-    "unknown",
+-    "CdaCCt",
+-    "A",
++    "CadtC",
+     "^hCadRf",
+-    "^hCda",
+-    "CaCdCDCC",
+-    "^dCf",
+-    "^hCadcfC",
+-    "CadcC",
+-    "Ca",
+-    "CadCt",
+-    "Sr",
+-    "CaCdCCC",
+-    "^hCad",
+-    "^hCadCtf",
+-    "CadtC",
+-    "ShADFadRr",
+-    "^cCCc",
++    "Caf",
++    "CC",
++    "HcADc",
++    "^hCadCCCDGGGGCG",
++    "^cC",
++    "^hCadC",
++    "^r",
++    "^hCacdCfA",
++    "C",
+     "ShADadFRRf",
+-    "^dCaRf",
+-    "^hCacd",
++    "^hCadfCr",
++    "HcADCc",
++    "CaCcdC",
+     "CadC",
+-    "^cC",
+-    "CadCCC",
+-    "ShADaFdRr",
+-    "^hCadCCt",
++    "CdC",
+     "Cadf",
+-    "^a",
++    "^hCadcfC",
++    "^dCaRf",
++    "^cCcC",
++    "^hCacdCcft",
+     "^hCdCaCf",
+-    "CadCtC",
+-    "CfRdtaR",
+-    "CdaCt",
+-    "S",
+-    "^adtC",
+-    "^hCacdCc",
+-    "^hCadCC",
+-    "^dCafR",
++    "CadCCCDC",
++    "D",
++    "^hCacdcC",
++    "^dfCr",
++    "CCd",
++    "CaCdCDCC",
++    "^hCdCaf",
+     "^dDa",
+-    "HcADc",
+-    "HcF",
+-    "CadCC",
+-    "CdCa",
+-    "CdCCC",
+-    "Aa",
+-    "^dCfr",
+-    "^dfC",
++    "^dC",
++    "ShADaFdRr",
++    "^dCaf",
++    "^cCr",
++    "Ca",
++    "^hCadCtf",
++    "^cCcCa",
+     "^hCdaf",
+-    "Cr",
+-    "^hCdaCCt",
+-    "CaCcdC",
+-    "AD",
+     "CaCdCC",
+-    "CadCCDC",
+-    "^dCfa",
+-    "^hCacdC",
+-    "Cadt",
+-    "^hCcdtCafR",
+-    "^cCcCa",
++    "CdCa",
++    "^hCacd",
++    "ShADad",
+     "^hCadCCtR",
+-    "^hCac",
+-    "Caf",
++    "^hCadcRf",
+     "^dADFaRf",
+-    "CdCat",
+-    "CdRfaR",
++    "^dCCCC",
++    "^dCaCCtt",
++    "CdCCC",
++    "CacdCC",
++    "HcF",
+     "Cd",
+-    "ShADad",
+-    "DT",
+-    "^hCdCatf",
+-    "CafA",
+-    "CdC",
++    "^dCarR",
++    "^dCfr",
++    "^hCadCCt",
++    "^hCadCCCC",
++    "CadRfR",
++    "HcADF",
+     "CdaCc",
+-    "^dCaCCtt",
+-    "^hCadfCr",
++    "^dCa",
++    "^dfCa",
++    "Hc",
++    "CafA",
++    "CaCdCCC",
+     "^hCacdCf",
+-    "Cda",
+-    "^dA",
+-    "CC",
+-    "^hCadCCCDGGGGCG",
+-    "CCd",
+-    "CadCRf",
+-    "^hCdaCAGtf",
+-    "C",
+-    "CaCdCCCD",
+-    "^hCadcCc",
+-    "Cc",
++    "^dCafR",
+     "^hR",
+-    "Cdta",
+-    "^cCr",
+-    "CacdCC",
+-    "^dCaC"
++    "^hCadftR",
++    "^hCacdCc",
++    "^dCaCtC",
++    "^dCat",
++    "^hCacf",
++    "CaCdC",
++    "^cCCc",
++    "CaC",
++    "^hCacdC",
++    "^hCac",
++    "^hCdaCAGtf"
+   ]
+ }
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"4ccb8251-4629-4598-b691-30bc2113c371\" name=\"Changes\" comment=\"Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience.\">\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\n      <map>\n        <entry key=\"$PROJECT_DIR$\" value=\"main\" />\n      </map>\n    </option>\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"GitHubPullRequestSearchHistory\">{\n  &quot;lastFilter&quot;: {\n    &quot;state&quot;: &quot;OPEN&quot;,\n    &quot;assignee&quot;: &quot;Enryou&quot;\n  }\n}</component>\n  <component name=\"GithubPullRequestsUISettings\">{\n  &quot;selectedUrlAndAccountId&quot;: {\n    &quot;url&quot;: &quot;https://github.com/PYCOD1-Group2/MantaGuard.git&quot;,\n    &quot;accountId&quot;: &quot;a8b22f56-0ab1-40d6-b6b1-90a16f9cdbdc&quot;\n  }\n}</component>\n  <component name=\"HighlightingSettingsPerFile\">\n    <setting file=\"file://$PROJECT_DIR$/MANTAGUARD.py\" root0=\"FORCE_HIGHLIGHTING\" />\n  </component>\n  <component name=\"ProjectColorInfo\">{\n  &quot;associatedIndex&quot;: 3\n}</component>\n  <component name=\"ProjectId\" id=\"2x5KPsI2rwM5yRm2N1wIlYTZ2fY\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">{\n  &quot;keyToString&quot;: {\n    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,\n    &quot;git-widget-placeholder&quot;: &quot;flask-rewrite&quot;,\n    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,\n    &quot;last_opened_file_path&quot;: &quot;/home/skam/github/MantaGuard/ai-model/pcaps&quot;,\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\n    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\n  }\n}</component>\n  <component name=\"RecentsManager\">\n    <key name=\"CopyFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$/ai-model/pcaps\" />\n      <recent name=\"$PROJECT_DIR$/ai-model/output/analysis_results\" />\n    </key>\n    <key name=\"MoveFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$/ai-model/training\" />\n      <recent name=\"$PROJECT_DIR$/ai-model/test\" />\n    </key>\n  </component>\n  <component name=\"RunManager\">\n    <configuration name=\"MantaGuard\" type=\"Python.FlaskServer\">\n      <module name=\"MantaGuard\" />\n      <option name=\"target\" value=\"$PROJECT_DIR$/app.py\" />\n      <option name=\"targetType\" value=\"PATH\" />\n      <option name=\"ENV_FILES\" value=\"\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <EXTENSION ID=\"PythonCoverageRunConfigurationExtension\" runner=\"coverage.py\" />\n      <option name=\"launchJavascriptDebuger\" value=\"false\" />\n      <method v=\"2\" />\n    </configuration>\n  </component>\n  <component name=\"SharedIndexes\">\n    <attachedChunks>\n      <set>\n        <option value=\"bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-PY-251.25410.159\" />\n        <option value=\"bundled-python-sdk-e0ed3721d81e-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.25410.159\" />\n      </set>\n    </attachedChunks>\n  </component>\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"4ccb8251-4629-4598-b691-30bc2113c371\" name=\"Changes\" comment=\"\" />\n      <created>1747222474908</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1747222474908</updated>\n      <workItem from=\"1747222476368\" duration=\"1232000\" />\n      <workItem from=\"1747382574522\" duration=\"5236000\" />\n      <workItem from=\"1747388278325\" duration=\"1159000\" />\n      <workItem from=\"1747392536840\" duration=\"99000\" />\n      <workItem from=\"1747392644081\" duration=\"1654000\" />\n      <workItem from=\"1747394307141\" duration=\"11271000\" />\n      <workItem from=\"1747410881104\" duration=\"350000\" />\n      <workItem from=\"1747467355455\" duration=\"2824000\" />\n      <workItem from=\"1747748303176\" duration=\"6924000\" />\n      <workItem from=\"1747827619263\" duration=\"295000\" />\n      <workItem from=\"1747916231181\" duration=\"6338000\" />\n      <workItem from=\"1747997672912\" duration=\"2336000\" />\n      <workItem from=\"1749104117913\" duration=\"23000\" />\n      <workItem from=\"1749104150988\" duration=\"123000\" />\n      <workItem from=\"1749104280831\" duration=\"8112000\" />\n      <workItem from=\"1749114945870\" duration=\"4833000\" />\n      <workItem from=\"1749197080593\" duration=\"8929000\" />\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"add initial project structure and configuration files for the AI\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747222807826</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747222807826</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"add initial project structure and configuration files for the AI\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747223537465</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747223537465</updated>\n    </task>\n    <task id=\"LOCAL-00003\" summary=\"add initial project structure and configuration files for the AI\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747383166608</created>\n      <option name=\"number\" value=\"00003\" />\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747383166608</updated>\n    </task>\n    <task id=\"LOCAL-00004\" summary=\"add initial project structure and configuration files for the AI\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747387064101</created>\n      <option name=\"number\" value=\"00004\" />\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747387064101</updated>\n    </task>\n    <task id=\"LOCAL-00005\" summary=\"add initial project structure and configuration files for the AI\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747387359831</created>\n      <option name=\"number\" value=\"00005\" />\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747387359831</updated>\n    </task>\n    <task id=\"LOCAL-00006\" summary=\"Add new scripts and files for AI model data analysis  &#10;&#10;This commit introduces initial scripts and structures for analyzing network capture files and dataset preprocessing. Key additions include a PCAP analysis script, dataset checker, and various utility modules. Documentation and sample outputs are also included for debugging and testing.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747392924231</created>\n      <option name=\"number\" value=\"00006\" />\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747392924231</updated>\n    </task>\n    <task id=\"LOCAL-00007\" summary=\"Add new scripts and files for AI model data analysis  &#10;&#10;This commit introduces initial scripts and structures for analyzing network capture files and dataset preprocessing. Key additions include a PCAP analysis script, dataset checker, and various utility modules. Documentation and sample outputs are also included for debugging and testing.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747393802554</created>\n      <option name=\"number\" value=\"00007\" />\n      <option name=\"presentableId\" value=\"LOCAL-00007\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747393802554</updated>\n    </task>\n    <task id=\"LOCAL-00008\" summary=\"Add initial AI model analysis and data processing scripts&#10;&#10;This commit adds foundational scripts for analyzing PCAP files, loading and preprocessing NSL-KDD datasets, and managing the MantaGuard AI model pipeline. Updates include `analyze_capture.py`, `check_dataset.py`, and `data_loader.py`, along with sample outputs and initial `.gitignore` configurations for clarity and efficiency.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747394369612</created>\n      <option name=\"number\" value=\"00008\" />\n      <option name=\"presentableId\" value=\"LOCAL-00008\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747394369612</updated>\n    </task>\n    <task id=\"LOCAL-00009\" summary=\"Add initial AI model analysis and data processing scripts&#10;&#10;This commit adds foundational scripts for analyzing PCAP files, loading and preprocessing NSL-KDD datasets, and managing the MantaGuard AI model pipeline. Updates include `analyze_capture.py`, `check_dataset.py`, and `data_loader.py`, along with sample outputs and initial `.gitignore` configurations for clarity and efficiency.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747394382401</created>\n      <option name=\"number\" value=\"00009\" />\n      <option name=\"presentableId\" value=\"LOCAL-00009\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747394382401</updated>\n    </task>\n    <task id=\"LOCAL-00010\" summary=\"Remove unused Zeek log files and improve model file handling&#10;&#10;Deleted redundant Zeek output logs to declutter the repository. Enhanced model file detection logic in timed_capture.py with fallback warnings and included detailed error messages for missing model files.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747399958152</created>\n      <option name=\"number\" value=\"00010\" />\n      <option name=\"presentableId\" value=\"LOCAL-00010\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747399958152</updated>\n    </task>\n    <task id=\"LOCAL-00011\" summary=\"Remove large combined scan CSV file from repository&#10;&#10;The file `combined_scan_20250423_134837.csv` was removed due to its large size and potential redundancy. Keeping it in the repository could negatively impact performance and storage.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747400295466</created>\n      <option name=\"number\" value=\"00011\" />\n      <option name=\"presentableId\" value=\"LOCAL-00011\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747400295466</updated>\n    </task>\n    <task id=\"LOCAL-00012\" summary=\"Enhance MantaGuard UI and session state management&#10;&#10;- Improved sidebar navigation to preserve user selections during reruns.&#10;- Added functionality to display scan completion messages and manage refresh behavior.&#10;- Updated retrain_ocsvm.py to allow optional labeled anomalies for model retraining.&#10;- Adjusted model directory paths in timed_capture.py for consistency.&#10;- Modified unknown_categories.json to include new entries and improve categorization.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747748648135</created>\n      <option name=\"number\" value=\"00012\" />\n      <option name=\"presentableId\" value=\"LOCAL-00012\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747748648135</updated>\n    </task>\n    <task id=\"LOCAL-00013\" summary=\"Enhance MantaGuard UI and session state management&#10;&#10;- Improved sidebar navigation to preserve user selections during reruns.&#10;- Added functionality to display scan completion messages and manage refresh behavior.&#10;- Updated retrain_ocsvm.py to allow optional labeled anomalies for model retraining.&#10;- Adjusted model directory paths in timed_capture.py for consistency.&#10;- Modified unknown_categories.json to include new entries and improve categorization.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747748787719</created>\n      <option name=\"number\" value=\"00013\" />\n      <option name=\"presentableId\" value=\"LOCAL-00013\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747748787719</updated>\n    </task>\n    <task id=\"LOCAL-00014\" summary=\"Remove outdated data preprocessing and evaluation scripts.&#10;&#10;Deprecated scripts related to dataset preprocessing, feature engineering, and model evaluation have been removed to streamline the codebase. These functionalities are likely replaced or no longer aligned with the current design.&#10;&#10;Optimized the &quot;Upload PCAP&quot; and later use of analyze_capture.py\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747754500663</created>\n      <option name=\"number\" value=\"00014\" />\n      <option name=\"presentableId\" value=\"LOCAL-00014\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747754500663</updated>\n    </task>\n    <task id=\"LOCAL-00015\" summary=\"Add UID-based PCAP extraction script and enhance UI workflows.&#10;&#10;Added `extract_flow_by_uid.py` for extracting flows by UID from Zeek logs and PCAPs. Enhanced MantaGuard's UI to integrate PCAP extraction with anomaly predictions, and adjusted related files for seamless workflow improvements.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747922825309</created>\n      <option name=\"number\" value=\"00015\" />\n      <option name=\"presentableId\" value=\"LOCAL-00015\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747922825309</updated>\n    </task>\n    <task id=\"LOCAL-00016\" summary=\"/\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1747922953736</created>\n      <option name=\"number\" value=\"00016\" />\n      <option name=\"presentableId\" value=\"LOCAL-00016\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1747922953736</updated>\n    </task>\n    <task id=\"LOCAL-00017\" summary=\"Clean up `.idea/workspace.xml` to remove redundant changes and reformat properties.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1748860967128</created>\n      <option name=\"number\" value=\"00017\" />\n      <option name=\"presentableId\" value=\"LOCAL-00017\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1748860967128</updated>\n    </task>\n    <task id=\"LOCAL-00018\" summary=\"Clean up `.idea/workspace.xml` to remove redundant changes and reformat properties.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1749118980081</created>\n      <option name=\"number\" value=\"00018\" />\n      <option name=\"presentableId\" value=\"LOCAL-00018\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1749118980081</updated>\n    </task>\n    <task id=\"LOCAL-00019\" summary=\"Refractored the original MANTAGUARD.py into smaller separate files.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1749198059913</created>\n      <option name=\"number\" value=\"00019\" />\n      <option name=\"presentableId\" value=\"LOCAL-00019\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1749198059913</updated>\n    </task>\n    <task id=\"LOCAL-00020\" summary=\"Add base HTML template and initial structure for Home, Reports, Scanning, and Fix &amp; Patches pages with placeholder content.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1749211274324</created>\n      <option name=\"number\" value=\"00020\" />\n      <option name=\"presentableId\" value=\"LOCAL-00020\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1749211274324</updated>\n    </task>\n    <task id=\"LOCAL-00021\" summary=\"Add comprehensive security analytics, API endpoints, and professional styling for the reports page.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1749212767262</created>\n      <option name=\"number\" value=\"00021\" />\n      <option name=\"presentableId\" value=\"LOCAL-00021\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1749212767262</updated>\n    </task>\n    <task id=\"LOCAL-00022\" summary=\"Revamp Home and Scanning pages with professional design: added advanced styling, interactive components, and enhanced UX elements.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1749215939655</created>\n      <option name=\"number\" value=\"00022\" />\n      <option name=\"presentableId\" value=\"LOCAL-00022\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1749215939655</updated>\n    </task>\n    <task id=\"LOCAL-00023\" summary=\"Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1749217196464</created>\n      <option name=\"number\" value=\"00023\" />\n      <option name=\"presentableId\" value=\"LOCAL-00023\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1749217196464</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"24\" />\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"OPEN_GENERIC_TABS\">\n      <map>\n        <entry key=\"8ee6a343-179d-4529-98f8-cadc4d0745c8\" value=\"TOOL_WINDOW\" />\n      </map>\n    </option>\n    <option name=\"RECENT_FILTERS\">\n      <map>\n        <entry key=\"Branch\">\n          <value>\n            <list>\n              <RecentGroup>\n                <option name=\"FILTER_VALUES\">\n                  <option value=\"origin/main\" />\n                </option>\n              </RecentGroup>\n            </list>\n          </value>\n        </entry>\n        <entry key=\"User\">\n          <value>\n            <list>\n              <RecentGroup>\n                <option name=\"FILTER_VALUES\">\n                  <option value=\"*\" />\n                </option>\n              </RecentGroup>\n            </list>\n          </value>\n        </entry>\n      </map>\n    </option>\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"8ee6a343-179d-4529-98f8-cadc4d0745c8\">\n          <value>\n            <State />\n          </value>\n        </entry>\n        <entry key=\"MAIN\">\n          <value>\n            <State>\n              <option name=\"FILTERS\">\n                <map>\n                  <entry key=\"branch\">\n                    <value>\n                      <list>\n                        <option value=\"refactor\" />\n                      </list>\n                    </value>\n                  </entry>\n                </map>\n              </option>\n            </State>\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"add initial project structure and configuration files for the AI\" />\n    <MESSAGE value=\"change CSV file creation\" />\n    <MESSAGE value=\"Add new scripts and files for AI model data analysis  &#10;&#10;This commit introduces initial scripts and structures for analyzing network capture files and dataset preprocessing. Key additions include a PCAP analysis script, dataset checker, and various utility modules. Documentation and sample outputs are also included for debugging and testing.\" />\n    <MESSAGE value=\"Add initial AI model analysis and data processing scripts&#10;&#10;This commit adds foundational scripts for analyzing PCAP files, loading and preprocessing NSL-KDD datasets, and managing the MantaGuard AI model pipeline. Updates include `analyze_capture.py`, `check_dataset.py`, and `data_loader.py`, along with sample outputs and initial `.gitignore` configurations for clarity and efficiency.\" />\n    <MESSAGE value=\"Remove unused Zeek log files and improve model file handling&#10;&#10;Deleted redundant Zeek output logs to declutter the repository. Enhanced model file detection logic in timed_capture.py with fallback warnings and included detailed error messages for missing model files.\" />\n    <MESSAGE value=\"Remove large combined scan CSV file from repository&#10;&#10;The file `combined_scan_20250423_134837.csv` was removed due to its large size and potential redundancy. Keeping it in the repository could negatively impact performance and storage.\" />\n    <MESSAGE value=\"Enhance MantaGuard UI and session state management&#10;&#10;- Improved sidebar navigation to preserve user selections during reruns.&#10;- Added functionality to display scan completion messages and manage refresh behavior.&#10;- Updated retrain_ocsvm.py to allow optional labeled anomalies for model retraining.&#10;- Adjusted model directory paths in timed_capture.py for consistency.&#10;- Modified unknown_categories.json to include new entries and improve categorization.\" />\n    <MESSAGE value=\"Remove outdated data preprocessing and evaluation scripts.&#10;&#10;Deprecated scripts related to dataset preprocessing, feature engineering, and model evaluation have been removed to streamline the codebase. These functionalities are likely replaced or no longer aligned with the current design.&#10;&#10;Optimized the &quot;Upload PCAP&quot; and later use of analyze_capture.py\" />\n    <MESSAGE value=\"Add UID-based PCAP extraction script and enhance UI workflows.&#10;&#10;Added `extract_flow_by_uid.py` for extracting flows by UID from Zeek logs and PCAPs. Enhanced MantaGuard's UI to integrate PCAP extraction with anomaly predictions, and adjusted related files for seamless workflow improvements.\" />\n    <MESSAGE value=\"/\" />\n    <MESSAGE value=\"Push\" />\n    <MESSAGE value=\"Clean up `.idea/workspace.xml` to remove redundant changes and reformat properties.\" />\n    <MESSAGE value=\"Refractored the original MANTAGUARD.py into smaller separate files.\" />\n    <MESSAGE value=\"Refactor pages and scripts: integrate session state caching for network interfaces, improve PCAP extraction flow, and reorganize path handling logic for consistency.\" />\n    <MESSAGE value=\"Add base HTML template and initial structure for Home, Reports, Scanning, and Fix &amp; Patches pages with placeholder content.\" />\n    <MESSAGE value=\"Add comprehensive security analytics, API endpoints, and professional styling for the reports page.\" />\n    <MESSAGE value=\"Revamp Home and Scanning pages with professional design: added advanced styling, interactive components, and enhanced UX elements.\" />\n    <MESSAGE value=\"Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience.\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience.\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 5594855b94b501d9ecc2e3758dd1742615e13ebd)
++++ b/.idea/workspace.xml	(date 1749299353014)
+@@ -4,8 +4,9 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience.">
++    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Update `.idea` configuration: enable Flask support, adjust docstring format to Plain, and add Jinja2 template configuration.">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -120,6 +121,7 @@
+       <workItem from="1749104280831" duration="8112000" />
+       <workItem from="1749114945870" duration="4833000" />
+       <workItem from="1749197080593" duration="8929000" />
++      <workItem from="1749298487533" duration="865000" />
+     </task>
+     <task id="LOCAL-00001" summary="add initial project structure and configuration files for the AI">
+       <option name="closed" value="true" />
+@@ -305,7 +307,15 @@
+       <option name="project" value="LOCAL" />
+       <updated>1749217196464</updated>
+     </task>
+-    <option name="localTasksCounter" value="24" />
++    <task id="LOCAL-00024" summary="Update `.idea` configuration: enable Flask support, adjust docstring format to Plain, and add Jinja2 template configuration.">
++      <option name="closed" value="true" />
++      <created>1749298662900</created>
++      <option name="number" value="00024" />
++      <option name="presentableId" value="LOCAL-00024" />
++      <option name="project" value="LOCAL" />
++      <updated>1749298662900</updated>
++    </task>
++    <option name="localTasksCounter" value="25" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -389,6 +399,7 @@
+     <MESSAGE value="Add comprehensive security analytics, API endpoints, and professional styling for the reports page." />
+     <MESSAGE value="Revamp Home and Scanning pages with professional design: added advanced styling, interactive components, and enhanced UX elements." />
+     <MESSAGE value="Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience." />
+-    <option name="LAST_COMMIT_MESSAGE" value="Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience." />
++    <MESSAGE value="Update `.idea` configuration: enable Flask support, adjust docstring format to Plain, and add Jinja2 template configuration." />
++    <option name="LAST_COMMIT_MESSAGE" value="Update `.idea` configuration: enable Flask support, adjust docstring format to Plain, and add Jinja2 template configuration." />
+   </component>
+ </project>
+\ No newline at end of file
