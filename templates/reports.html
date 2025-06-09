@@ -586,9 +586,17 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1><i class="fas fa-chart-bar me-2"></i>Security Reports & Analytics</h1>
-                <button class="btn btn-outline-primary" onclick="refreshReports()">
-                    <i class="fas fa-sync-alt me-2"></i>Refresh Data
-                </button>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="refreshReports()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh Data
+                    </button>
+                    <button class="btn btn-outline-warning btn-sm" onclick="closeScanModal()" title="Fix UI if it becomes unresponsive">
+                        <i class="fas fa-tools me-1"></i>Fix UI
+                    </button>
+                    <button class="btn btn-outline-info btn-sm" onclick="window.debugMode = !window.debugMode; console.log('Debug mode:', window.debugMode);" title="Toggle debug mode for modal issues">
+                        <i class="fas fa-bug me-1"></i>Debug
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -763,12 +771,12 @@
 </div>
 
 <!-- Scan Details Modal -->
-<div class="modal fade" id="scanDetailsModal" tabindex="-1">
+<div class="modal fade" id="scanDetailsModal" tabindex="-1" data-bs-backdrop="true" data-bs-keyboard="true">
     <div class="modal-dialog" style="max-width: 95vw; width: 95vw;">
         <div class="modal-content" style="background-color: #1E1E1E; border: 1px solid rgba(255, 255, 255, 0.1);">
             <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
                 <h5 class="modal-title" id="scanDetailsTitle">Scan Details</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="closeScanModal()"></button>
             </div>
             <div class="modal-body" id="scanDetailsBody">
                 <div class="text-center">
@@ -954,195 +962,642 @@ function updateRecentScans(scans) {
     scansContainer.innerHTML = html;
 }
 
-function viewScanDetails(scanId) {
-    const modal = new bootstrap.Modal(document.getElementById('scanDetailsModal'));
+// Global variable to track the current modal instance
+let currentScanModal = null;
+
+// Function to safely close and cleanup modal with aggressive cleanup
+function closeScanModal() {
+    console.log('Closing scan modal...');
+    
+    // Hide and dispose modal instance
+    if (currentScanModal) {
+        try {
+            currentScanModal.hide();
+            currentScanModal.dispose();
+        } catch (e) {
+            console.warn('Error disposing modal:', e);
+        }
+        currentScanModal = null;
+    }
+    
+    // Force hide the modal element
+    const modalElement = document.getElementById('scanDetailsModal');
+    if (modalElement) {
+        modalElement.classList.remove('show');
+        modalElement.style.display = 'none';
+        modalElement.setAttribute('aria-hidden', 'true');
+        modalElement.removeAttribute('aria-modal');
+        modalElement.removeAttribute('role');
+    }
+    
+    // Aggressive backdrop cleanup - remove all possible backdrop elements
+    const backdrops = document.querySelectorAll('.modal-backdrop, .modal-backdrop.fade, .modal-backdrop.show');
+    backdrops.forEach(backdrop => {
+        backdrop.remove();
+    });
+    
+    // Reset body state completely
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    document.body.style.marginRight = '';
+    
+    // Remove any Bootstrap modal classes that might linger
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.paddingRight = '';
+    
+    // Force a short delay and re-check
+    setTimeout(() => {
+        const remainingBackdrops = document.querySelectorAll('.modal-backdrop');
+        remainingBackdrops.forEach(backdrop => backdrop.remove());
+        
+        if (document.body.classList.contains('modal-open')) {
+            document.body.classList.remove('modal-open');
+        }
+        
+        // Final cleanup
+        document.body.style.cssText = document.body.style.cssText.replace(/overflow[^;]*;?/g, '');
+        document.body.style.cssText = document.body.style.cssText.replace(/padding-right[^;]*;?/g, '');
+        
+        console.log('Modal cleanup completed');
+    }, 150);
+}
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', closeScanModal);
+
+// Emergency cleanup - detect if UI is locked and fix it
+let lastInteraction = Date.now();
+document.addEventListener('click', function(e) {
+    lastInteraction = Date.now();
+    
+    // Check if we have lingering modal issues
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    const modalOpen = document.body.classList.contains('modal-open');
+    const modalElement = document.getElementById('scanDetailsModal');
+    const modalVisible = modalElement && modalElement.classList.contains('show');
+    
+    // If we have backdrops but no visible modal, or modal-open class without modal, cleanup
+    if ((backdrops.length > 0 && !modalVisible) || (modalOpen && !modalVisible)) {
+        console.warn('Detected UI lockup, performing emergency cleanup');
+        closeScanModal();
+    }
+});
+
+// Periodic check for stuck UI (every 5 seconds)
+setInterval(() => {
+    const timeSinceLastInteraction = Date.now() - lastInteraction;
+    if (timeSinceLastInteraction > 5000) { // Only check if user hasn't interacted recently
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        const modalOpen = document.body.classList.contains('modal-open');
+        const modalElement = document.getElementById('scanDetailsModal');
+        const modalVisible = modalElement && modalElement.classList.contains('show');
+        
+        if ((backdrops.length > 0 && !modalVisible) || (modalOpen && !modalVisible)) {
+            console.warn('Periodic check detected UI lockup, performing emergency cleanup');
+            closeScanModal();
+        }
+    }
+}, 5000);
+
+// Escape key handler for emergency cleanup
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        const modalOpen = document.body.classList.contains('modal-open');
+        const modalElement = document.getElementById('scanDetailsModal');
+        const modalVisible = modalElement && modalElement.classList.contains('show');
+        
+        // If escape is pressed and UI seems stuck, force cleanup
+        if ((backdrops.length > 0 && !modalVisible) || (modalOpen && !modalVisible)) {
+            console.log('Escape key pressed, performing emergency cleanup');
+            e.preventDefault();
+            e.stopPropagation();
+            closeScanModal();
+        }
+    }
+});
+
+// Named function for modal hidden event with aggressive cleanup
+function handleModalHidden() {
+    console.log('Modal hidden event triggered');
+    
+    if (currentScanModal) {
+        try {
+            currentScanModal.dispose();
+        } catch (e) {
+            console.warn('Error disposing modal in hidden event:', e);
+        }
+        currentScanModal = null;
+    }
+    
+    // Immediate cleanup
+    closeScanModal();
+}
+
+// Function to update modal content without creating new modal instance
+function updateModalContent(data, scanId) {
     const modalTitle = document.getElementById('scanDetailsTitle');
     const modalBody = document.getElementById('scanDetailsBody');
     
-    modalTitle.textContent = `Scan Details - ${scanId}`;
+    // Generate visualization tabs
+    const vizTabs = data.visualizations.length > 0 ? 
+        data.visualizations.map((viz, index) => {
+            const vizName = viz.replace('.png', '').replace(/_/g, ' ');
+            const isActive = index === 0 ? 'active' : '';
+            return `<li class="nav-item" role="presentation">
+                <button class="nav-link ${isActive}" id="viz-${index}-tab" data-bs-toggle="tab" data-bs-target="#viz-${index}" type="button" role="tab">
+                    ${vizName}
+                </button>
+            </li>`;
+        }).join('') : 
+        '<li class="nav-item"><span class="nav-link disabled">No Visualizations</span></li>';
+
+    const vizContent = data.visualizations.length > 0 ? 
+        data.visualizations.map((viz, index) => {
+            const isActive = index === 0 ? 'show active' : '';
+            return `<div class="tab-pane fade ${isActive}" id="viz-${index}" role="tabpanel">
+                <div class="visualization-container">
+                    <img src="/images/${viz}" alt="${viz}" loading="lazy" />
+                </div>
+            </div>`;
+        }).join('') : 
+        '<div class="tab-pane fade show active"><div class="no-visualization">No visualizations available for this scan</div></div>';
+
+    // Update modal title with origin information
+    const originIcon = data.origin_type === 'timed_capture' ? 'clock' : data.origin_type === 'upload' ? 'upload' : 'question';
+    modalTitle.innerHTML = `<i class="fas fa-${originIcon} me-2"></i>Scan Details - ${data.origin_description}`;
+
     modalBody.innerHTML = `
-        <div class="text-center">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+        <div class="alert alert-info mb-3">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Source:</strong> ${data.origin_details}
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-number">${data.total_connections}</div>
+                    <div class="metric-label">Total Connections</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-number" style="color: #dc3545;">${data.anomalies}</div>
+                    <div class="metric-label">Anomalies</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-number" style="color: #28a745;">${data.normal}</div>
+                    <div class="metric-label">Normal</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-number" style="color: #ffc107;">${data.anomaly_rate}%</div>
+                    <div class="metric-label">Anomaly Rate</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h6 class="mb-1">Connection Details</h6>
+                        <small class="text-muted">
+                            <i class="fas fa-file-archive text-success me-1"></i>
+                            ${data.extracted_count || 0} connections have extracted PCAPs
+                        </small>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn btn-sm btn-outline-primary" onclick="openForensicsFolder('${scanId}')">
+                            <i class="fas fa-folder-open me-1"></i>Open Forensics Folder
+                        </button>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="anomalyFilter" onchange="filterConnections('${scanId}')">
+                                <label class="form-check-label" for="anomalyFilter">
+                                    Show only anomalies
+                                </label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="extractedFilter" onchange="filterConnections('${scanId}')">
+                                <label class="form-check-label" for="extractedFilter">
+                                    Show only extracted
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-dark table-sm">
+                        <thead>
+                            <tr>
+                                <th width="40px">
+                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll('${scanId}')">
+                                </th>
+                                <th>UID</th>
+                                <th>Protocol</th>
+                                <th>Score</th>
+                                <th>Prediction</th>
+                                <th width="80px">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="connectionsTableBody">
+                            ${data.connections.map(conn => `
+                                <tr data-prediction="${conn.prediction}" class="${conn.has_extracted_pcap ? 'extracted-connection' : ''}">
+                                    <td><input type="checkbox" class="connection-checkbox" value="${conn.uid}"></td>
+                                    <td>
+                                        ${conn.has_extracted_pcap ? '<i class="fas fa-file-archive text-success me-1" title="PCAP extracted"></i>' : ''}
+                                        ${conn.uid}
+                                    </td>
+                                    <td>${conn.proto || 'unknown'}</td>
+                                    <td>${parseFloat(conn.score).toFixed(4)}</td>
+                                    <td><span class="badge ${conn.prediction === 'anomaly' ? 'bg-danger' : 'bg-success'}">${conn.prediction}</span></td>
+                                    <td>
+                                        ${conn.has_extracted_pcap ? 
+                                            `<button class="btn btn-xs btn-success" onclick="openPcapFile('${scanId}', '${conn.uid}')" title="Open extracted PCAP file">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </button>` :
+                                            `<button class="btn btn-xs btn-outline-secondary" onclick="openPcapFile('${scanId}', '${conn.uid}')" title="PCAP not extracted yet">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </button>`
+                                        }
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-primary" onclick="extractSelectedConnections('${scanId}')" id="extractBtn" disabled>
+                        <i class="fas fa-download me-1"></i>Extract Selected PCAPs
+                    </button>
+                    <span class="ms-2 text-muted" id="selectedCount">0 connections selected</span>
+                    <div class="mt-2">
+                        <small class="text-info">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Tip: Connections with <i class="fas fa-file-archive text-success"></i> icons already have extracted PCAPs
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h6 class="mb-3">Visualizations</h6>
+                <ul class="nav nav-tabs" id="visualizationTabs" role="tablist">
+                    ${vizTabs}
+                </ul>
+                <div class="tab-content" id="visualizationTabContent">
+                    ${vizContent}
+                </div>
             </div>
         </div>
     `;
     
-    modal.show();
+    // Store connections data for filtering
+    window.currentScanConnections = data.connections;
     
-    fetch(`/api/reports/scan/${scanId}`)
+    // Add event listeners for checkboxes
+    updateSelectedCount();
+}
+
+// Track current extraction state to detect changes
+let currentExtractionState = new Map();
+let tableRefreshInterval = null;
+let isExtractionInProgress = false;
+
+// Function to update only the connections table while preserving modal state
+function refreshConnectionsTable(scanId, preserveSelections = true) {
+    const tableBody = document.getElementById('connectionsTableBody');
+    if (!tableBody) return;
+    
+    // Store current user selections and filters
+    const currentSelections = preserveSelections ? Array.from(document.querySelectorAll('.connection-checkbox:checked')).map(cb => cb.value) : [];
+    const anomalyFilterState = document.getElementById('anomalyFilter')?.checked || false;
+    const extractedFilterState = document.getElementById('extractedFilter')?.checked || false;
+    const scrollPosition = tableBody.closest('.table').parentElement.scrollTop;
+    
+    console.log('Refreshing connections table for scan:', scanId);
+    
+    fetch(`/api/reports/scan/${scanId}/connections`)
     .then(response => response.json())
     .then(data => {
         if (data.error) {
-            modalBody.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+            console.error('Error refreshing connections:', data.error);
             return;
         }
         
-        // Generate visualization tabs
-        const vizTabs = data.visualizations.length > 0 ? 
-            data.visualizations.map((viz, index) => {
-                const vizName = viz.replace('.png', '').replace(/_/g, ' ');
-                const isActive = index === 0 ? 'active' : '';
-                return `<li class="nav-item" role="presentation">
-                    <button class="nav-link ${isActive}" id="viz-${index}-tab" data-bs-toggle="tab" data-bs-target="#viz-${index}" type="button" role="tab">
-                        ${vizName}
-                    </button>
-                </li>`;
-            }).join('') : 
-            '<li class="nav-item"><span class="nav-link disabled">No Visualizations</span></li>';
+        // Update connections data
+        window.currentScanConnections = data.connections;
+        
+        // Detect changes in extraction status
+        let hasChanges = false;
+        let newlyExtractedUIDs = [];
+        const newExtractionState = new Map();
+        
+        data.connections.forEach(conn => {
+            newExtractionState.set(conn.uid, conn.has_extracted_pcap);
+            const oldState = currentExtractionState.get(conn.uid);
+            if (oldState === false && conn.has_extracted_pcap === true) {
+                hasChanges = true;
+                newlyExtractedUIDs.push(conn.uid);
+            }
+        });
+        
+        // Update the extraction state tracking
+        currentExtractionState = newExtractionState;
+        
+        // Regenerate table content
+        tableBody.innerHTML = data.connections.map(conn => {
+            const isNewlyExtracted = newlyExtractedUIDs.includes(conn.uid);
+            return `
+                <tr data-prediction="${conn.prediction}" class="${conn.has_extracted_pcap ? 'extracted-connection' : ''} ${isNewlyExtracted ? 'newly-extracted' : ''}">
+                    <td><input type="checkbox" class="connection-checkbox" value="${conn.uid}"></td>
+                    <td>
+                        ${conn.has_extracted_pcap ? '<i class="fas fa-file-archive text-success me-1" title="PCAP extracted"></i>' : ''}
+                        ${conn.uid}
+                    </td>
+                    <td>${conn.proto || 'unknown'}</td>
+                    <td>${parseFloat(conn.score).toFixed(4)}</td>
+                    <td><span class="badge ${conn.prediction === 'anomaly' ? 'bg-danger' : 'bg-success'}">${conn.prediction}</span></td>
+                    <td>
+                        ${conn.has_extracted_pcap ? 
+                            `<button class="btn btn-xs btn-success" onclick="openPcapFile('${scanId}', '${conn.uid}')" title="Open extracted PCAP file">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>` :
+                            `<button class="btn btn-xs btn-outline-secondary" onclick="openPcapFile('${scanId}', '${conn.uid}')" title="PCAP not extracted yet">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>`
+                        }
+                    </td>
+                </tr>
+            `;
+        }).join('');
+        
+        // Restore user selections
+        if (preserveSelections && currentSelections.length > 0) {
+            currentSelections.forEach(uid => {
+                const checkbox = document.querySelector(`.connection-checkbox[value="${uid}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+        
+        // Restore filter states
+        if (document.getElementById('anomalyFilter')) {
+            document.getElementById('anomalyFilter').checked = anomalyFilterState;
+        }
+        if (document.getElementById('extractedFilter')) {
+            document.getElementById('extractedFilter').checked = extractedFilterState;
+        }
+        
+        // Reapply filters
+        filterConnections(scanId);
+        
+        // Update UI counts and states
+        updateSelectedCount();
+        updateExtractedCount(data.extracted_count);
+        
+        // Restore scroll position
+        setTimeout(() => {
+            const scrollContainer = tableBody.closest('.table').parentElement;
+            if (scrollContainer) scrollContainer.scrollTop = scrollPosition;
+        }, 10);
+        
+        // Show notification if new extractions detected
+        if (hasChanges && !isExtractionInProgress && newlyExtractedUIDs.length > 0) {
+            showToast(`${newlyExtractedUIDs.length} new PCAP${newlyExtractedUIDs.length !== 1 ? 's' : ''} extracted and ready!`, true);
+            
+            // Highlight newly extracted rows briefly
+            setTimeout(() => {
+                document.querySelectorAll('.newly-extracted').forEach(row => {
+                    row.style.backgroundColor = 'rgba(40, 167, 69, 0.2)';
+                    row.style.transition = 'background-color 2s ease';
+                    setTimeout(() => {
+                        row.style.backgroundColor = '';
+                        row.classList.remove('newly-extracted');
+                    }, 2000);
+                });
+            }, 100);
+        }
+        
+        console.log(`Table refreshed for scan ${scanId} - ${data.extracted_count} extracted PCAPs`);
+        
+    })
+    .catch(error => {
+        console.error('Error refreshing connections table:', error);
+    });
+}
 
-        const vizContent = data.visualizations.length > 0 ? 
-            data.visualizations.map((viz, index) => {
-                const isActive = index === 0 ? 'show active' : '';
-                return `<div class="tab-pane fade ${isActive}" id="viz-${index}" role="tabpanel">
-                    <div class="visualization-container">
-                        <img src="/images/${viz}" alt="${viz}" loading="lazy" />
-                    </div>
-                </div>`;
-            }).join('') : 
-            '<div class="tab-pane fade show active"><div class="no-visualization">No visualizations available for this scan</div></div>';
+// Function to update extracted count display
+function updateExtractedCount(count) {
+    const extractedCountDisplay = document.querySelector('.text-muted .fas.fa-file-archive');
+    if (extractedCountDisplay) {
+        const parentSmall = extractedCountDisplay.closest('small');
+        if (parentSmall) {
+            parentSmall.innerHTML = `<i class="fas fa-file-archive text-success me-1"></i>${count} connections have extracted PCAPs`;
+        }
+    }
+}
 
-        // Update modal title with origin information
-        const originIcon = data.origin_type === 'timed_capture' ? 'clock' : data.origin_type === 'upload' ? 'upload' : 'question';
-        modalTitle.innerHTML = `<i class="fas fa-${originIcon} me-2"></i>Scan Details - ${data.origin_description}`;
+// Function to initialize auto-refresh for a scan modal
+function initializeAutoRefresh(scanId) {
+    console.log('Initializing post-extraction refresh for scan:', scanId);
+    
+    // Clear any existing interval
+    if (tableRefreshInterval) {
+        clearInterval(tableRefreshInterval);
+        tableRefreshInterval = null;
+    }
+    
+    // Initialize the extraction state tracking with current data
+    const tableBody = document.getElementById('connectionsTableBody');
+    if (tableBody && window.currentScanConnections) {
+        currentExtractionState.clear();
+        window.currentScanConnections.forEach(conn => {
+            currentExtractionState.set(conn.uid, conn.has_extracted_pcap);
+        });
+        console.log('Initialized extraction state with', currentExtractionState.size, 'connections');
+    }
+    
+    // Store scanId for post-extraction refresh
+    window.currentScanId = scanId;
+    
+    // Add cleanup listener for when modal is hidden
+    const modalElement = document.getElementById('scanDetailsModal');
+    if (modalElement) {
+        modalElement.addEventListener('hidden.bs.modal', function() {
+            console.log('Modal hidden, cleaning up refresh tracking');
+            if (tableRefreshInterval) {
+                clearInterval(tableRefreshInterval);
+                tableRefreshInterval = null;
+            }
+            currentExtractionState.clear();
+            isExtractionInProgress = false;
+            window.currentScanId = null;
+        }, { once: false }); // Allow multiple listeners but clean up properly
+    }
+}
 
+// Function to trigger refresh after extraction completes
+function triggerPostExtractionRefresh() {
+    if (window.currentScanId && document.getElementById('scanDetailsModal').classList.contains('show')) {
+        console.log('Triggering post-extraction refresh for scan:', window.currentScanId);
+        refreshConnectionsTable(window.currentScanId, false); // Don't preserve selections since extraction clears them
+    }
+}
+
+// Function to refresh scan details without creating new modal instance
+function refreshCurrentScanDetails(scanId) {
+    if (currentScanModal && document.getElementById('scanDetailsModal').classList.contains('show')) {
+        // Just update the content of the existing modal
+        const modalBody = document.getElementById('scanDetailsBody');
         modalBody.innerHTML = `
-            <div class="alert alert-info mb-3">
-                <i class="fas fa-info-circle me-2"></i>
-                <strong>Source:</strong> ${data.origin_details}
-            </div>
-            
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="metric-card">
-                        <div class="metric-number">${data.total_connections}</div>
-                        <div class="metric-label">Total Connections</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="metric-card">
-                        <div class="metric-number" style="color: #dc3545;">${data.anomalies}</div>
-                        <div class="metric-label">Anomalies</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="metric-card">
-                        <div class="metric-number" style="color: #28a745;">${data.normal}</div>
-                        <div class="metric-label">Normal</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="metric-card">
-                        <div class="metric-number" style="color: #ffc107;">${data.anomaly_rate}%</div>
-                        <div class="metric-label">Anomaly Rate</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            <h6 class="mb-1">Connection Details</h6>
-                            <small class="text-muted">
-                                <i class="fas fa-file-archive text-success me-1"></i>
-                                ${data.extracted_count || 0} connections have extracted PCAPs
-                            </small>
-                        </div>
-                        <div class="d-flex align-items-center gap-3">
-                            <button class="btn btn-sm btn-outline-primary" onclick="openForensicsFolder('${scanId}')">
-                                <i class="fas fa-folder-open me-1"></i>Open Forensics Folder
-                            </button>
-                            <div class="d-flex flex-column gap-2">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="anomalyFilter" onchange="filterConnections('${scanId}')">
-                                    <label class="form-check-label" for="anomalyFilter">
-                                        Show only anomalies
-                                    </label>
-                                </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="extractedFilter" onchange="filterConnections('${scanId}')">
-                                    <label class="form-check-label" for="extractedFilter">
-                                        Show only extracted
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="max-height: 400px; overflow-y: auto;">
-                        <table class="table table-dark table-sm">
-                            <thead>
-                                <tr>
-                                    <th width="40px">
-                                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll('${scanId}')">
-                                    </th>
-                                    <th>UID</th>
-                                    <th>Protocol</th>
-                                    <th>Score</th>
-                                    <th>Prediction</th>
-                                    <th width="80px">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="connectionsTableBody">
-                                ${data.connections.map(conn => `
-                                    <tr data-prediction="${conn.prediction}" class="${conn.has_extracted_pcap ? 'extracted-connection' : ''}">
-                                        <td><input type="checkbox" class="connection-checkbox" value="${conn.uid}"></td>
-                                        <td>
-                                            ${conn.has_extracted_pcap ? '<i class="fas fa-file-archive text-success me-1" title="PCAP extracted"></i>' : ''}
-                                            ${conn.uid}
-                                        </td>
-                                        <td>${conn.proto || 'unknown'}</td>
-                                        <td>${parseFloat(conn.score).toFixed(4)}</td>
-                                        <td><span class="badge ${conn.prediction === 'anomaly' ? 'bg-danger' : 'bg-success'}">${conn.prediction}</span></td>
-                                        <td>
-                                            ${conn.has_extracted_pcap ? 
-                                                `<button class="btn btn-xs btn-success" onclick="openPcapFile('${scanId}', '${conn.uid}')" title="Open extracted PCAP file">
-                                                    <i class="fas fa-external-link-alt"></i>
-                                                </button>` :
-                                                `<button class="btn btn-xs btn-outline-secondary" onclick="openPcapFile('${scanId}', '${conn.uid}')" title="PCAP not extracted yet">
-                                                    <i class="fas fa-external-link-alt"></i>
-                                                </button>`
-                                            }
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="mt-3">
-                        <button class="btn btn-primary" onclick="extractSelectedConnections('${scanId}')" id="extractBtn" disabled>
-                            <i class="fas fa-download me-1"></i>Extract Selected PCAPs
-                        </button>
-                        <span class="ms-2 text-muted" id="selectedCount">0 connections selected</span>
-                        <div class="mt-2">
-                            <small class="text-info">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Tip: Connections with <i class="fas fa-file-archive text-success"></i> icons already have extracted PCAPs
-                            </small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <h6 class="mb-3">Visualizations</h6>
-                    <ul class="nav nav-tabs" id="visualizationTabs" role="tablist">
-                        ${vizTabs}
-                    </ul>
-                    <div class="tab-content" id="visualizationTabContent">
-                        ${vizContent}
-                    </div>
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Refreshing...</span>
                 </div>
             </div>
         `;
         
-        // Store connections data for filtering
-        window.currentScanConnections = data.connections;
+        // Fetch and update the content
+        fetch(`/api/reports/scan/${scanId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                modalBody.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                return;
+            }
+            
+            // Update the modal content (reuse the existing modal content generation logic)
+            updateModalContent(data, scanId);
+        })
+        .catch(error => {
+            modalBody.innerHTML = `<div class="alert alert-danger">Error loading scan details: ${error.message}</div>`;
+        });
+    }
+}
+
+function viewScanDetails(scanId) {
+    console.log('Opening scan details for:', scanId);
+    
+    // For debugging - let's also try a simple approach first
+    if (window.debugMode) {
+        const modalElement = document.getElementById('scanDetailsModal');
+        const modalTitle = document.getElementById('scanDetailsTitle');
+        const modalBody = document.getElementById('scanDetailsBody');
         
-        // Add event listeners for checkboxes
-        updateSelectedCount();
-    })
-    .catch(error => {
-        modalBody.innerHTML = `<div class="alert alert-danger">Error loading scan details: ${error.message}</div>`;
-    });
+        modalTitle.textContent = `Scan Details - ${scanId}`;
+        modalBody.innerHTML = '<div class="text-center"><div class="spinner-border text-primary"></div></div>';
+        
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+        
+        fetch(`/api/reports/scan/${scanId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('DEBUG: Received data:', data);
+            updateModalContent(data, scanId);
+            
+            // Initialize auto-refresh for debug mode too
+            initializeAutoRefresh(scanId);
+        })
+        .catch(error => {
+            console.error('DEBUG: Fetch error:', error);
+            modalBody.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+        });
+        return;
+    }
+    
+    // Force cleanup any existing issues first
+    closeScanModal();
+    
+    const modalElement = document.getElementById('scanDetailsModal');
+    const modalTitle = document.getElementById('scanDetailsTitle');
+    const modalBody = document.getElementById('scanDetailsBody');
+    
+    // Check if modal elements exist
+    if (!modalElement || !modalTitle || !modalBody) {
+        console.error('Modal elements not found!');
+        return;
+    }
+    
+    // Wait a moment for cleanup to complete
+    setTimeout(() => {
+        console.log('Starting modal initialization for scan:', scanId);
+        try {
+            // Create new modal instance with defensive error handling
+            currentScanModal = new bootstrap.Modal(modalElement, {
+                backdrop: true,
+                keyboard: true,
+                focus: true
+            });
+            
+            modalTitle.textContent = `Scan Details - ${scanId}`;
+            modalBody.innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners with error handling
+            modalElement.removeEventListener('hidden.bs.modal', handleModalHidden);
+            modalElement.addEventListener('hidden.bs.modal', handleModalHidden);
+            
+            // Add click handler for backdrop
+            modalElement.addEventListener('click', function(e) {
+                if (e.target === modalElement) {
+                    console.log('Backdrop clicked, closing modal');
+                    closeScanModal();
+                }
+            });
+            
+            // Show modal with error handling
+            try {
+                currentScanModal.show();
+                console.log('Modal shown successfully');
+                
+                // Fetch data AFTER modal is shown
+                console.log('Fetching scan data for:', scanId);
+                fetch(`/api/reports/scan/${scanId}`)
+                .then(response => {
+                    console.log('Received response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Received scan data:', data);
+                    if (data.error) {
+                        console.error('API returned error:', data.error);
+                        modalBody.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                        return;
+                    }
+                    
+                    // Use the extracted content generation function
+                    updateModalContent(data, scanId);
+                    
+                    // Initialize auto-refresh after content is loaded
+                    initializeAutoRefresh(scanId);
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    modalBody.innerHTML = `<div class="alert alert-danger">Error loading scan details: ${error.message}</div>`;
+                });
+                
+            } catch (showError) {
+                console.error('Error showing modal:', showError);
+                closeScanModal();
+                return;
+            }
+            
+        } catch (error) {
+            console.error('Error creating modal:', error);
+            closeScanModal();
+            return;
+        }
+    }, 100); // Reduced delay for faster loading
 }
 
 
@@ -1326,6 +1781,9 @@ function extractSelectedConnections(scanId) {
     extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Extracting...';
     extractBtn.disabled = true;
     
+    // Set extraction in progress flag for auto-refresh logic
+    isExtractionInProgress = true;
+    
     fetch('/api/reports/extract_pcaps', {
         method: 'POST',
         headers: {
@@ -1346,17 +1804,18 @@ function extractSelectedConnections(scanId) {
                 console.warn('Extraction warnings:', data.warnings);
             }
             
-            showToast(message, true);
-            
             // Reset selections
             document.querySelectorAll('.connection-checkbox').forEach(cb => cb.checked = false);
             document.getElementById('selectAll').checked = false;
             updateSelectedCount();
             
-            // Refresh the scan details to show updated extraction status
+            // Show success message
+            showToast(message, true);
+            
+            // Trigger post-extraction refresh to show changes
             setTimeout(() => {
-                viewScanDetails(scanId);
-            }, 1000);
+                triggerPostExtractionRefresh();
+            }, 1000); // Small delay to allow backend to complete file operations
         } else {
             showToast(`Error extracting PCAPs: ${data.error}`, false);
         }
@@ -1367,6 +1826,9 @@ function extractSelectedConnections(scanId) {
     .finally(() => {
         extractBtn.innerHTML = originalText;
         extractBtn.disabled = document.querySelectorAll('.connection-checkbox:checked').length === 0;
+        
+        // Clear extraction in progress flag
+        isExtractionInProgress = false;
     });
 }
 

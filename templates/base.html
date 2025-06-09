@@ -316,6 +316,196 @@
         .back-to-top:active {
             transform: translateY(0);
         }
+        
+        /* Shutdown button styling */
+        #shutdown-btn {
+            border-color: #dc3545 !important;
+            color: #dc3545 !important;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+        
+        #shutdown-btn:hover {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: #ffffff !important;
+        }
+        
+        #shutdown-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: transparent !important;
+        }
+        
+        /* Add extra margin for mobile navbar collapse */
+        @media (max-width: 991.98px) {
+            #shutdown-btn {
+                margin-top: 1rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        /* Shutdown modal styling */
+        .modal-content.bg-dark {
+            background-color: #1e1e1e !important;
+            border: 2px solid #dc3545;
+        }
+        
+        .modal-header.border-danger {
+            border-bottom-color: #dc3545 !important;
+        }
+        
+        .modal-footer.border-danger {
+            border-top-color: #dc3545 !important;
+        }
+
+        /* Toast styling for shutdown notifications */
+        .toast .toast-header.bg-dark {
+            background-color: #1e1e1e !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .toast .toast-body.bg-dark {
+            background-color: #1e1e1e !important;
+        }
+
+        /* Header Model Info Styling */
+        .model-info-header {
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 6px 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .model-info-header:hover {
+            background: rgba(30, 30, 30, 0.95);
+            border-color: #00BFFF;
+        }
+
+        .model-info-compact {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        .model-version-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #00BFFF;
+            white-space: nowrap;
+        }
+
+        .model-status-indicator {
+            font-size: 0.6rem;
+            margin-top: 1px;
+        }
+
+        .model-status-indicator.status-ready {
+            color: #28a745;
+        }
+
+        .model-status-indicator.status-error {
+            color: #dc3545;
+        }
+
+        .model-status-indicator.status-loading {
+            color: #ffc107;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 991.98px) {
+            .model-info-header {
+                margin-top: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        /* Tooltip for model info */
+        .model-info-tooltip {
+            position: absolute;
+            background: #1e1e1e;
+            border: 1px solid #00BFFF;
+            border-radius: 6px;
+            padding: 12px;
+            color: white;
+            font-size: 0.8rem;
+            z-index: 1070;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            min-width: 200px;
+            display: none;
+        }
+
+        .model-info-tooltip.show {
+            display: block;
+        }
+
+        /* Model dropdown styling */
+        .model-dropdown-menu {
+            background-color: #1e1e1e !important;
+            border: 1px solid #00BFFF !important;
+            border-radius: 6px;
+            min-width: 220px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .model-dropdown-menu .dropdown-header {
+            color: #00BFFF !important;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .model-dropdown-menu .dropdown-item {
+            color: #ffffff !important;
+            font-size: 0.85rem;
+            padding: 8px 16px;
+        }
+
+        .model-dropdown-menu .dropdown-item:hover,
+        .model-dropdown-menu .dropdown-item:focus {
+            background-color: rgba(0, 191, 255, 0.1) !important;
+            color: #00BFFF !important;
+        }
+
+        .model-dropdown-menu .dropdown-item.active {
+            background-color: #00BFFF !important;
+            color: #ffffff !important;
+        }
+
+        .model-dropdown-menu .dropdown-item-text {
+            color: rgba(255, 255, 255, 0.7) !important;
+            font-size: 0.8rem;
+            padding: 8px 16px;
+        }
+
+        .model-dropdown-menu .dropdown-divider {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .model-version-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .model-version-status {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        .model-version-status.current {
+            background-color: #00BFFF;
+            color: white;
+        }
+
+        .model-version-status.available {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -352,9 +542,80 @@
                         </a>
                     </li>
                 </ul>
+                
+                <!-- AI Model Info in Header -->
+                <div class="d-flex align-items-center ms-3">
+                    <div class="dropdown">
+                        <div class="model-info-header" id="modelDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Click to view/change AI model">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-brain me-2 text-primary"></i>
+                                <div class="model-info-compact">
+                                    <span class="model-version-badge" id="header-model-version">
+                                        <i class="fas fa-spinner fa-spin fa-xs me-1"></i>Loading...
+                                    </span>
+                                    <div class="model-status-indicator" id="header-model-status">
+                                        <i class="fas fa-circle fa-xs"></i>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-down ms-2" style="font-size: 0.7rem; opacity: 0.7;"></i>
+                            </div>
+                        </div>
+                        <ul class="dropdown-menu model-dropdown-menu" aria-labelledby="modelDropdown">
+                            <li><h6 class="dropdown-header">AI Model Selection</h6></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="refreshHeaderModelInfo()">
+                                    <i class="fas fa-sync-alt me-2"></i>Refresh Status
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="model-versions-list">
+                                <span class="dropdown-item-text">
+                                    <i class="fas fa-spinner fa-spin me-2"></i>Loading versions...
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Shutdown button separated in far right corner -->
+                <div class="ms-4">
+                    <button class="btn btn-outline-danger btn-sm" id="shutdown-btn" onclick="shutdownApplication()" title="Shutdown MantaGuard">
+                        <i class="fas fa-power-off me-1"></i>Shutdown
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
+
+    <!-- Shutdown Confirmation Modal -->
+    <div class="modal fade" id="shutdownModal" tabindex="-1" aria-labelledby="shutdownModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark border-danger">
+                <div class="modal-header border-danger">
+                    <h5 class="modal-title text-danger" id="shutdownModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Confirm Shutdown
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-white">
+                    <p class="mb-3">Are you sure you want to shutdown MantaGuard?</p>
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Warning:</strong> This will close the application completely. You will need to restart it manually from the terminal.
+                    </div>
+                </div>
+                <div class="modal-footer border-danger">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmShutdownBtn" onclick="executeShutdown()">
+                        <i class="fas fa-power-off me-1"></i>Shutdown Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <div class="container-fluid py-4">
@@ -389,6 +650,306 @@
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
+        });
+    }
+
+    // Header Model Info Functions
+    function loadHeaderModelInfo() {
+        fetch('/api/model_info')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.model_info) {
+                updateHeaderModelDisplay(data.model_info);
+            } else {
+                showHeaderModelError(data.error || 'Model error');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading header model info:', error);
+            showHeaderModelError('Connection error');
+        });
+    }
+
+    function updateHeaderModelDisplay(modelInfo) {
+        const versionElement = document.getElementById('header-model-version');
+        const statusElement = document.getElementById('header-model-status');
+        
+        if (versionElement) {
+            versionElement.innerHTML = `AI ${modelInfo.version || 'Unknown'}`;
+        }
+        
+        if (statusElement) {
+            const isLoaded = modelInfo.model_loaded && modelInfo.scaler_loaded && modelInfo.encoders_loaded;
+            if (isLoaded) {
+                statusElement.innerHTML = '<i class="fas fa-circle fa-xs"></i> Ready';
+                statusElement.className = 'model-status-indicator status-ready';
+            } else {
+                statusElement.innerHTML = '<i class="fas fa-exclamation-triangle fa-xs"></i> Error';
+                statusElement.className = 'model-status-indicator status-error';
+            }
+        }
+        
+        // Set up tooltip with detailed info
+        setupModelInfoTooltip(modelInfo);
+        
+        // Update dropdown with available versions
+        updateModelDropdown(modelInfo);
+    }
+
+    function showHeaderModelError(errorMessage) {
+        const versionElement = document.getElementById('header-model-version');
+        const statusElement = document.getElementById('header-model-status');
+        
+        if (versionElement) {
+            versionElement.innerHTML = 'AI Error';
+        }
+        
+        if (statusElement) {
+            statusElement.innerHTML = '<i class="fas fa-times-circle fa-xs"></i> Error';
+            statusElement.className = 'model-status-indicator status-error';
+        }
+    }
+
+    function setupModelInfoTooltip(modelInfo) {
+        const headerElement = document.getElementById('header-model-info');
+        if (!headerElement) return;
+
+        // Remove existing tooltip if any
+        const existingTooltip = document.getElementById('model-info-tooltip');
+        if (existingTooltip) {
+            existingTooltip.remove();
+        }
+
+        // Create tooltip content
+        const availableVersions = modelInfo.available_versions ? modelInfo.available_versions.join(', ') : 'None';
+        const tooltipContent = `
+            <div><strong>Version:</strong> ${modelInfo.version || 'Unknown'}</div>
+            <div><strong>Status:</strong> ${modelInfo.model_loaded ? 'Ready' : 'Error'}</div>
+            <div><strong>Available:</strong> ${availableVersions}</div>
+            <div><strong>Directory:</strong> ...${modelInfo.model_dir ? modelInfo.model_dir.slice(-30) : 'Unknown'}</div>
+        `;
+
+        // Create tooltip element
+        const tooltip = document.createElement('div');
+        tooltip.id = 'model-info-tooltip';
+        tooltip.className = 'model-info-tooltip';
+        tooltip.innerHTML = tooltipContent;
+        document.body.appendChild(tooltip);
+
+        // Add hover events
+        headerElement.addEventListener('mouseenter', function(e) {
+            const rect = headerElement.getBoundingClientRect();
+            tooltip.style.top = (rect.bottom + 5) + 'px';
+            tooltip.style.left = (rect.left) + 'px';
+            tooltip.classList.add('show');
+        });
+
+        headerElement.addEventListener('mouseleave', function() {
+            tooltip.classList.remove('show');
+        });
+    }
+
+    function updateModelDropdown(modelInfo) {
+        const versionsList = document.getElementById('model-versions-list');
+        if (!versionsList || !modelInfo.available_versions) return;
+
+        // Clear existing content
+        versionsList.innerHTML = '';
+
+        if (modelInfo.available_versions.length === 0) {
+            versionsList.innerHTML = '<span class="dropdown-item-text">No versions available</span>';
+            return;
+        }
+
+        // Add each available version
+        modelInfo.available_versions.forEach(version => {
+            const li = document.createElement('li');
+            const currentVersion = modelInfo.version || 'base';
+            const isCurrent = version === currentVersion;
+            
+            li.innerHTML = `
+                <a class="dropdown-item ${isCurrent ? 'active' : ''}" href="#" onclick="switchModelVersion('${version}')">
+                    <div class="model-version-item">
+                        <span>
+                            <i class="fas fa-microchip me-2"></i>
+                            ${version === 'base' ? 'Base Model' : 'Version ' + version}
+                        </span>
+                        <span class="model-version-status ${isCurrent ? 'current' : 'available'}">
+                            ${isCurrent ? 'Current' : 'Available'}
+                        </span>
+                    </div>
+                </a>
+            `;
+            
+            versionsList.appendChild(li);
+        });
+    }
+
+    function switchModelVersion(version) {
+        // Close the dropdown
+        const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('modelDropdown'));
+        if (dropdown) dropdown.hide();
+
+        // Show loading state
+        const versionElement = document.getElementById('header-model-version');
+        const statusElement = document.getElementById('header-model-status');
+        
+        if (versionElement) {
+            versionElement.innerHTML = '<i class="fas fa-spinner fa-spin fa-xs me-1"></i>Switching...';
+        }
+        if (statusElement) {
+            statusElement.innerHTML = '<i class="fas fa-circle fa-xs"></i>';
+            statusElement.className = 'model-status-indicator status-loading';
+        }
+
+        // Call the switch API
+        fetch('/api/switch_model', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                version: version
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success notification
+                showShutdownNotification(`Successfully switched to ${version}`, 'success');
+                // Refresh the display
+                setTimeout(() => {
+                    loadHeaderModelInfo();
+                }, 1000);
+            } else {
+                showShutdownNotification(`Failed to switch: ${data.error}`, 'warning');
+                // Reload current info
+                loadHeaderModelInfo();
+            }
+        })
+        .catch(error => {
+            console.error('Error switching model:', error);
+            showShutdownNotification('Error switching model', 'warning');
+            loadHeaderModelInfo();
+        });
+    }
+
+    // Manual refresh function
+    function refreshHeaderModelInfo() {
+        // Show loading state
+        const versionElement = document.getElementById('header-model-version');
+        const statusElement = document.getElementById('header-model-status');
+        
+        if (versionElement) {
+            versionElement.innerHTML = '<i class="fas fa-spinner fa-spin fa-xs me-1"></i>Refreshing...';
+        }
+        if (statusElement) {
+            statusElement.innerHTML = '<i class="fas fa-circle fa-xs"></i>';
+            statusElement.className = 'model-status-indicator status-loading';
+        }
+        
+        // Load fresh data
+        loadHeaderModelInfo();
+    }
+
+    // Load header model info on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadHeaderModelInfo();
+        
+        // Refresh every 30 seconds
+        setInterval(loadHeaderModelInfo, 30000);
+    });
+
+    // Shutdown application function - shows confirmation modal
+    function shutdownApplication() {
+        const shutdownModal = new bootstrap.Modal(document.getElementById('shutdownModal'));
+        shutdownModal.show();
+    }
+
+    // Execute the actual shutdown after confirmation
+    function executeShutdown() {
+        // Close the modal
+        const shutdownModal = bootstrap.Modal.getInstance(document.getElementById('shutdownModal'));
+        shutdownModal.hide();
+
+        // Show loading state on both buttons
+        const shutdownBtn = document.getElementById('shutdown-btn');
+        const confirmBtn = document.getElementById('confirmShutdownBtn');
+        
+        const originalShutdownContent = shutdownBtn.innerHTML;
+        const originalConfirmContent = confirmBtn.innerHTML;
+        
+        shutdownBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Shutting down...';
+        shutdownBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Shutting down...';
+        confirmBtn.disabled = true;
+
+        // Show success notification
+        showShutdownNotification('Initiating shutdown...', 'info');
+
+        // Call shutdown API
+        fetch('/api/shutdown', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                showShutdownNotification('MantaGuard is shutting down. You can close this browser tab.', 'success');
+            } else {
+                throw new Error('Shutdown request failed');
+            }
+        })
+        .catch(error => {
+            // This is expected when the server shuts down
+            console.log('Server shutdown initiated');
+            showShutdownNotification('MantaGuard is shutting down. You can close this browser tab.', 'success');
+        });
+    }
+
+    // Show shutdown notification using Bootstrap toast
+    function showShutdownNotification(message, type) {
+        // Create toast element if it doesn't exist
+        let toastContainer = document.getElementById('shutdown-toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'shutdown-toast-container';
+            toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+            toastContainer.style.zIndex = '1060';
+            document.body.appendChild(toastContainer);
+        }
+
+        const toastId = 'shutdown-toast-' + Date.now();
+        const iconClass = type === 'success' ? 'fa-check-circle text-success' : 
+                         type === 'warning' ? 'fa-exclamation-triangle text-warning' : 
+                         'fa-info-circle text-info';
+
+        const toastHTML = `
+            <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header bg-dark text-white">
+                    <i class="fas ${iconClass} me-2"></i>
+                    <strong class="me-auto">MantaGuard</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body bg-dark text-white">
+                    ${message}
+                </div>
+            </div>
+        `;
+
+        toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+        
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement, {
+            autohide: type !== 'success', // Keep success message visible
+            delay: type === 'success' ? 10000 : 5000
+        });
+        toast.show();
+
+        // Remove toast element after it's hidden
+        toastElement.addEventListener('hidden.bs.toast', function() {
+            toastElement.remove();
         });
     }
     </script>

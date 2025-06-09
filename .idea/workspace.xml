@@ -5,11 +5,72 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Clean up `.idea` shelf files and streamline `unknown_categories.json` structure with reordered entries for consistency.">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/timed_capture.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/timed_capture.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MANTAGUARD_old.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/analyze_capture.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/extract_flow_by_uid.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/forensics/.gitkeep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/forensics/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/live_packet_buffer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/analysis_results/.gitkeep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/ocsvm_model/encoders.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/ocsvm_model/labeled_anomalies.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/ocsvm_model/ocsvm_model.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/ocsvm_model/scaler.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/retrained_model/encoders_v2.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/retrained_model/ocsvm_model_v2.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/retrained_model/scaler_v2.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/test_visualizations/sample_with_labels.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/test_visualizations/sample_without_labels.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/test_visualizations/with_labels/confusion_matrix.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/test_visualizations/with_labels/precision_recall_curve.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/test_visualizations/with_labels/roc_curve.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/test_visualizations/with_labels/score_histogram.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/test_visualizations/with_labels/time_series.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/test_visualizations/without_labels/confusion_matrix_unavailable.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/test_visualizations/without_labels/precision_recall_curve_unavailable.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/test_visualizations/without_labels/roc_curve_unavailable.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/test_visualizations/without_labels/score_histogram.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/output/test_visualizations/without_labels/time_series.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/parsers/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/parsers/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/parsers/zeek_loader.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/pcap_metadata.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/pcaps/.gitkeep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/realtime_detector.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/run_retrain_ocsvm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_analyze_capture.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_fix.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_live_packet_buffer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_offline_pipeline.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_pipeline.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_realtime_detector.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_timed_capture.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_unknown_categories.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_visualize_results.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_zeek.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/test/test_zeek_loader.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/timed_capture.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/training/retrain_ocsvm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/training/sample_conn.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/training/train_ocsvm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/visualize_results.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/visualize_results_README.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/scanning_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/scanning_page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/fix_patches_page.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/home_page.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/reports_page.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/scanning_page.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/config.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/navigation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/session_state.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/home.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/reports.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/reports.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/scanning.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/scanning.html" afterDir="false" />
     </list>
@@ -127,7 +188,7 @@
       <workItem from="1749114945870" duration="4833000" />
       <workItem from="1749197080593" duration="8929000" />
       <workItem from="1749300014144" duration="335000" />
-      <workItem from="1749423009112" duration="1851000" />
+      <workItem from="1749423009112" duration="11533000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project structure and configuration files for the AI">
       <option name="closed" value="true" />

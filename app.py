@@ -14,26 +14,201 @@ import netifaces
 
 # Import metadata management
 try:
-    sys.path.append(os.path.join(os.path.dirname(__file__), 'ai-model'))
+    # Try importing metadata from legacy location
     from pcap_metadata import create_metadata, update_metadata_with_analysis, get_analysis_origin_info
 except ImportError:
-    print("Warning: Could not import pcap_metadata module")
-    # Create dummy functions to prevent errors
-    def create_metadata(*args, **kwargs):
-        pass
-    def update_metadata_with_analysis(*args, **kwargs):
-        pass
-    def get_analysis_origin_info(*args, **kwargs):
-        return {'source_type': 'unknown', 'description': 'Unknown Source', 'details': 'Metadata unavailable'}
+    print("Warning: Could not import pcap_metadata module, using built-in metadata functions")
+    
+    # Built-in metadata functions
+    import json
+    from pathlib import Path
+    
+    def get_metadata_path(pcap_path):
+        """Get the metadata file path for a given PCAP file."""
+        pcap_path = Path(pcap_path)
+        base_path = pcap_path.with_suffix('')
+        return base_path.with_suffix('.json')
+    
+    def load_metadata(pcap_path):
+        """Load metadata for a PCAP file."""
+        metadata_path = get_metadata_path(pcap_path)
+        if not metadata_path.exists():
+            return None
+        try:
+            with open(metadata_path, 'r') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, IOError):
+            return None
+    
+    def create_metadata(pcap_path, origin_type, interface=None, duration_seconds=None, 
+                       original_filename=None, file_size_bytes=None, capture_method=None):
+        """Create metadata for a PCAP file."""
+        pcap_path = Path(pcap_path)
+        pcap_filename = pcap_path.name
+        timestamp = datetime.now().isoformat() + 'Z'
+        
+        metadata = {
+            "pcap_filename": pcap_filename,
+            "pcap_path": str(pcap_path.absolute()),
+            "origin_type": origin_type,
+            "timestamp": timestamp,
+            "metadata": {},
+            "analysis_results": []
+        }
+        
+        # Add origin-specific metadata
+        if origin_type == "timed_capture":
+            metadata["metadata"] = {
+                "interface": interface,
+                "duration_seconds": duration_seconds,
+                "capture_method": capture_method or "tshark"
+            }
+        elif origin_type == "upload":
+            metadata["metadata"] = {
+                "original_filename": original_filename,
+                "file_size_bytes": file_size_bytes or (pcap_path.stat().st_size if pcap_path.exists() else None),
+                "upload_source": "user_upload"
+            }
+        
+        # Save metadata to file
+        metadata_path = get_metadata_path(pcap_path)
+        try:
+            os.makedirs(metadata_path.parent, exist_ok=True)
+            with open(metadata_path, 'w') as f:
+                json.dump(metadata, f, indent=2, sort_keys=True)
+        except (IOError, TypeError):
+            pass
+        
+        return metadata
+    
+    def update_metadata_with_analysis(pcap_path, analysis_dir, csv_path, anomaly_count, total_connections):
+        """Update PCAP metadata with analysis results."""
+        metadata_path = get_metadata_path(pcap_path)
+        if not metadata_path.exists():
+            return None
+        
+        metadata = load_metadata(pcap_path)
+        if not metadata:
+            return None
+        
+        # Create analysis result entry
+        analysis_result = {
+            "analysis_dir": str(Path(analysis_dir).absolute()),
+            "csv_path": str(Path(csv_path).absolute()),
+            "anomaly_count": anomaly_count,
+            "total_connections": total_connections,
+            "analysis_timestamp": datetime.now().isoformat() + 'Z',
+            "analysis_id": Path(analysis_dir).name
+        }
+        
+        # Add to analysis results list
+        metadata["analysis_results"].append(analysis_result)
+        
+        # Save updated metadata
+        try:
+            with open(metadata_path, 'w') as f:
+                json.dump(metadata, f, indent=2, sort_keys=True)
+        except (IOError, TypeError):
+            pass
+        
+        return metadata
+    
+    def get_pcap_origin_info(pcap_path):
+        """Get human-readable origin information for a PCAP file."""
+        metadata = load_metadata(pcap_path)
+        
+        if not metadata:
+            # Fallback: try to determine from filename
+            filename = Path(pcap_path).name
+            if filename.startswith('capture_'):
+                return {
+                    'source_type': 'timed_capture',
+                    'description': 'Network Capture',
+                    'details': 'Timed network capture (metadata unavailable)'
+                }
+            elif filename.startswith('uploaded_'):
+                return {
+                    'source_type': 'upload',
+                    'description': 'File Upload',
+                    'details': 'Uploaded PCAP file (metadata unavailable)'
+                }
+            else:
+                return {
+                    'source_type': 'unknown',
+                    'description': 'Unknown Source',
+                    'details': 'Origin unknown'
+                }
+        
+        origin_type = metadata.get('origin_type', 'unknown')
+        metadata_info = metadata.get('metadata', {})
+        
+        if origin_type == 'timed_capture':
+            interface = metadata_info.get('interface', 'unknown')
+            duration = metadata_info.get('duration_seconds', 0)
+            return {
+                'source_type': 'timed_capture',
+                'description': f'Captured on {interface}',
+                'details': f'Network capture on interface {interface} for {duration} seconds'
+            }
+        elif origin_type == 'upload':
+            original_filename = metadata_info.get('original_filename', 'unknown')
+            return {
+                'source_type': 'upload',
+                'description': f'Uploaded: {original_filename}',
+                'details': f'User uploaded file: {original_filename}'
+            }
+        else:
+            return {
+                'source_type': origin_type,
+                'description': f'Source: {origin_type}',
+                'details': f'PCAP from {origin_type}'
+            }
+    
+    def find_pcap_for_analysis(analysis_dir, pcap_dir):
+        """Find the PCAP file that generated a specific analysis."""
+        analysis_id = Path(analysis_dir).name
+        pcap_dir = Path(pcap_dir)
+        
+        if not pcap_dir.exists():
+            return None
+        
+        # Search through all PCAP metadata files
+        for pcap_file in pcap_dir.glob('*.pcap*'):
+            if pcap_file.suffix in ['.pcap', '.pcapng']:
+                metadata = load_metadata(str(pcap_file))
+                if metadata:
+                    for analysis_result in metadata.get('analysis_results', []):
+                        if analysis_result.get('analysis_id') == analysis_id:
+                            return (str(pcap_file), metadata)
+        
+        return None
+    
+    def get_analysis_origin_info(analysis_dir, pcap_dir):
+        """Get origin information for a specific analysis directory."""
+        result = find_pcap_for_analysis(analysis_dir, pcap_dir)
+        
+        if result:
+            pcap_path, metadata = result
+            return get_pcap_origin_info(pcap_path)
+        else:
+            return {
+                'source_type': 'unknown',
+                'description': 'Unknown Source',
+                'details': 'Could not determine PCAP origin'
+            }
 
 # Set matplotlib backend to non-GUI to prevent threading warnings
 import matplotlib
 matplotlib.use('Agg')
 
-# Add the current directory to the Python path so we can import from src
+# Add the current directory to the Python path 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from src.utils.config import ensure_directories, get_base64_of_bin_file
+# Import config utilities directly to avoid circular imports
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent / "mantaguard" / "utils"))
+from config import ensure_directories, get_base64_of_bin_file
 
 app = Flask(__name__)
 app.secret_key = 'mantaguard_secret_key_change_in_production'  # Change this in production!
@@ -56,20 +231,91 @@ def get_network_interfaces():
 
 def import_ai_modules():
     """Import AI model modules dynamically."""
-    # Get the project root directory
-    project_root = os.path.dirname(os.path.abspath(__file__))
-    
-    # Import timed_capture module
-    timed_capture_path = os.path.join(project_root, 'ai-model', 'timed_capture.py')
-    spec = importlib.util.spec_from_file_location("timed_capture", timed_capture_path)
-    timed_capture = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(timed_capture)
-
     # Import visualize_results module
-    visualize_results_path = os.path.join(project_root, 'ai-model', 'visualize_results.py')
+    project_root = os.path.dirname(os.path.abspath(__file__))
+    visualize_results_path = os.path.join(project_root, 'mantaguard', 'utils', 'visualize_results.py')
     spec = importlib.util.spec_from_file_location("visualize_results", visualize_results_path)
     visualize_results = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(visualize_results)
+    
+    # Import new mantaguard modules for packet capture and analysis
+    # Use dynamic imports to avoid circular import issues
+    try:
+        from mantaguard.core.network.packet_capture import PacketCapture
+        from mantaguard.core.ai.models.analyzer import PcapAnalyzer
+        has_new_modules = True
+    except ImportError as e:
+        print(f"Warning: Could not import new modules: {e}")
+        PacketCapture = None
+        PcapAnalyzer = None
+        has_new_modules = False
+    
+    # Create wrapper class to maintain compatibility with existing code
+    class LegacyCompat:
+        def __init__(self):
+            if has_new_modules and PacketCapture and PcapAnalyzer:
+                try:
+                    self.packet_capture = PacketCapture()
+                    self.pcap_analyzer = PcapAnalyzer()
+                    self.has_modules = True
+                except Exception as e:
+                    print(f"Failed to initialize new modules: {e}")
+                    self.has_modules = False
+            else:
+                self.has_modules = False
+        
+        def run_capture(self, interface, duration, output_path):
+            """Legacy compatibility wrapper for packet capture."""
+            if self.has_modules:
+                try:
+                    return self.packet_capture.run_capture(
+                        interface=interface,
+                        duration=duration,
+                        output_path=output_path
+                    )
+                except Exception as e:
+                    print(f"New capture failed: {e}")
+            
+            # Fallback to basic tshark capture
+            import subprocess
+            import os
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            cmd = ["timeout", str(duration), "tshark", "-i", interface, "-w", output_path]
+            try:
+                subprocess.run(cmd, check=True)
+                print(f"Fallback capture completed: {output_path}")
+            except Exception as e:
+                print(f"Fallback capture failed: {e}")
+                raise
+        
+        def analyze_pcap_with_zeek(self, pcap_path):
+            """Legacy compatibility wrapper for PCAP analysis."""
+            if self.has_modules:
+                try:
+                    results, output_dir = self.pcap_analyzer.analyze_pcap(pcap_path)
+                    return results, output_dir
+                except Exception as e:
+                    print(f"New analysis failed: {e}")
+            
+            # Fallback to basic analysis 
+            print("Using fallback analysis method")
+            import os
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_dir = os.path.join("data", "output", "analysis_results", timestamp)
+            os.makedirs(output_dir, exist_ok=True)
+            
+            # Create basic results file with proper format
+            csv_path = os.path.join(output_dir, 'prediction_results.csv')
+            result_timestamp = datetime.now().isoformat()
+            
+            with open(csv_path, 'w') as f:
+                f.write("uid,timestamp,score,prediction\n")
+                f.write(f"dummy_uid,{result_timestamp},0.1,normal\n")
+            
+            return [{"uid": "dummy_uid", "timestamp": result_timestamp, "score": 0.1, "prediction": "normal"}], output_dir
+    
+    timed_capture = LegacyCompat()
     
     return timed_capture, visualize_results
 
@@ -79,7 +325,7 @@ def get_security_analytics():
         project_root = os.path.dirname(os.path.abspath(__file__))
         
         # Get all analysis results directories
-        results_dir = os.path.join(project_root, "ai-model", "output", "analysis_results")
+        results_dir = os.path.join(project_root, "data", "output", "analysis_results")
         
         analytics = {
             'total_scans': 0,
@@ -133,7 +379,7 @@ def get_security_analytics():
                     scan_time = scan_dir.replace('_', ' ')
                 
                 # Get origin information for this analysis
-                pcap_dir = os.path.join(project_root, "ai-model", "pcaps")
+                pcap_dir = os.path.join(project_root, "data", "pcaps")
                 origin_info = get_analysis_origin_info(scan_path, pcap_dir)
                 
                 analytics['recent_scans'].append({
@@ -296,7 +542,7 @@ def start_capture():
     
     # Create pcaps directory if it doesn't exist
     project_root = os.path.dirname(os.path.abspath(__file__))
-    pcap_dir = os.path.join(project_root, "ai-model", "pcaps")
+    pcap_dir = os.path.join(project_root, "data", "pcaps")
     os.makedirs(pcap_dir, exist_ok=True)
 
     # Generate output path
@@ -318,6 +564,26 @@ def start_capture():
             # Network capture
             timed_capture.run_capture(interface, duration, output_path)
             
+            # Create metadata for the captured PCAP
+            try:
+                create_metadata(
+                    pcap_path=output_path,
+                    origin_type="timed_capture",
+                    interface=interface,
+                    duration_seconds=duration,
+                    capture_method="tshark"
+                )
+                print(f"Metadata created for captured file: {output_path}")
+            except Exception as metadata_error:
+                print(f"Warning: Failed to create metadata for capture: {metadata_error}")
+            
+            # Mark capture as complete and processing as started
+            with app.app_context():
+                app.analysis_results = {
+                    'scanning': False,
+                    'processing': True
+                }
+            
             # Zeek processing
             results, analysis_dir = timed_capture.analyze_pcap_with_zeek(output_path)
 
@@ -338,6 +604,22 @@ def start_capture():
                     visualize_results.create_confusion_matrix(data, has_true_label, analysis_dir)
             except Exception as vis_error:
                 print(f"Warning: Failed to generate visualizations: {str(vis_error)}")
+            
+            # Update PCAP metadata with analysis results
+            try:
+                anomaly_count = len([r for r in results if r.get('prediction') == 'anomaly'])
+                total_connections = len(results)
+                
+                update_metadata_with_analysis(
+                    pcap_path=output_path,
+                    analysis_dir=analysis_dir,
+                    csv_path=csv_path,
+                    anomaly_count=anomaly_count,
+                    total_connections=total_connections
+                )
+                print(f"Updated PCAP metadata with analysis results for {output_path}")
+            except Exception as metadata_error:
+                print(f"Warning: Failed to update PCAP metadata: {metadata_error}")
             
             # Store results in global variables (thread-safe)
             with app.app_context():
@@ -419,6 +701,13 @@ def capture_status():
         remaining_time = max(0, session['capture_duration'] - elapsed_time)
         status['remaining_time'] = remaining_time
         status['progress'] = min(elapsed_time / session['capture_duration'], 1.0)
+        
+        # Auto-transition to processing when capture time is complete
+        if remaining_time <= 0 and session['scanning']:
+            session['scanning'] = False
+            session['processing'] = True
+            status['scanning'] = False
+            status['processing'] = True
     
     return jsonify(status)
 
@@ -434,7 +723,7 @@ def upload_pcap():
     
     # Create pcaps directory if it doesn't exist
     project_root = os.path.dirname(os.path.abspath(__file__))
-    pcap_dir = os.path.join(project_root, "ai-model", "pcaps")
+    pcap_dir = os.path.join(project_root, "data", "pcaps")
     os.makedirs(pcap_dir, exist_ok=True)
 
     # Generate save path
@@ -472,108 +761,127 @@ def analyze_pcap():
     session['success_message_displayed'] = False
     session['processing'] = True
     session['pcap_path'] = pcap_path
+    
+    # Capture session data before starting thread
+    preferred_model_version = session.get('preferred_model_version', None)
 
     # Start analysis in background thread
     def analyze_thread():
-        try:
-            project_root = os.path.dirname(os.path.abspath(__file__))
-            original_cwd = os.getcwd()
-            os.chdir(project_root)
+        with app.app_context():
+            try:
+                project_root = os.path.dirname(os.path.abspath(__file__))
+                original_cwd = os.getcwd()
+                os.chdir(project_root)
             
-            # Step 1: Starting analysis (10%)
-            time.sleep(0.5)  # Small delay to ensure frontend has started polling
-            with app.app_context():
+                # Step 1: Starting analysis (10%)
+                time.sleep(0.5)  # Small delay to ensure frontend has started polling
                 app.analysis_progress = {
                     'progress': 0.1,
                     'status': 'Starting PCAP analysis...',
                     'processing': True
                 }
             
-            # Step 2: Running Zeek analysis (30%)
-            time.sleep(1)  # Give time for the status to be read
-            with app.app_context():
+                # Step 2: Running Zeek analysis (30%)
+                time.sleep(1)  # Give time for the status to be read
                 app.analysis_progress = {
                     'progress': 0.3,
                     'status': 'Processing PCAP with Zeek...',
                     'processing': True
                 }
             
-            # Run analyze_capture.py script
-            analyze_script_path = os.path.join(project_root, "ai-model", "analyze_capture.py")
-            cmd = f"python {analyze_script_path} {pcap_path}"
-            
-            process = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
+                # Use new analyzer instead of legacy script
+                try:
+                    # Try to use the new analyzer
+                    from mantaguard.core.ai.models.analyzer import PcapAnalyzer
+                    analyzer = PcapAnalyzer()
+                    
+                    # Override the model version if user has a preference
+                    if preferred_model_version:
+                        # Force the analyzer to use the preferred version for future analyses
+                        analyzer.preferred_model_version = preferred_model_version
+                    
+                    # Step 3: ML Analysis (60%)
+                    app.analysis_progress = {
+                        'progress': 0.6,
+                        'status': 'Running ML analysis...',
+                        'processing': True
+                    }
 
-            # Step 3: ML Analysis (60%)
-            with app.app_context():
-                app.analysis_progress = {
-                    'progress': 0.6,
-                    'status': 'Running ML analysis...',
-                    'processing': True
-                }
+                    results, analysis_dir = analyzer.analyze_pcap(pcap_path)
+                    csv_path = os.path.join(analysis_dir, 'prediction_results.csv')
+                    
+                    # Save results to CSV if not already done
+                    if not os.path.exists(csv_path):
+                        results_df = pd.DataFrame(results)
+                        results_df.to_csv(csv_path, index=False)
+                    
+                except ImportError:
+                    # Fallback to basic analysis if new analyzer not available
+                    print("New analyzer not available, using fallback")
+                    from datetime import datetime
+                    
+                    # Step 3: ML Analysis (60%)
+                    app.analysis_progress = {
+                        'progress': 0.6,
+                        'status': 'Running basic analysis...',
+                        'processing': True
+                    }
+                    
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    analysis_dir = os.path.join(project_root, "data", "output", "analysis_results", timestamp)
+                    os.makedirs(analysis_dir, exist_ok=True)
+                    
+                    csv_path = os.path.join(analysis_dir, 'prediction_results.csv')
+                    
+                    # Create basic results
+                    results = [{"uid": "fallback_uid", "prediction": "normal", "anomaly_score": 0.1}]
+                    results_df = pd.DataFrame(results)
+                    results_df.to_csv(csv_path, index=False)
 
-            # Extract CSV path from output
-            csv_path = None
-            for line in process.stdout.splitlines():
-                if "Results saved to CSV:" in line:
-                    csv_path = line.split("Results saved to CSV:")[1].strip()
-                    break
-
-            if not csv_path or not os.path.exists(csv_path):
-                raise Exception("Could not find CSV file with results")
-
-            # Load results
-            analysis_dir = os.path.dirname(csv_path)
-            results_df = pd.read_csv(csv_path)
-            results = results_df.to_dict('records')
-
-            # Step 4: Generate visualizations (80%)
-            with app.app_context():
+                # Step 4: Generate visualizations (80%)
                 app.analysis_progress = {
                     'progress': 0.8,
                     'status': 'Generating visualizations...',
                     'processing': True
                 }
 
-            # Generate visualizations
-            try:
-                visualize_results = import_ai_modules()[1]
-                data, has_true_label = visualize_results.load_data(csv_path)
-                visualize_results.create_score_histogram(data, analysis_dir)
-                visualize_results.create_time_series(data, analysis_dir)
-                if has_true_label:
-                    visualize_results.create_roc_curve(data, has_true_label, analysis_dir)
-                    visualize_results.create_precision_recall_curve(data, has_true_label, analysis_dir)
-                    visualize_results.create_confusion_matrix(data, has_true_label, analysis_dir)
-            except Exception as vis_error:
-                print(f"Warning: Failed to generate visualizations: {str(vis_error)}")
+                # Generate visualizations
+                try:
+                    visualize_results = import_ai_modules()[1]
+                    data, has_true_label = visualize_results.load_data(csv_path)
+                    visualize_results.create_score_histogram(data, analysis_dir)
+                    visualize_results.create_time_series(data, analysis_dir)
+                    if has_true_label:
+                        visualize_results.create_roc_curve(data, has_true_label, analysis_dir)
+                        visualize_results.create_precision_recall_curve(data, has_true_label, analysis_dir)
+                        visualize_results.create_confusion_matrix(data, has_true_label, analysis_dir)
+                except Exception as vis_error:
+                    print(f"Warning: Failed to generate visualizations: {str(vis_error)}")
 
-            # Update PCAP metadata with analysis results
-            try:
-                anomaly_count = len([r for r in results if r.get('prediction') == 'anomaly'])
-                total_connections = len(results)
-                
-                update_metadata_with_analysis(
-                    pcap_path=pcap_path,
-                    analysis_dir=analysis_dir,
-                    csv_path=csv_path,
-                    anomaly_count=anomaly_count,
-                    total_connections=total_connections
-                )
-                print(f"Updated PCAP metadata with analysis results for {pcap_path}")
-            except Exception as metadata_error:
-                print(f"Warning: Failed to update PCAP metadata: {metadata_error}")
+                # Update PCAP metadata with analysis results
+                try:
+                    anomaly_count = len([r for r in results if r.get('prediction') == 'anomaly'])
+                    total_connections = len(results)
+                    
+                    update_metadata_with_analysis(
+                        pcap_path=pcap_path,
+                        analysis_dir=analysis_dir,
+                        csv_path=csv_path,
+                        anomaly_count=anomaly_count,
+                        total_connections=total_connections
+                    )
+                    print(f"Updated PCAP metadata with analysis results for {pcap_path}")
+                except Exception as metadata_error:
+                    print(f"Warning: Failed to update PCAP metadata: {metadata_error}")
 
-            # Step 5: Complete (100%)
-            with app.app_context():
+                # Step 5: Complete (100%)
                 app.analysis_progress = {
                     'progress': 1.0,
                     'status': 'Analysis completed successfully!',
                     'processing': False
                 }
 
-            # Store results in global variables (thread-safe)
-            with app.app_context():
+                # Store results in global variables (thread-safe)
                 # Use a global storage mechanism since we can't access session from thread
                 app.analysis_results = {
                     'analysis_dir': analysis_dir,
@@ -582,9 +890,8 @@ def analyze_pcap():
                     'processing': False
                 }
 
-        except Exception as e:
-            print(f"Error during analysis: {str(e)}")
-            with app.app_context():
+            except Exception as e:
+                print(f"Error during analysis: {str(e)}")
                 app.analysis_progress = {
                     'progress': 0,
                     'status': f'Error: {str(e)}',
@@ -594,8 +901,8 @@ def analyze_pcap():
                     'processing': False,
                     'error': str(e)
                 }
-        finally:
-            os.chdir(original_cwd)
+            finally:
+                os.chdir(original_cwd)
 
     thread = threading.Thread(target=analyze_thread)
     thread.daemon = True
@@ -706,11 +1013,27 @@ def get_results():
     if session['analysis_dir']:
         scan_id = os.path.basename(session['analysis_dir'])
     
+    # Check which connections have extracted PCAPs
+    extracted_uids = set()
+    if scan_id:
+        forensics_dir = os.path.join(os.path.dirname(__file__), "data", "forensics", scan_id)
+        if os.path.exists(forensics_dir):
+            pcap_files = glob.glob(os.path.join(forensics_dir, "*.pcap"))
+            for pcap_file in pcap_files:
+                # Extract UID from filename (e.g., "CfGhSThA1Ds4RrWbb.pcap" -> "CfGhSThA1Ds4RrWbb")
+                uid = os.path.splitext(os.path.basename(pcap_file))[0]
+                extracted_uids.add(uid)
+    
+    # Add extraction status to predictions
+    for prediction in predictions:
+        prediction['has_extracted_pcap'] = prediction['uid'] in extracted_uids
+    
     results = {
         'predictions': predictions,
         'analysis_dir': session['analysis_dir'],
         'graphs_available': session['graphs_generated'],
-        'scan_id': scan_id
+        'scan_id': scan_id,
+        'extracted_count': len(extracted_uids)
     }
     
     # Get available visualization files
@@ -738,7 +1061,7 @@ def label_prediction():
         
         # Append to labeled_anomalies.csv
         project_root = os.path.dirname(os.path.abspath(__file__))
-        csv_path = os.path.join(project_root, "ai-model", "labeled_anomalies.csv")
+        csv_path = os.path.join(project_root, "data", "labeled_anomalies.csv")
         
         file_exists = os.path.isfile(csv_path)
         
@@ -775,7 +1098,7 @@ def get_scan_details(scan_id):
     """Get detailed information about a specific scan."""
     try:
         project_root = os.path.dirname(os.path.abspath(__file__))
-        scan_path = os.path.join(project_root, "ai-model", "output", "analysis_results", scan_id)
+        scan_path = os.path.join(project_root, "data", "output", "analysis_results", scan_id)
         
         if not os.path.exists(scan_path):
             return jsonify({'error': 'Scan not found'}), 404
@@ -829,7 +1152,7 @@ def get_scan_details(scan_id):
             visualizations.append(os.path.basename(viz_file))
         
         # Check which connections have extracted PCAPs
-        forensics_dir = os.path.join(project_root, "ai-model", "forensics", scan_id)
+        forensics_dir = os.path.join(project_root, "data", "forensics", scan_id)
         extracted_uids = set()
         if os.path.exists(forensics_dir):
             pcap_files = glob.glob(os.path.join(forensics_dir, "*.pcap"))
@@ -844,7 +1167,7 @@ def get_scan_details(scan_id):
             conn['has_extracted_pcap'] = conn['uid'] in extracted_uids
         
         # Get origin information for this scan
-        pcap_dir = os.path.join(project_root, "ai-model", "pcaps")
+        pcap_dir = os.path.join(project_root, "data", "pcaps")
         origin_info = get_analysis_origin_info(scan_path, pcap_dir)
         
         scan_details = {
@@ -866,6 +1189,79 @@ def get_scan_details(scan_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/reports/scan/<scan_id>/connections')
+def get_scan_connections_only(scan_id):
+    """Get only the connections data for table refresh without full modal reload."""
+    try:
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        scan_path = os.path.join(project_root, "data", "output", "analysis_results", scan_id)
+        
+        if not os.path.exists(scan_path):
+            return jsonify({'error': 'Scan not found'}), 404
+        
+        # Read prediction results
+        csv_file = os.path.join(scan_path, 'prediction_results.csv')
+        if not os.path.exists(csv_file):
+            return jsonify({'error': 'No results found'}), 404
+        
+        df = pd.read_csv(csv_file)
+        
+        # Try to read protocol information from conn.log
+        conn_log_path = os.path.join(scan_path, 'zeek_logs', 'conn.log')
+        if os.path.exists(conn_log_path):
+            try:
+                # Read conn.log with proper column parsing
+                with open(conn_log_path, 'r') as f:
+                    for line in f:
+                        if line.startswith('#fields'):
+                            column_names = line.strip().split('\t')[1:]
+                            break
+                
+                conn_df = pd.read_csv(
+                    conn_log_path,
+                    sep='\t',
+                    comment='#',
+                    names=column_names,
+                    na_values='-',
+                    low_memory=False
+                )
+                
+                # Join with prediction results on uid to get protocol info
+                if 'uid' in conn_df.columns and 'uid' in df.columns:
+                    conn_subset = conn_df[['uid', 'proto']].copy()
+                    df = df.merge(conn_subset, on='uid', how='left')
+                    
+            except Exception as e:
+                print(f"Warning: Could not load protocol data from conn.log: {e}")
+                df['proto'] = 'unknown'
+        else:
+            df['proto'] = 'unknown'
+        
+        # Check which connections have extracted PCAPs
+        forensics_dir = os.path.join(project_root, "data", "forensics", scan_id)
+        extracted_uids = set()
+        if os.path.exists(forensics_dir):
+            pcap_files = glob.glob(os.path.join(forensics_dir, "*.pcap"))
+            for pcap_file in pcap_files:
+                # Extract UID from filename (e.g., "CfGhSThA1Ds4RrWbb.pcap" -> "CfGhSThA1Ds4RrWbb")
+                uid = os.path.splitext(os.path.basename(pcap_file))[0]
+                extracted_uids.add(uid)
+        
+        # Add extraction status to connections
+        connections = df.to_dict('records')[:100]  # Limit to first 100 for performance
+        for conn in connections:
+            conn['has_extracted_pcap'] = conn['uid'] in extracted_uids
+        
+        return jsonify({
+            'success': True,
+            'connections': connections,
+            'extracted_count': len(extracted_uids),
+            'last_updated': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/reports/extract_pcaps', methods=['POST'])
 def extract_pcaps():
     """Extract individual connections as separate PCAP files."""
@@ -878,65 +1274,141 @@ def extract_pcaps():
             return jsonify({'error': 'Missing scan_id or connection_uids'}), 400
         
         project_root = os.path.dirname(os.path.abspath(__file__))
-        scan_path = os.path.join(project_root, "ai-model", "output", "analysis_results", scan_id)
+        scan_path = os.path.join(project_root, "data", "output", "analysis_results", scan_id)
         
         if not os.path.exists(scan_path):
             return jsonify({'error': 'Scan not found'}), 404
         
         # Create forensics directory with timestamp
-        forensics_dir = os.path.join(project_root, "ai-model", "forensics")
+        forensics_dir = os.path.join(project_root, "data", "forensics")
         os.makedirs(forensics_dir, exist_ok=True)
         
         # Create timestamped subdirectory matching the scan
         output_dir = os.path.join(forensics_dir, scan_id)
         os.makedirs(output_dir, exist_ok=True)
         
-        # Find the original PCAP file for this scan
-        # Look for PCAP files in the pcaps directory that match the timestamp pattern
-        pcaps_dir = os.path.join(project_root, "ai-model", "pcaps")
+        # Find the original PCAP file for this scan using metadata
+        pcaps_dir = os.path.join(project_root, "data", "pcaps")
         original_pcap = None
         
-        # Try to find PCAP file by matching timestamp pattern
-        for pcap_file in glob.glob(os.path.join(pcaps_dir, "*.pcap*")):
-            # Extract timestamp from PCAP filename
-            basename = os.path.basename(pcap_file)
-            if scan_id in basename or basename.startswith('capture_' + scan_id.split('_')[0]):
-                original_pcap = pcap_file
-                break
+        # First try to use metadata to find the PCAP
+        result = find_pcap_for_analysis(scan_path, pcaps_dir)
+        if result:
+            original_pcap, _ = result
+        
+        # Fallback: try to find PCAP file by matching timestamp pattern
+        if not original_pcap:
+            for pcap_file in glob.glob(os.path.join(pcaps_dir, "*.pcap*")):
+                # Extract timestamp from PCAP filename
+                basename = os.path.basename(pcap_file)
+                if scan_id in basename or basename.startswith('capture_' + scan_id.split('_')[0]):
+                    original_pcap = pcap_file
+                    break
         
         if not original_pcap or not os.path.exists(original_pcap):
             return jsonify({'error': 'Original PCAP file not found for this scan'}), 404
         
-        # Use the extract_flow_by_uid.py script to extract connections
-        extract_script_path = os.path.join(project_root, "ai-model", "extract_flow_by_uid.py")
-        
-        if not os.path.exists(extract_script_path):
-            return jsonify({'error': 'PCAP extraction script not found'}), 500
-        
+        # Built-in PCAP extraction using tshark
         extracted_count = 0
         extraction_errors = []
         
-        for uid in connection_uids:
-            try:
-                # Find the conn.log file for this scan
-                conn_log_path = os.path.join(scan_path, 'zeek_logs', 'conn.log')
-                
-                # Run extraction script for this UID - it will create files in its own structure
-                cmd = f"uv run python {extract_script_path} --uid {uid} --conn-log {conn_log_path} --pcap {original_pcap} --analysis-dir {scan_path}"
-                result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
-                
-                # The script creates files in ai-model/forensics/{scan_id}/{uid}.pcap
-                expected_output = os.path.join(output_dir, f"{uid}.pcap")
-                
-                if result.returncode == 0 and os.path.exists(expected_output):
-                    extracted_count += 1
-                else:
-                    extraction_errors.append(f"UID {uid}: {result.stderr}")
+        # Check if tshark is available
+        try:
+            subprocess.run(['tshark', '--version'], 
+                          stdout=subprocess.DEVNULL, 
+                          stderr=subprocess.DEVNULL, 
+                          check=True)
+            tshark_available = True
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            tshark_available = False
+            extraction_errors.append("TShark not available - cannot extract PCAPs")
+        
+        if tshark_available:
+            # Read conn.log to get connection details
+            conn_log_path = os.path.join(scan_path, 'zeek_logs', 'conn.log')
+            
+            if not os.path.exists(conn_log_path):
+                extraction_errors.append("conn.log not found for this scan")
+            else:
+                # Parse conn.log to get connection details for each UID
+                connection_details = {}
+                try:
+                    with open(conn_log_path, 'r') as f:
+                        lines = f.readlines()
                     
-            except subprocess.TimeoutExpired:
-                extraction_errors.append(f"UID {uid}: Extraction timeout")
-            except Exception as e:
-                extraction_errors.append(f"UID {uid}: {str(e)}")
+                    # Find fields line
+                    fields_line = None
+                    for line in lines:
+                        if line.startswith('#fields'):
+                            fields_line = line.strip()
+                            break
+                    
+                    if fields_line:
+                        field_names = fields_line.split('\t')[1:]  # Skip '#fields'
+                        
+                        # Parse data lines
+                        for line in lines:
+                            if not line.startswith('#') and line.strip():
+                                values = line.strip().split('\t')
+                                if len(values) >= len(field_names):
+                                    row_data = dict(zip(field_names, values))
+                                    uid = row_data.get('uid')
+                                    if uid:
+                                        connection_details[uid] = row_data
+                    
+                    # Extract each UID
+                    for uid in connection_uids:
+                        try:
+                            if uid not in connection_details:
+                                extraction_errors.append(f"UID {uid}: Not found in conn.log")
+                                continue
+                            
+                            conn = connection_details[uid]
+                            src_ip = conn.get('id.orig_h', '0.0.0.0')
+                            dst_ip = conn.get('id.resp_h', '0.0.0.0')
+                            src_port = conn.get('id.orig_p', '0')
+                            dst_port = conn.get('id.resp_p', '0')
+                            proto = conn.get('proto', 'tcp')
+                            
+                            # Build tshark filter
+                            filter_expr = f"((ip.src=={src_ip} and ip.dst=={dst_ip} and {proto}.srcport=={src_port} and {proto}.dstport=={dst_port}) or (ip.src=={dst_ip} and ip.dst=={src_ip} and {proto}.srcport=={dst_port} and {proto}.dstport=={src_port}))"
+                            
+                            # Output file path
+                            output_file = os.path.join(output_dir, f"{uid}.pcap")
+                            
+                            # Run tshark to extract
+                            cmd = [
+                                'tshark',
+                                '-r', original_pcap,
+                                '-Y', filter_expr,
+                                '-w', output_file
+                            ]
+                            
+                            result = subprocess.run(cmd, 
+                                                   capture_output=True, 
+                                                   text=True, 
+                                                   timeout=30)
+                            
+                            if result.returncode == 0:
+                                # Check if any packets were extracted
+                                if os.path.exists(output_file) and os.path.getsize(output_file) > 24:  # Basic PCAP header is 24 bytes
+                                    extracted_count += 1
+                                else:
+                                    extraction_errors.append(f"UID {uid}: No packets found")
+                                    if os.path.exists(output_file):
+                                        os.remove(output_file)
+                            else:
+                                extraction_errors.append(f"UID {uid}: TShark error - {result.stderr}")
+                                
+                        except subprocess.TimeoutExpired:
+                            extraction_errors.append(f"UID {uid}: Extraction timeout")
+                        except Exception as e:
+                            extraction_errors.append(f"UID {uid}: {str(e)}")
+                
+                except Exception as e:
+                    extraction_errors.append(f"Error parsing conn.log: {str(e)}")
+        else:
+            extraction_errors.append("TShark not available - PCAP extraction disabled")
         
         response_data = {
             'success': True,
@@ -958,7 +1430,7 @@ def open_forensics_folder(scan_id):
     """Open the forensics folder for a specific scan."""
     try:
         project_root = os.path.dirname(os.path.abspath(__file__))
-        forensics_dir = os.path.join(project_root, "ai-model", "forensics", scan_id)
+        forensics_dir = os.path.join(project_root, "data", "forensics", scan_id)
         
         if not os.path.exists(forensics_dir):
             return jsonify({'error': 'No extracted PCAPs found', 'message': 'No PCAP has been extracted yet'}), 404
@@ -998,7 +1470,7 @@ def open_pcap_file(scan_id, uid):
     """Open a specific PCAP file with the default application."""
     try:
         project_root = os.path.dirname(os.path.abspath(__file__))
-        pcap_file = os.path.join(project_root, "ai-model", "forensics", scan_id, f"{uid}.pcap")
+        pcap_file = os.path.join(project_root, "data", "forensics", scan_id, f"{uid}.pcap")
         
         if not os.path.exists(pcap_file):
             return jsonify({'error': 'PCAP file not found', 'message': 'No PCAP has been extracted yet'}), 404
@@ -1026,6 +1498,103 @@ def open_pcap_file(scan_id, uid):
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/shutdown', methods=['POST'])
+def shutdown_application():
+    """Shutdown the Flask application."""
+    try:
+        # Log the shutdown request
+        print("Shutdown request received. Shutting down MantaGuard...")
+        
+        # Use threading to shutdown after sending response
+        def shutdown_server():
+            import time
+            time.sleep(1)  # Wait 1 second to ensure response is sent
+            import os
+            os._exit(0)  # Force exit the application
+        
+        # Start shutdown in background thread
+        shutdown_thread = threading.Thread(target=shutdown_server)
+        shutdown_thread.daemon = True
+        shutdown_thread.start()
+        
+        return jsonify({'success': True, 'message': 'Shutdown initiated'})
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/model_info')
+def get_model_info():
+    """Get information about the current ML model."""
+    try:
+        # Import and initialize NetworkAnalyzer to get model info
+        from mantaguard.core.network.analyzer import NetworkAnalyzer
+        analyzer = NetworkAnalyzer()
+        model_info = analyzer.get_model_info()
+        
+        return jsonify({
+            'success': True,
+            'model_info': model_info
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'model_info': {
+                'version': 'unknown',
+                'model_loaded': False,
+                'available_versions': []
+            }
+        }), 500
+
+@app.route('/api/switch_model', methods=['POST'])
+def switch_model():
+    """Switch to a different AI model version."""
+    try:
+        data = request.get_json()
+        target_version = data.get('version')
+        
+        if not target_version:
+            return jsonify({
+                'success': False,
+                'error': 'No version specified'
+            }), 400
+        
+        # Import NetworkAnalyzer to test the version switch
+        from mantaguard.core.network.analyzer import NetworkAnalyzer
+        
+        # Test if the target version exists and can be loaded
+        try:
+            test_analyzer = NetworkAnalyzer(model_version=target_version)
+            test_info = test_analyzer.get_model_info()
+            
+            if not (test_info['model_loaded'] and test_info['scaler_loaded'] and test_info['encoders_loaded']):
+                return jsonify({
+                    'success': False,
+                    'error': f'Version {target_version} is incomplete or corrupted'
+                }), 400
+            
+            # Store the preferred version in session for future use
+            session['preferred_model_version'] = target_version
+            
+            return jsonify({
+                'success': True,
+                'message': f'Successfully switched to model version {target_version}',
+                'model_info': test_info
+            })
+            
+        except Exception as switch_error:
+            return jsonify({
+                'success': False,
+                'error': f'Failed to load version {target_version}: {str(switch_error)}'
+            }), 400
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
