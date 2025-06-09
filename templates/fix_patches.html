@@ -1,13 +1,132 @@
 {% extends "base.html" %}
 
-{% block title %}Fix & Patches{% endblock %}
+{% block title %}Fixes and Patches{% endblock %}
+
+{% block extra_css %}
+<style>
+    .tab-content {
+        background-color: #1E1E1E;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    
+    .nav-tabs .nav-link {
+        background-color: #262730;
+        border-color: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .nav-tabs .nav-link.active {
+        background-color: #00BFFF;
+        border-color: #00BFFF;
+        color: white !important;
+        font-weight: 600;
+        z-index: 1;
+        position: relative;
+    }
+    
+    .nav-tabs .nav-link.active i {
+        color: white !important;
+    }
+    
+    /* Make sure all text in tab content is visible */
+    .tab-content *, .tab-content p, .tab-content div, .tab-content span {
+        color: #ffffff;
+    }
+
+    /* Professional table styling to match reports page */
+    .table, .table-sm, #anomalies-table {
+        background: #1e1e1e !important;
+        border: 2px solid rgba(0, 191, 255, 0.3) !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+        color: #ffffff !important;
+        --bs-table-bg: #1e1e1e !important;
+        --bs-table-color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .table th, .table-sm th, #anomalies-table th {
+        background: rgba(255, 255, 255, 0.03) !important;
+        color: #b0b0b0 !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        border-color: rgba(255, 255, 255, 0.12) !important;
+        font-size: 0.8rem !important;
+        border-bottom: 2px solid #00BFFF !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+    
+    .table td, .table-sm td, #anomalies-table td {
+        border-color: rgba(255, 255, 255, 0.12) !important;
+        color: #ffffff !important;
+        background: #1e1e1e !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+    
+    .table tbody tr:hover, .table-sm tbody tr:hover, #anomalies-table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.02) !important;
+    }
+    
+    .table-responsive {
+        border-radius: 8px !important;
+        overflow: hidden !important;
+        border: 2px solid rgba(0, 191, 255, 0.3) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        background: #1e1e1e !important;
+    }
+    
+    /* Additional table frame styling */
+    .table thead th:first-child, .table-sm thead th:first-child, #anomalies-table thead th:first-child {
+        border-top-left-radius: 6px !important;
+    }
+    
+    .table thead th:last-child, .table-sm thead th:last-child, #anomalies-table thead th:last-child {
+        border-top-right-radius: 6px !important;
+    }
+    
+    .table tbody tr:last-child td:first-child, .table-sm tbody tr:last-child td:first-child, #anomalies-table tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 6px !important;
+    }
+    
+    .table tbody tr:last-child td:last-child, .table-sm tbody tr:last-child td:last-child, #anomalies-table tbody tr:last-child td:last-child {
+        border-bottom-right-radius: 6px !important;
+    }
+    
+    /* Professional checkbox styling */
+    input[type="checkbox"] {
+        accent-color: #4CAF50 !important;
+        transform: scale(1.1) !important;
+    }
+    
+    /* Badge styling for consistency */
+    .badge.bg-danger {
+        background: #dc3545 !important;
+    }
+    
+    .badge.bg-warning {
+        background: #ffc107 !important;
+        color: #000 !important;
+    }
+    
+    .badge.bg-info {
+        background: #00BFFF !important;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row">
         <div class="col-12">
             <h1 class="mb-4">
-                <i class="fas fa-tools me-2"></i>Fix & Patches
+                <i class="fas fa-tools me-2"></i>Fixes and Patches
             </h1>
             
             <!-- Navigation Tabs -->

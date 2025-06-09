@@ -87,6 +87,52 @@
     .results-table {
         max-height: 400px;
         overflow-y: auto;
+        border: 2px solid rgba(0, 191, 255, 0.3) !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        background: #1e1e1e !important;
+    }
+    
+    /* Professional table styling for results table */
+    .table-dark {
+        border: none !important;
+        border-radius: 6px !important;
+        overflow: hidden !important;
+        margin-bottom: 0 !important;
+    }
+    
+    .table-dark th {
+        border-bottom: 2px solid #00BFFF !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .table-dark td {
+        border-left: none !important;
+        border-right: none !important;
+        border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+    
+    /* Additional table frame styling for scanning results table */
+    .table-dark thead th:first-child {
+        border-top-left-radius: 6px !important;
+    }
+
+    .table-dark thead th:last-child {
+        border-top-right-radius: 6px !important;
+    }
+
+    .table-dark tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 6px !important;
+    }
+
+    .table-dark tbody tr:last-child td:last-child {
+        border-bottom-right-radius: 6px !important;
     }
     
     .visualization-gallery {
@@ -729,6 +775,8 @@ function loadResults() {
     fetch('/api/results')
     .then(response => response.json())
     .then(data => {
+        console.log('Results API response:', data);
+        
         if (data.predictions) {
             document.getElementById('no-results').classList.add('d-none');
             document.getElementById('results-content').classList.remove('d-none');
@@ -773,10 +821,17 @@ function loadResults() {
             loadVisualizations(data.visualizations);
             
             // Store current scan ID from session state (will be used for extraction)
+            console.log('Setting currentResultsScanId to:', data.scan_id);
             window.currentResultsScanId = data.scan_id;
             
             // Add event listeners for checkboxes and update counts
             updateSelectedCountResults();
+            
+            // Reapply the anomaly filter if it was previously enabled
+            const anomalyFilter = document.getElementById('anomalyFilterResults');
+            if (anomalyFilter && anomalyFilter.checked) {
+                filterResultsConnections();
+            }
         }
     });
 }
@@ -853,13 +908,21 @@ function loadVisualizations(visualizations) {
         content.innerHTML = '<div class="visualization-gallery"></div>';
         const gallery = content.querySelector('.visualization-gallery');
         
+        console.log('Loading visualizations:', visualizations);
+        console.log('Current scan ID:', window.currentResultsScanId);
+        
         visualizations.forEach(filename => {
             const item = document.createElement('div');
             item.className = 'visualization-item';
             const title = filename.replace('.png', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            // Use scan ID prefix if available, otherwise fall back to session-based loading
+            const imageSrc = window.currentResultsScanId ? 
+                `/images/${window.currentResultsScanId}/${filename}` : 
+                `/images/${filename}`;
+                
             item.innerHTML = `
                 <h6>${title}</h6>
-                <img src="/images/${filename}" alt="${title}" class="img-fluid">
+                <img src="${imageSrc}?t=${Date.now()}" alt="${title}" class="img-fluid">
             `;
             gallery.appendChild(item);
         });
@@ -883,19 +946,57 @@ function filterResultsConnections() {
     const tableBody = document.getElementById('results-table-body');
     const rows = tableBody.querySelectorAll('tr');
     
+    let anomalyCount = 0;
+    let visibleCount = 0;
+    
     rows.forEach(row => {
         const prediction = row.getAttribute('data-prediction');
+        
+        if (prediction === 'anomaly') {
+            anomalyCount++;
+        }
+        
         if (showOnlyAnomalies) {
-            row.style.display = prediction === 'anomaly' ? '' : 'none';
+            const shouldShow = prediction === 'anomaly';
+            row.style.display = shouldShow ? '' : 'none';
+            if (shouldShow) visibleCount++;
         } else {
             row.style.display = '';
+            visibleCount++;
         }
     });
+    
+    // Update filter status message
+    updateFilterStatusResults(showOnlyAnomalies, anomalyCount, visibleCount, rows.length);
     
     // Reset checkboxes when filtering
     document.getElementById('selectAllResults').checked = false;
     document.querySelectorAll('.connection-checkbox-results').forEach(cb => cb.checked = false);
     updateSelectedCountResults();
+}
+
+// Update filter status message for results tab
+function updateFilterStatusResults(showOnlyAnomalies, anomalyCount, visibleCount, totalCount) {
+    let statusEl = document.getElementById('results-filter-status');
+    if (!statusEl) {
+        // Create status element if it doesn't exist
+        statusEl = document.createElement('div');
+        statusEl.id = 'results-filter-status';
+        statusEl.className = 'alert alert-info mt-2 mb-0';
+        
+        // Insert after the table
+        const table = document.querySelector('#results-content .results-table');
+        if (table && table.parentNode) {
+            table.parentNode.insertBefore(statusEl, table.nextSibling);
+        }
+    }
+    
+    if (showOnlyAnomalies) {
+        statusEl.innerHTML = `<i class="fas fa-filter me-2"></i>Showing ${visibleCount} of ${anomalyCount} anomalies (${totalCount} total connections)`;
+        statusEl.style.display = 'block';
+    } else {
+        statusEl.style.display = 'none';
+    }
 }
 
 // Toggle select all checkboxes in results tab
@@ -1021,104 +1122,130 @@ function extractSelectedConnectionsResults() {
         return;
     }
     
-    // We need to get the current scan ID - for now we'll need to get it from the session
-    fetch('/api/capture_status')
-    .then(response => response.json())
-    .then(statusData => {
-        // Get scan ID from analysis directory path or generate one from timestamp
-        const analysisDir = statusData.analysis_dir || window.currentResultsScanId;
-        const scanId = analysisDir ? analysisDir.split('/').pop() : generateCurrentScanId();
-        
-        if (!scanId) {
-            showToast('Unable to determine scan ID for extraction.', false);
-            return;
-        }
-        
-        // Check for already extracted connections
-        let alreadyExtractedUIDs = [];
-        let newUIDs = [];
-        
-        selectedCheckboxes.forEach(checkbox => {
-            const row = checkbox.closest('tr');
-            const uid = checkbox.value;
-            if (row.classList.contains('extracted-connection')) {
-                alreadyExtractedUIDs.push(uid);
-            } else {
-                newUIDs.push(uid);
-            }
-        });
-        
-        // Show confirmation dialog if there are already extracted connections
-        if (alreadyExtractedUIDs.length > 0) {
-            const message = alreadyExtractedUIDs.length === selectedUIDs.length 
-                ? `All ${alreadyExtractedUIDs.length} selected connections already have extracted PCAPs. This will re-extract them (overwriting existing files).`
-                : `${alreadyExtractedUIDs.length} of ${selectedUIDs.length} selected connections already have extracted PCAPs:\n\n` +
-                  `Already extracted: ${alreadyExtractedUIDs.slice(0, 3).join(', ')}${alreadyExtractedUIDs.length > 3 ? ` and ${alreadyExtractedUIDs.length - 3} more` : ''}\n` +
-                  `New extractions: ${newUIDs.length}\n\n` +
-                  `Continue anyway? This will re-extract existing PCAPs (overwriting files).`;
-            
-            if (!confirm(message)) {
-                return;
-            }
-        }
-        
-        // Show loading state
-        const extractBtn = document.getElementById('extractBtnResults');
-        const originalText = extractBtn.innerHTML;
-        extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Extracting...';
-        extractBtn.disabled = true;
-        
-        // Set extraction in progress flag
-        isExtractionInProgressResults = true;
-        
-        fetch('/api/reports/extract_pcaps', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                scan_id: scanId,
-                connection_uids: selectedUIDs
-            })
-        })
+    // Get the current scan ID from the stored session value or generate one
+    let scanId = window.currentResultsScanId;
+    
+    if (!scanId) {
+        // Try to get it from the capture status API
+        fetch('/api/capture_status')
         .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                let message = `Successfully extracted ${data.extracted_count} PCAP file${data.extracted_count !== 1 ? 's' : ''} to:<br><code>${data.output_path}</code>`;
-                
-                if (data.warnings && data.warnings.length > 0) {
-                    message += `<br><br><small class="text-warning">Some extractions had warnings - check console for details.</small>`;
-                    console.warn('Extraction warnings:', data.warnings);
-                }
-                
-                showToast(message, true);
-                
-                // Reset selections
-                document.querySelectorAll('.connection-checkbox-results').forEach(cb => cb.checked = false);
-                document.getElementById('selectAllResults').checked = false;
-                updateSelectedCountResults();
-                
-                // Trigger post-extraction refresh to show changes
-                setTimeout(() => {
-                    triggerPostExtractionRefreshResults();
-                }, 1000); // Small delay to allow backend to complete file operations
+        .then(statusData => {
+            // Get scan ID from analysis directory path
+            if (statusData.analysis_dir) {
+                scanId = statusData.analysis_dir.split('/').pop();
             } else {
-                showToast(`Error extracting PCAPs: ${data.error}`, false);
+                scanId = generateCurrentScanId();
             }
+            
+            console.log('Determined scan ID for extraction:', scanId);
+            performExtraction(scanId, selectedUIDs, selectedCheckboxes);
         })
         .catch(error => {
-            showToast(`Error extracting PCAPs: ${error.message}`, false);
-        })
-        .finally(() => {
-            extractBtn.innerHTML = originalText;
-            extractBtn.disabled = document.querySelectorAll('.connection-checkbox-results:checked').length === 0;
-            
-            // Clear extraction in progress flag
-            isExtractionInProgressResults = false;
+            console.error('Error getting scan ID:', error);
+            showToast('Unable to determine scan ID for extraction.', false);
         });
+        return;
+    }
+    
+    console.log('Using stored scan ID for extraction:', scanId);
+    performExtraction(scanId, selectedUIDs, selectedCheckboxes);
+}
+
+function performExtraction(scanId, selectedUIDs, selectedCheckboxes) {
+    if (!scanId) {
+        showToast('Unable to determine scan ID for extraction.', false);
+        return;
+    }
+    
+    // Check for already extracted connections
+    let alreadyExtractedUIDs = [];
+    let newUIDs = [];
+    
+    selectedCheckboxes.forEach(checkbox => {
+        const row = checkbox.closest('tr');
+        const uid = checkbox.value;
+        if (row.classList.contains('extracted-connection')) {
+            alreadyExtractedUIDs.push(uid);
+        } else {
+            newUIDs.push(uid);
+        }
+    });
+    
+    // Show confirmation dialog if there are already extracted connections
+    if (alreadyExtractedUIDs.length > 0) {
+        const message = alreadyExtractedUIDs.length === selectedUIDs.length 
+            ? `All ${alreadyExtractedUIDs.length} selected connections already have extracted PCAPs. This will re-extract them (overwriting existing files).`
+            : `${alreadyExtractedUIDs.length} of ${selectedUIDs.length} selected connections already have extracted PCAPs:\n\n` +
+              `Already extracted: ${alreadyExtractedUIDs.slice(0, 3).join(', ')}${alreadyExtractedUIDs.length > 3 ? ` and ${alreadyExtractedUIDs.length - 3} more` : ''}\n` +
+              `New extractions: ${newUIDs.length}\n\n` +
+              `Continue anyway? This will re-extract existing PCAPs (overwriting files).`;
+        
+        if (!confirm(message)) {
+            return;
+        }
+    }
+    
+    // Show loading state
+    const extractBtn = document.getElementById('extractBtnResults');
+    const originalText = extractBtn.innerHTML;
+    extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Extracting...';
+    extractBtn.disabled = true;
+    
+    // Set extraction in progress flag
+    isExtractionInProgressResults = true;
+    
+    console.log('Sending extraction request with scan_id:', scanId, 'UIDs:', selectedUIDs);
+    
+    fetch('/api/reports/extract_pcaps', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            scan_id: scanId,
+            connection_uids: selectedUIDs
+        })
+    })
+    .then(response => {
+        console.log('Scanning extraction response status:', response.status);
+        return response.json();
+    })
+    .then(data => {
+        console.log('Scanning extraction response data:', data);
+        
+        if (data.success) {
+            let message = `Successfully extracted ${data.extracted_count} PCAP file${data.extracted_count !== 1 ? 's' : ''} to:<br><code>${data.output_path}</code>`;
+            
+            if (data.warnings && data.warnings.length > 0) {
+                message += `<br><br><small class="text-warning">Some extractions had warnings - check console for details.</small>`;
+                console.warn('Extraction warnings:', data.warnings);
+            }
+            
+            showToast(message, true);
+            
+            // Reset selections
+            document.querySelectorAll('.connection-checkbox-results').forEach(cb => cb.checked = false);
+            document.getElementById('selectAllResults').checked = false;
+            updateSelectedCountResults();
+            
+            // Trigger post-extraction refresh to show changes
+            setTimeout(() => {
+                triggerPostExtractionRefreshResults();
+            }, 1000); // Small delay to allow backend to complete file operations
+        } else {
+            console.error('Scanning extraction failed:', data.error);
+            showToast(`Error extracting PCAPs: ${data.error}`, false);
+        }
     })
     .catch(error => {
-        showToast('Error getting scan information for extraction.', false);
+        showToast(`Error extracting PCAPs: ${error.message}`, false);
+    })
+    .finally(() => {
+        extractBtn.innerHTML = originalText;
+        extractBtn.disabled = document.querySelectorAll('.connection-checkbox-results:checked').length === 0;
+        
+        // Clear extraction in progress flag
+        isExtractionInProgressResults = false;
     });
 }
 

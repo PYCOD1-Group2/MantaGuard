@@ -7,9 +7,16 @@
     <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/output/ocsvm_model/labeled_anomalies.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/output/ocsvm_model/labeled_anomalies.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mantaguard/core/ai/training/retrain_ocsvm.py" beforeDir="false" afterPath="$PROJECT_DIR$/mantaguard/core/ai/training/retrain_ocsvm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mantaguard/core/ai/models/analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/mantaguard/core/ai/models/analyzer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mantaguard/core/ai/training/train_ocsvm.py" beforeDir="false" afterPath="$PROJECT_DIR$/mantaguard/core/ai/training/train_ocsvm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mantaguard/data/unknown_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/mantaguard/data/unknown_categories.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mantaguard/utils/forensics.py" beforeDir="false" afterPath="$PROJECT_DIR$/mantaguard/utils/forensics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/fix_patches.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/fix_patches.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/reports.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/reports.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/scanning.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/scanning.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/legacy/test_zeek_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/legacy/test_zeek_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +41,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -58,23 +66,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/skam/github/MantaGuard/ai-model/pcaps&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/home/skam/github/MantaGuard/ai-model/pcaps",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "ml.llm.LLMConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/ai-model/pcaps" />

@@ -7,6 +7,7 @@ for detailed forensic analysis.
 """
 
 import argparse
+import ipaddress
 import os
 import subprocess
 import sys
@@ -190,6 +191,18 @@ class ForensicsExtractor:
         dst_port = conn_tuple['id.resp_p']
         proto = conn_tuple['proto'].lower()
         
+        # Determine if we're dealing with IPv4 or IPv6
+        try:
+            src_addr = ipaddress.ip_address(src_ip)
+            dst_addr = ipaddress.ip_address(dst_ip)
+            is_ipv6 = isinstance(src_addr, ipaddress.IPv6Address) or isinstance(dst_addr, ipaddress.IPv6Address)
+        except ValueError:
+            # Fallback to IPv4 if addresses are not valid
+            is_ipv6 = False
+        
+        # Choose appropriate IP filter prefix
+        ip_filter = "ipv6" if is_ipv6 else "ip"
+        
         # Protocol number mapping
         proto_numbers = {
             'icmp': 1,
@@ -200,32 +213,39 @@ class ForensicsExtractor:
         
         # Build filter based on protocol
         if proto == 'icmp':
-            # ICMP doesn't use ports
+            # ICMP doesn't use ports - use appropriate ICMP filter for IPv4/IPv6
+            icmp_proto = "icmpv6" if is_ipv6 else "icmp"
             filter_str = (
-                f"(ip.src == {src_ip} && ip.dst == {dst_ip} && icmp) || "
-                f"(ip.src == {dst_ip} && ip.dst == {src_ip} && icmp)"
+                f"({ip_filter}.src == {src_ip} && {ip_filter}.dst == {dst_ip} && {icmp_proto}) || "
+                f"({ip_filter}.src == {dst_ip} && {ip_filter}.dst == {src_ip} && {icmp_proto})"
             )
         elif proto in ['tcp', 'udp']:
             # TCP and UDP use ports
             filter_str = (
-                f"(ip.src == {src_ip} && ip.dst == {dst_ip} && "
+                f"({ip_filter}.src == {src_ip} && {ip_filter}.dst == {dst_ip} && "
                 f"{proto}.srcport == {src_port} && {proto}.dstport == {dst_port}) || "
-                f"(ip.src == {dst_ip} && ip.dst == {src_ip} && "
+                f"({ip_filter}.src == {dst_ip} && {ip_filter}.dst == {src_ip} && "
                 f"{proto}.srcport == {dst_port} && {proto}.dstport == {src_port})"
+            )
+        elif proto == 'unknown_transport':
+            # Handle unknown transport protocols - use IP addresses only
+            filter_str = (
+                f"({ip_filter}.src == {src_ip} && {ip_filter}.dst == {dst_ip}) || "
+                f"({ip_filter}.src == {dst_ip} && {ip_filter}.dst == {src_ip})"
             )
         else:
             # Other protocols
             proto_num = proto_numbers.get(proto)
             if proto_num:
                 filter_str = (
-                    f"(ip.src == {src_ip} && ip.dst == {dst_ip} && ip.proto == {proto_num}) || "
-                    f"(ip.src == {dst_ip} && ip.dst == {src_ip} && ip.proto == {proto_num})"
+                    f"({ip_filter}.src == {src_ip} && {ip_filter}.dst == {dst_ip} && {ip_filter}.proto == {proto_num}) || "
+                    f"({ip_filter}.src == {dst_ip} && {ip_filter}.dst == {src_ip} && {ip_filter}.proto == {proto_num})"
                 )
             else:
                 # Fallback to IP addresses only
                 filter_str = (
-                    f"(ip.src == {src_ip} && ip.dst == {dst_ip}) || "
-                    f"(ip.src == {dst_ip} && ip.dst == {src_ip})"
+                    f"({ip_filter}.src == {src_ip} && {ip_filter}.dst == {dst_ip}) || "
+                    f"({ip_filter}.src == {dst_ip} && {ip_filter}.dst == {src_ip})"
                 )
         
         return filter_str

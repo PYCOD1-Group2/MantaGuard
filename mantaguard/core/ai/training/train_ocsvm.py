@@ -71,7 +71,7 @@ class OCSVMTrainer:
             logger.info(f"Loaded DataFrame with shape: {df.shape}")
             
             # Convert to features
-            X, encoders = zeek_to_features(df)
+            X, encoders, unknown_values = zeek_to_features(df)
             logger.info(f"Created feature matrix with shape: {X.shape}")
             
             # Apply standard scaling

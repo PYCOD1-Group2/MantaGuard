@@ -23,10 +23,6 @@
         --cyber-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.2);
     }
 
-    /* Override global background */
-    body {
-        background: var(--cyber-bg-dark);
-    }
 
     /* Professional metric cards */
     .metric-card {
@@ -39,14 +35,14 @@
         height: 100%;
         box-shadow: var(--cyber-shadow);
     }
-    
+
     .metric-card:hover {
         border-color: var(--cyber-border-accent);
         transform: translateY(-2px);
         box-shadow: var(--cyber-shadow-hover);
         background: var(--cyber-bg-hover);
     }
-    
+
     .metric-number {
         font-size: 2.5rem;
         font-weight: 700;
@@ -54,7 +50,7 @@
         margin-bottom: 8px;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     }
-    
+
     .metric-label {
         color: var(--cyber-text-secondary);
         font-size: 0.875rem;
@@ -62,7 +58,7 @@
         letter-spacing: 0.5px;
         font-weight: 500;
     }
-    
+
     /* Professional cards */
     .card {
         background: var(--cyber-bg-card);
@@ -71,19 +67,19 @@
         box-shadow: var(--cyber-shadow);
         transition: all 0.3s ease;
     }
-    
+
     .card:hover {
         border-color: var(--cyber-border-accent);
         box-shadow: var(--cyber-shadow-hover);
     }
-    
+
     .card-header {
         background: rgba(255, 255, 255, 0.03);
         border-bottom: 1px solid var(--cyber-border);
         padding: 20px;
         border-radius: 8px 8px 0 0 !important;
     }
-    
+
     .card-header h5 {
         color: var(--cyber-text);
         font-weight: 600;
@@ -92,32 +88,32 @@
         margin: 0;
         font-size: 0.9rem;
     }
-    
+
     /* Professional timeline */
     .scan-timeline {
         max-height: 500px;
         overflow-y: auto;
         padding-right: 10px;
     }
-    
+
     .scan-timeline::-webkit-scrollbar {
         width: 6px;
     }
-    
+
     .scan-timeline::-webkit-scrollbar-track {
         background: var(--cyber-bg-dark);
         border-radius: 3px;
     }
-    
+
     .scan-timeline::-webkit-scrollbar-thumb {
         background: var(--cyber-text-dim);
         border-radius: 3px;
     }
-    
+
     .scan-timeline::-webkit-scrollbar-thumb:hover {
         background: var(--cyber-primary);
     }
-    
+
     .timeline-item {
         border-left: 3px solid var(--cyber-primary);
         padding-left: 20px;
@@ -127,7 +123,7 @@
         border-radius: 0 6px 6px 0;
         padding: 12px 16px 12px 20px;
     }
-    
+
     .timeline-item::before {
         content: '';
         position: absolute;
@@ -139,25 +135,25 @@
         background-color: var(--cyber-primary);
         border: 2px solid var(--cyber-bg-dark);
     }
-    
+
     .timeline-item.high-severity {
         border-left-color: var(--cyber-accent);
         background: rgba(244, 67, 54, 0.05);
     }
-    
+
     .timeline-item.high-severity::before {
         background-color: var(--cyber-accent);
     }
-    
+
     .timeline-item.medium-severity {
         border-left-color: var(--cyber-warning);
         background: rgba(255, 152, 0, 0.05);
     }
-    
+
     .timeline-item.medium-severity::before {
         background-color: var(--cyber-warning);
     }
-    
+
     /* Professional protocol bars */
     .protocol-bar {
         background: var(--cyber-bg-dark);
@@ -168,13 +164,13 @@
         position: relative;
         border: 1px solid var(--cyber-border);
     }
-    
+
     .protocol-fill {
         height: 100%;
         background: linear-gradient(90deg, var(--cyber-primary), var(--cyber-secondary));
         transition: width 0.3s ease;
     }
-    
+
     .protocol-label {
         position: absolute;
         left: 10px;
@@ -185,7 +181,7 @@
         font-weight: 500;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
     }
-    
+
     /* Professional severity badges */
     .severity-badge {
         padding: 4px 8px;
@@ -196,25 +192,25 @@
         letter-spacing: 0.5px;
         border: 1px solid;
     }
-    
+
     .severity-high {
         background: rgba(244, 67, 54, 0.1);
         color: var(--cyber-accent);
         border-color: var(--cyber-accent);
     }
-    
+
     .severity-medium {
         background: rgba(255, 152, 0, 0.1);
         color: var(--cyber-warning);
         border-color: var(--cyber-warning);
     }
-    
+
     .severity-low {
         background: rgba(76, 175, 80, 0.1);
         color: var(--cyber-primary);
         border-color: var(--cyber-primary);
     }
-    
+
     /* Professional scan items */
     .scan-item {
         background: var(--cyber-bg-card);
@@ -225,14 +221,14 @@
         cursor: pointer;
         transition: all 0.2s ease;
     }
-    
+
     .scan-item:hover {
         border-color: var(--cyber-border-accent);
         background: var(--cyber-bg-hover);
         transform: translateX(2px);
         box-shadow: var(--cyber-shadow);
     }
-    
+
     /* Professional buttons */
     .btn-outline-primary {
         color: var(--cyber-primary);
@@ -241,73 +237,75 @@
         font-weight: 500;
         transition: all 0.2s ease;
     }
-    
+
     .btn-outline-primary:hover {
         background-color: var(--cyber-primary);
         border-color: var(--cyber-primary);
         color: var(--cyber-bg-dark);
     }
-    
+
     .btn-primary {
         background: var(--cyber-primary);
         border: none;
         font-weight: 500;
         transition: all 0.2s ease;
     }
-    
+
     .btn-primary:hover {
         background: #45a049;
         transform: translateY(-1px);
         box-shadow: var(--cyber-shadow);
     }
-    
-    
+
+
     /* Professional loading spinner */
     .loading-spinner {
         display: none;
         text-align: center;
         padding: 40px;
     }
-    
+
     .spinner-border {
         border-color: rgba(255, 255, 255, 0.1);
         border-top-color: var(--cyber-primary);
     }
-    
+
     /* Professional anomaly rate styling */
     .anomaly-rate-high {
         color: var(--cyber-accent);
         font-weight: 600;
     }
-    
+
     .anomaly-rate-medium {
         color: var(--cyber-warning);
         font-weight: 600;
     }
-    
+
     .anomaly-rate-low {
         color: var(--cyber-primary);
         font-weight: 600;
     }
-    
+
     /* Professional headings */
     h1, h5, h6 {
         color: var(--cyber-text);
     }
-    
+
     h1 {
         font-weight: 700;
         color: var(--cyber-text);
     }
-    
+
     /* Professional table styling for modal */
     .table-dark {
         background: var(--cyber-bg-card);
-        border: 1px solid var(--cyber-border);
-        border-radius: 6px;
-        overflow: hidden;
+        border: 2px solid rgba(0, 191, 255, 0.3) !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        margin-bottom: 1rem !important;
     }
-    
+
     .table-dark th {
         background: rgba(255, 255, 255, 0.03);
         color: var(--cyber-text-secondary);
@@ -316,29 +314,52 @@
         letter-spacing: 0.5px;
         border-color: var(--cyber-border);
         font-size: 0.8rem;
+        border-bottom: 2px solid #00BFFF !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
     }
-    
+
     .table-dark td {
         border-color: var(--cyber-border);
         color: var(--cyber-text);
+        border-left: none !important;
+        border-right: none !important;
     }
-    
+
     .table-dark tbody tr:hover {
         background: rgba(255, 255, 255, 0.02);
     }
-    
+
+    /* Additional table frame styling for modal tables */
+    .table-dark thead th:first-child {
+        border-top-left-radius: 6px !important;
+    }
+
+    .table-dark thead th:last-child {
+        border-top-right-radius: 6px !important;
+    }
+
+    .table-dark tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 6px !important;
+    }
+
+    .table-dark tbody tr:last-child td:last-child {
+        border-bottom-right-radius: 6px !important;
+    }
+
     /* Professional checkbox styling */
     input[type="checkbox"] {
         accent-color: var(--cyber-primary);
         transform: scale(1.1);
     }
-    
+
     /* Professional form switch styling */
     .form-check-input:checked {
         background-color: var(--cyber-primary);
         border-color: var(--cyber-primary);
     }
-    
+
     .form-check-label {
         color: var(--cyber-text-secondary);
         font-weight: 500;
@@ -349,7 +370,7 @@
     .toast-container {
         z-index: 1060;
     }
-    
+
     .toast {
         background: var(--cyber-bg-card);
         border: 1px solid var(--cyber-border);
@@ -358,17 +379,17 @@
         backdrop-filter: blur(8px);
         min-width: 350px;
     }
-    
+
     .toast.border-success {
         border-color: var(--cyber-primary);
         border-left: 4px solid var(--cyber-primary);
     }
-    
+
     .toast.border-danger {
         border-color: var(--cyber-accent);
         border-left: 4px solid var(--cyber-accent);
     }
-    
+
     .toast-header {
         background: rgba(255, 255, 255, 0.03);
         border-bottom: 1px solid var(--cyber-border);
@@ -376,13 +397,13 @@
         font-weight: 600;
         border-radius: 8px 8px 0 0;
     }
-    
+
     .toast-body {
         color: var(--cyber-text);
         padding: 16px;
         font-weight: 400;
     }
-    
+
     .toast-body code {
         background: rgba(255, 255, 255, 0.05);
         color: var(--cyber-primary);
@@ -392,21 +413,21 @@
         border: 1px solid var(--cyber-border);
         font-size: 0.85em;
     }
-    
+
     .btn-close {
         filter: invert(1) brightness(0.8);
     }
-    
+
     /* Text color overrides */
     .text-muted {
         color: var(--cyber-text-dim) !important;
     }
-    
+
     /* Professional tab styling for visualizations */
     .nav-tabs {
         border-bottom: 1px solid var(--cyber-border);
     }
-    
+
     .nav-tabs .nav-link {
         background: transparent;
         border: 1px solid transparent;
@@ -417,20 +438,20 @@
         border-radius: 6px 6px 0 0;
         transition: all 0.2s ease;
     }
-    
+
     .nav-tabs .nav-link:hover {
         background: rgba(255, 255, 255, 0.05);
         color: var(--cyber-text);
         border-color: var(--cyber-border);
     }
-    
+
     .nav-tabs .nav-link.active {
         background: var(--cyber-bg-card);
         color: var(--cyber-primary);
         border-color: var(--cyber-border) var(--cyber-border) var(--cyber-bg-card);
         border-bottom-color: var(--cyber-bg-card);
     }
-    
+
     .tab-content {
         border: 1px solid var(--cyber-border);
         border-top: none;
@@ -438,11 +459,11 @@
         background: var(--cyber-bg-card);
         min-height: 400px;
     }
-    
+
     .tab-pane {
         padding: 20px;
     }
-    
+
     .visualization-container {
         text-align: center;
         height: 100%;
@@ -451,7 +472,7 @@
         justify-content: center;
         align-items: center;
     }
-    
+
     .visualization-container img {
         max-width: 100%;
         max-height: 350px;
@@ -459,14 +480,14 @@
         border-radius: 4px;
         box-shadow: var(--cyber-shadow);
     }
-    
+
     .no-visualization {
         color: var(--cyber-text-dim);
         font-style: italic;
         text-align: center;
         padding: 60px 20px;
     }
-    
+
     /* Professional badge styling */
     .badge {
         font-weight: 600;
@@ -474,15 +495,15 @@
         border-radius: 4px;
         font-size: 0.75rem;
     }
-    
+
     .bg-danger {
         background: var(--cyber-accent) !important;
     }
-    
+
     .bg-success {
         background: var(--cyber-primary) !important;
     }
-    
+
     /* Professional modal styling */
     .modal-content {
         background: var(--cyber-bg-card) !important;
@@ -490,80 +511,80 @@
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
         border-radius: 8px !important;
     }
-    
+
     .modal-header {
         border-bottom: 1px solid var(--cyber-border) !important;
         background: rgba(255, 255, 255, 0.02) !important;
         border-radius: 8px 8px 0 0 !important;
     }
-    
+
     .modal-title {
         color: var(--cyber-text) !important;
         font-weight: 600 !important;
         font-size: 1.1rem !important;
     }
-    
+
     /* Professional button styling for small buttons */
     .btn-xs {
         padding: 2px 6px;
         font-size: 0.75rem;
         border-radius: 3px;
     }
-    
+
     .btn-outline-secondary {
         color: var(--cyber-text-secondary);
         border-color: var(--cyber-border);
         background: transparent;
         transition: all 0.2s ease;
     }
-    
+
     .btn-outline-secondary:hover {
         background-color: var(--cyber-text-secondary);
         border-color: var(--cyber-text-secondary);
         color: var(--cyber-bg-dark);
     }
-    
+
     /* Gap utility for flexbox */
     .gap-3 {
         gap: 1rem;
     }
-    
+
     /* Visual indicators for extracted connections */
     .extracted-connection {
         background: rgba(76, 175, 80, 0.05) !important;
         border-left: 3px solid var(--cyber-primary) !important;
     }
-    
+
     .extracted-connection:hover {
         background: rgba(76, 175, 80, 0.1) !important;
     }
-    
+
     /* Success button styling */
     .btn-success {
         background: var(--cyber-primary) !important;
         border-color: var(--cyber-primary) !important;
         color: var(--cyber-bg-dark) !important;
     }
-    
+
     .btn-success:hover {
         background: #45a049 !important;
         border-color: #45a049 !important;
         color: var(--cyber-bg-dark) !important;
     }
-    
+
     /* Text color utilities */
     .text-success {
         color: var(--cyber-primary) !important;
     }
-    
+
     .text-warning {
         color: var(--cyber-warning) !important;
     }
-    
+
     .text-info {
         color: var(--cyber-secondary) !important;
     }
-    
+
     /* Warning button styling */
     .btn-warning {
         background: var(--cyber-warning) !important;
@@ -571,7 +592,7 @@
         color: var(--cyber-bg-dark) !important;
         font-weight: 600;
     }
-    
+
     .btn-warning:hover {
         background: #e6a700 !important;
         border-color: #e6a700 !important;
@@ -586,17 +607,9 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1><i class="fas fa-chart-bar me-2"></i>Security Reports & Analytics</h1>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary" onclick="refreshReports()">
-                        <i class="fas fa-sync-alt me-2"></i>Refresh Data
-                    </button>
-                    <button class="btn btn-outline-warning btn-sm" onclick="closeScanModal()" title="Fix UI if it becomes unresponsive">
-                        <i class="fas fa-tools me-1"></i>Fix UI
-                    </button>
-                    <button class="btn btn-outline-info btn-sm" onclick="window.debugMode = !window.debugMode; console.log('Debug mode:', window.debugMode);" title="Toggle debug mode for modal issues">
-                        <i class="fas fa-bug me-1"></i>Debug
-                    </button>
-                </div>
+                <button class="btn btn-outline-primary" onclick="refreshReports()">
+                    <i class="fas fa-sync-alt me-2"></i>Refresh Data
+                </button>
             </div>
         </div>
     </div>
@@ -795,10 +808,10 @@
 function refreshReports() {
     const loadingSpinner = document.getElementById('loading-spinner');
     const reportsContent = document.getElementById('reports-content');
-    
+
     loadingSpinner.style.display = 'block';
     reportsContent.style.opacity = '0.5';
-    
+
     fetch('/api/reports/analytics')
     .then(response => response.json())
     .then(data => {
@@ -806,7 +819,7 @@ function refreshReports() {
         updateProtocolChart(data.protocol_distribution);
         updateThreatTimeline(data.threat_timeline);
         updateRecentScans(data.recent_scans);
-        
+
         loadingSpinner.style.display = 'none';
         reportsContent.style.opacity = '1';
     })
@@ -827,7 +840,7 @@ function updateMetrics(data) {
 function updateProtocolChart(protocolData) {
     const chartContainer = document.getElementById('protocol-chart');
     const total = Object.values(protocolData).reduce((sum, count) => sum + count, 0);
-    
+
     let html = '';
     for (const [protocol, count] of Object.entries(protocolData)) {
         const percentage = total > 0 ? (count / total * 100).toFixed(1) : 0;
@@ -843,17 +856,17 @@ function updateProtocolChart(protocolData) {
             </div>
         `;
     }
-    
+
     if (html === '') {
         html = '<p class="text-muted">No protocol data available</p>';
     }
-    
+
     chartContainer.innerHTML = html;
 }
 
 function updateThreatTimeline(threats) {
     const timelineContainer = document.getElementById('threat-timeline');
-    
+
     let html = '';
     threats.forEach(threat => {
         html += `
@@ -868,21 +881,21 @@ function updateThreatTimeline(threats) {
             </div>
         `;
     });
-    
+
     if (html === '') {
         html = '<p class="text-muted">No recent threats detected</p>';
     }
-    
+
     timelineContainer.innerHTML = html;
 }
 
 function updateRecentScans(scans) {
     const scansContainer = document.getElementById('recent-scans');
-    
+
     let html = '';
     scans.forEach(scan => {
         const severityClass = scan.anomaly_rate > 50 ? 'high' : scan.anomaly_rate > 20 ? 'medium' : 'low';
-        
+
         // Format timestamp if it's in the old format (YYYYMMDD_HHMMSS)
         let formattedTimestamp = scan.timestamp;
         if (scan.timestamp.match(/^\d{8}_\d{6}$/)) {
@@ -906,7 +919,7 @@ function updateRecentScans(scans) {
                 formattedTimestamp = scan.timestamp.replace('_', ' ');
             }
         }
-        
+
         // Get origin icon based on type
         let originIcon = 'question';
         if (scan.origin_type === 'timed_capture') {
@@ -914,7 +927,7 @@ function updateRecentScans(scans) {
         } else if (scan.origin_type === 'upload') {
             originIcon = 'upload';
         }
-        
+
         html += `
             <div class="scan-item" onclick="viewScanDetails('${scan.directory}')">
                 <div class="row align-items-center">
@@ -945,7 +958,7 @@ function updateRecentScans(scans) {
             </div>
         `;
     });
-    
+
     if (html === '') {
         html = `
             <div class="text-center py-5">
@@ -958,7 +971,7 @@ function updateRecentScans(scans) {
             </div>
         `;
     }
-    
+
     scansContainer.innerHTML = html;
 }
 
@@ -968,7 +981,7 @@ let currentScanModal = null;
 // Function to safely close and cleanup modal with aggressive cleanup
 function closeScanModal() {
     console.log('Closing scan modal...');
-    
+
     // Hide and dispose modal instance
     if (currentScanModal) {
         try {
@@ -979,7 +992,7 @@ function closeScanModal() {
         }
         currentScanModal = null;
     }
-    
+
     // Force hide the modal element
     const modalElement = document.getElementById('scanDetailsModal');
     if (modalElement) {
@@ -989,36 +1002,36 @@ function closeScanModal() {
         modalElement.removeAttribute('aria-modal');
         modalElement.removeAttribute('role');
     }
-    
+
     // Aggressive backdrop cleanup - remove all possible backdrop elements
     const backdrops = document.querySelectorAll('.modal-backdrop, .modal-backdrop.fade, .modal-backdrop.show');
     backdrops.forEach(backdrop => {
         backdrop.remove();
     });
-    
+
     // Reset body state completely
     document.body.classList.remove('modal-open');
     document.body.style.overflow = '';
     document.body.style.paddingRight = '';
     document.body.style.marginRight = '';
-    
+
     // Remove any Bootstrap modal classes that might linger
     document.documentElement.style.overflow = '';
     document.documentElement.style.paddingRight = '';
-    
+
     // Force a short delay and re-check
     setTimeout(() => {
         const remainingBackdrops = document.querySelectorAll('.modal-backdrop');
         remainingBackdrops.forEach(backdrop => backdrop.remove());
-        
+
         if (document.body.classList.contains('modal-open')) {
             document.body.classList.remove('modal-open');
         }
-        
+
         // Final cleanup
         document.body.style.cssText = document.body.style.cssText.replace(/overflow[^;]*;?/g, '');
         document.body.style.cssText = document.body.style.cssText.replace(/padding-right[^;]*;?/g, '');
-        
+
         console.log('Modal cleanup completed');
     }, 150);
 }
@@ -1030,13 +1043,13 @@ window.addEventListener('beforeunload', closeScanModal);
 let lastInteraction = Date.now();
 document.addEventListener('click', function(e) {
     lastInteraction = Date.now();
-    
+
     // Check if we have lingering modal issues
     const backdrops = document.querySelectorAll('.modal-backdrop');
     const modalOpen = document.body.classList.contains('modal-open');
     const modalElement = document.getElementById('scanDetailsModal');
     const modalVisible = modalElement && modalElement.classList.contains('show');
-    
+
     // If we have backdrops but no visible modal, or modal-open class without modal, cleanup
     if ((backdrops.length > 0 && !modalVisible) || (modalOpen && !modalVisible)) {
         console.warn('Detected UI lockup, performing emergency cleanup');
@@ -1052,7 +1065,7 @@ setInterval(() => {
         const modalOpen = document.body.classList.contains('modal-open');
         const modalElement = document.getElementById('scanDetailsModal');
         const modalVisible = modalElement && modalElement.classList.contains('show');
-        
+
         if ((backdrops.length > 0 && !modalVisible) || (modalOpen && !modalVisible)) {
             console.warn('Periodic check detected UI lockup, performing emergency cleanup');
             closeScanModal();
@@ -1067,7 +1080,7 @@ document.addEventListener('keydown', function(e) {
         const modalOpen = document.body.classList.contains('modal-open');
         const modalElement = document.getElementById('scanDetailsModal');
         const modalVisible = modalElement && modalElement.classList.contains('show');
-        
+
         // If escape is pressed and UI seems stuck, force cleanup
         if ((backdrops.length > 0 && !modalVisible) || (modalOpen && !modalVisible)) {
             console.log('Escape key pressed, performing emergency cleanup');
@@ -1081,7 +1094,7 @@ document.addEventListener('keydown', function(e) {
 // Named function for modal hidden event with aggressive cleanup
 function handleModalHidden() {
     console.log('Modal hidden event triggered');
-    
+
     if (currentScanModal) {
         try {
             currentScanModal.dispose();
@@ -1090,7 +1103,7 @@ function handleModalHidden() {
         }
         currentScanModal = null;
     }
-    
+
     // Immediate cleanup
     closeScanModal();
 }
@@ -1099,7 +1112,7 @@ function handleModalHidden() {
 function updateModalContent(data, scanId) {
     const modalTitle = document.getElementById('scanDetailsTitle');
     const modalBody = document.getElementById('scanDetailsBody');
-    
+
     // Generate visualization tabs
     const vizTabs = data.visualizations.length > 0 ? 
         data.visualizations.map((viz, index) => {
@@ -1118,7 +1131,7 @@ function updateModalContent(data, scanId) {
             const isActive = index === 0 ? 'show active' : '';
             return `<div class="tab-pane fade ${isActive}" id="viz-${index}" role="tabpanel">
                 <div class="visualization-container">
-                    <img src="/images/${viz}" alt="${viz}" loading="lazy" />
+                    <img src="/images/${scanId}/${viz}" alt="${viz}" loading="lazy" />
                 </div>
             </div>`;
         }).join('') : 
@@ -1133,7 +1146,7 @@ function updateModalContent(data, scanId) {
             <i class="fas fa-info-circle me-2"></i>
             <strong>Source:</strong> ${data.origin_details}
         </div>
-        
+
         <div class="row mb-4">
             <div class="col-md-3">
                 <div class="metric-card">
@@ -1160,7 +1173,7 @@ function updateModalContent(data, scanId) {
                 </div>
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-md-6">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -1255,12 +1268,24 @@ function updateModalContent(data, scanId) {
             </div>
         </div>
     `;
-    
+
     // Store connections data for filtering
     window.currentScanConnections = data.connections;
-    
+
     // Add event listeners for checkboxes
     updateSelectedCount();
+
+    // Ensure filters are applied if they were already checked
+    // This fixes the issue where the filter doesn't work when the modal is first loaded
+    setTimeout(() => {
+        const anomalyFilter = document.getElementById('anomalyFilter');
+        const extractedFilter = document.getElementById('extractedFilter');
+
+        if ((anomalyFilter && anomalyFilter.checked) || (extractedFilter && extractedFilter.checked)) {
+            console.log('Applying initial filters');
+            filterConnections(scanId);
+        }
+    }, 100);
 }
 
 // Track current extraction state to detect changes
@@ -1272,15 +1297,15 @@ let isExtractionInProgress = false;
 function refreshConnectionsTable(scanId, preserveSelections = true) {
     const tableBody = document.getElementById('connectionsTableBody');
     if (!tableBody) return;
-    
+
     // Store current user selections and filters
     const currentSelections = preserveSelections ? Array.from(document.querySelectorAll('.connection-checkbox:checked')).map(cb => cb.value) : [];
     const anomalyFilterState = document.getElementById('anomalyFilter')?.checked || false;
     const extractedFilterState = document.getElementById('extractedFilter')?.checked || false;
     const scrollPosition = tableBody.closest('.table').parentElement.scrollTop;
-    
+
     console.log('Refreshing connections table for scan:', scanId);
-    
+
     fetch(`/api/reports/scan/${scanId}/connections`)
     .then(response => response.json())
     .then(data => {
@@ -1288,15 +1313,15 @@ function refreshConnectionsTable(scanId, preserveSelections = true) {
             console.error('Error refreshing connections:', data.error);
             return;
         }
-        
+
         // Update connections data
         window.currentScanConnections = data.connections;
-        
+
         // Detect changes in extraction status
         let hasChanges = false;
         let newlyExtractedUIDs = [];
         const newExtractionState = new Map();
-        
+
         data.connections.forEach(conn => {
             newExtractionState.set(conn.uid, conn.has_extracted_pcap);
             const oldState = currentExtractionState.get(conn.uid);
@@ -1305,10 +1330,10 @@ function refreshConnectionsTable(scanId, preserveSelections = true) {
                 newlyExtractedUIDs.push(conn.uid);
             }
         });
-        
+
         // Update the extraction state tracking
         currentExtractionState = newExtractionState;
-        
+
         // Regenerate table content
         tableBody.innerHTML = data.connections.map(conn => {
             const isNewlyExtracted = newlyExtractedUIDs.includes(conn.uid);
@@ -1335,7 +1360,7 @@ function refreshConnectionsTable(scanId, preserveSelections = true) {
                 </tr>
             `;
         }).join('');
-        
+
         // Restore user selections
         if (preserveSelections && currentSelections.length > 0) {
             currentSelections.forEach(uid => {
@@ -1343,32 +1368,34 @@ function refreshConnectionsTable(scanId, preserveSelections = true) {
                 if (checkbox) checkbox.checked = true;
             });
         }
-        
-        // Restore filter states
-        if (document.getElementById('anomalyFilter')) {
-            document.getElementById('anomalyFilter').checked = anomalyFilterState;
-        }
-        if (document.getElementById('extractedFilter')) {
-            document.getElementById('extractedFilter').checked = extractedFilterState;
-        }
-        
-        // Reapply filters
-        filterConnections(scanId);
-        
+
+        // Restore filter states and reapply filters after DOM is ready
+        setTimeout(() => {
+            if (document.getElementById('anomalyFilter')) {
+                document.getElementById('anomalyFilter').checked = anomalyFilterState;
+            }
+            if (document.getElementById('extractedFilter')) {
+                document.getElementById('extractedFilter').checked = extractedFilterState;
+            }
+
+            // Reapply filters after a small delay to ensure DOM is ready
+            filterConnections(scanId);
+        }, 50);
+
         // Update UI counts and states
         updateSelectedCount();
         updateExtractedCount(data.extracted_count);
-        
+
         // Restore scroll position
         setTimeout(() => {
             const scrollContainer = tableBody.closest('.table').parentElement;
             if (scrollContainer) scrollContainer.scrollTop = scrollPosition;
         }, 10);
-        
+
         // Show notification if new extractions detected
         if (hasChanges && !isExtractionInProgress && newlyExtractedUIDs.length > 0) {
             showToast(`${newlyExtractedUIDs.length} new PCAP${newlyExtractedUIDs.length !== 1 ? 's' : ''} extracted and ready!`, true);
-            
+
             // Highlight newly extracted rows briefly
             setTimeout(() => {
                 document.querySelectorAll('.newly-extracted').forEach(row => {
@@ -1381,9 +1408,9 @@ function refreshConnectionsTable(scanId, preserveSelections = true) {
                 });
             }, 100);
         }
-        
+
         console.log(`Table refreshed for scan ${scanId} - ${data.extracted_count} extracted PCAPs`);
-        
+
     })
     .catch(error => {
         console.error('Error refreshing connections table:', error);
@@ -1404,13 +1431,13 @@ function updateExtractedCount(count) {
 // Function to initialize auto-refresh for a scan modal
 function initializeAutoRefresh(scanId) {
     console.log('Initializing post-extraction refresh for scan:', scanId);
-    
+
     // Clear any existing interval
     if (tableRefreshInterval) {
         clearInterval(tableRefreshInterval);
         tableRefreshInterval = null;
     }
-    
+
     // Initialize the extraction state tracking with current data
     const tableBody = document.getElementById('connectionsTableBody');
     if (tableBody && window.currentScanConnections) {
@@ -1420,10 +1447,10 @@ function initializeAutoRefresh(scanId) {
         });
         console.log('Initialized extraction state with', currentExtractionState.size, 'connections');
     }
-    
+
     // Store scanId for post-extraction refresh
     window.currentScanId = scanId;
-    
+
     // Add cleanup listener for when modal is hidden
     const modalElement = document.getElementById('scanDetailsModal');
     if (modalElement) {
@@ -1460,7 +1487,7 @@ function refreshCurrentScanDetails(scanId) {
                 </div>
             </div>
         `;
-        
+
         // Fetch and update the content
         fetch(`/api/reports/scan/${scanId}`)
         .then(response => response.json())
@@ -1469,7 +1496,7 @@ function refreshCurrentScanDetails(scanId) {
                 modalBody.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
                 return;
             }
-            
+
             // Update the modal content (reuse the existing modal content generation logic)
             updateModalContent(data, scanId);
         })
@@ -1481,25 +1508,25 @@ function refreshCurrentScanDetails(scanId) {
 
 function viewScanDetails(scanId) {
     console.log('Opening scan details for:', scanId);
-    
+
     // For debugging - let's also try a simple approach first
     if (window.debugMode) {
         const modalElement = document.getElementById('scanDetailsModal');
         const modalTitle = document.getElementById('scanDetailsTitle');
         const modalBody = document.getElementById('scanDetailsBody');
-        
+
         modalTitle.textContent = `Scan Details - ${scanId}`;
         modalBody.innerHTML = '<div class="text-center"><div class="spinner-border text-primary"></div></div>';
-        
+
         const modal = new bootstrap.Modal(modalElement);
         modal.show();
-        
+
         fetch(`/api/reports/scan/${scanId}`)
         .then(response => response.json())
         .then(data => {
             console.log('DEBUG: Received data:', data);
             updateModalContent(data, scanId);
-            
+
             // Initialize auto-refresh for debug mode too
             initializeAutoRefresh(scanId);
         })
@@ -1509,20 +1536,20 @@ function viewScanDetails(scanId) {
         });
         return;
     }
-    
+
     // Force cleanup any existing issues first
     closeScanModal();
-    
+
     const modalElement = document.getElementById('scanDetailsModal');
     const modalTitle = document.getElementById('scanDetailsTitle');
     const modalBody = document.getElementById('scanDetailsBody');
-    
+
     // Check if modal elements exist
     if (!modalElement || !modalTitle || !modalBody) {
         console.error('Modal elements not found!');
         return;
     }
-    
+
     // Wait a moment for cleanup to complete
     setTimeout(() => {
         console.log('Starting modal initialization for scan:', scanId);
@@ -1533,7 +1560,7 @@ function viewScanDetails(scanId) {
                 keyboard: true,
                 focus: true
             });
-            
+
             modalTitle.textContent = `Scan Details - ${scanId}`;
             modalBody.innerHTML = `
                 <div class="text-center">
@@ -1542,11 +1569,11 @@ function viewScanDetails(scanId) {
                     </div>
                 </div>
             `;
-            
+
             // Add event listeners with error handling
             modalElement.removeEventListener('hidden.bs.modal', handleModalHidden);
             modalElement.addEventListener('hidden.bs.modal', handleModalHidden);
-            
+
             // Add click handler for backdrop
             modalElement.addEventListener('click', function(e) {
                 if (e.target === modalElement) {
@@ -1554,12 +1581,12 @@ function viewScanDetails(scanId) {
                     closeScanModal();
                 }
             });
-            
+
             // Show modal with error handling
             try {
                 currentScanModal.show();
                 console.log('Modal shown successfully');
-                
+
                 // Fetch data AFTER modal is shown
                 console.log('Fetching scan data for:', scanId);
                 fetch(`/api/reports/scan/${scanId}`)
@@ -1574,10 +1601,10 @@ function viewScanDetails(scanId) {
                         modalBody.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
                         return;
                     }
-                    
+
                     // Use the extracted content generation function
                     updateModalContent(data, scanId);
-                    
+
                     // Initialize auto-refresh after content is loaded
                     initializeAutoRefresh(scanId);
                 })
@@ -1585,13 +1612,13 @@ function viewScanDetails(scanId) {
                     console.error('Fetch error:', error);
                     modalBody.innerHTML = `<div class="alert alert-danger">Error loading scan details: ${error.message}</div>`;
                 });
-                
+
             } catch (showError) {
                 console.error('Error showing modal:', showError);
                 closeScanModal();
                 return;
             }
-            
+
         } catch (error) {
             console.error('Error creating modal:', error);
             closeScanModal();
@@ -1603,34 +1630,110 @@ function viewScanDetails(scanId) {
 
 // Filter connections based on anomaly and extraction status toggles
 function filterConnections(scanId) {
-    const showOnlyAnomalies = document.getElementById('anomalyFilter').checked;
-    const showOnlyExtracted = document.getElementById('extractedFilter').checked;
+    console.log('Filtering connections for scan:', scanId);
+
+    // Get filter states
+    const showOnlyAnomalies = document.getElementById('anomalyFilter')?.checked || false;
+    const showOnlyExtracted = document.getElementById('extractedFilter')?.checked || false;
+
+    console.log('Filter states:', { showOnlyAnomalies, showOnlyExtracted });
+
+    // Get table body with more robust error handling
     const tableBody = document.getElementById('connectionsTableBody');
+
+    if (!tableBody) {
+        console.error('Cannot find connectionsTableBody element');
+        return;
+    }
+
+    // Get all rows
     const rows = tableBody.querySelectorAll('tr');
-    
+
+    if (rows.length === 0) {
+        console.log('No rows found in connectionsTableBody');
+        return;
+    }
+
+    // Track how many rows are shown/hidden
+    let shownCount = 0;
+    let hiddenCount = 0;
+    let anomalyCount = 0;
+    let extractedCount = 0;
+
+    // Apply filters to each row
     rows.forEach(row => {
         const prediction = row.getAttribute('data-prediction');
         const hasExtractedClass = row.classList.contains('extracted-connection');
-        
+
+        if (prediction === 'anomaly') {
+            anomalyCount++;
+        }
+        if (hasExtractedClass) {
+            extractedCount++;
+        }
+
         let showRow = true;
-        
+
         // Apply anomaly filter
         if (showOnlyAnomalies && prediction !== 'anomaly') {
             showRow = false;
         }
-        
+
         // Apply extraction filter
         if (showOnlyExtracted && !hasExtractedClass) {
             showRow = false;
         }
-        
+
+        // Set display style
         row.style.display = showRow ? '' : 'none';
+
+        // Count results
+        if (showRow) {
+            shownCount++;
+        } else {
+            hiddenCount++;
+        }
     });
-    
+
+    // Update filter status message
+    updateFilterStatusReports(scanId, showOnlyAnomalies, showOnlyExtracted, anomalyCount, extractedCount, shownCount, rows.length);
+
     // Reset checkboxes when filtering
-    document.getElementById('selectAll').checked = false;
+    const selectAllCheckbox = document.getElementById('selectAll');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.checked = false;
+    }
+
     document.querySelectorAll('.connection-checkbox').forEach(cb => cb.checked = false);
     updateSelectedCount();
+}
+
+// Update filter status message for reports modal
+function updateFilterStatusReports(scanId, showOnlyAnomalies, showOnlyExtracted, anomalyCount, extractedCount, shownCount, totalCount) {
+    let statusEl = document.getElementById(`filter-status-${scanId}`);
+    if (!statusEl) {
+        // Create status element if it doesn't exist
+        statusEl = document.createElement('div');
+        statusEl.id = `filter-status-${scanId}`;
+        statusEl.className = 'alert alert-info mt-2 mb-0';
+        
+        // Insert after the connections table
+        const tableContainer = document.querySelector('.table-responsive');
+        if (tableContainer && tableContainer.parentNode) {
+            tableContainer.parentNode.insertBefore(statusEl, tableContainer.nextSibling);
+        }
+    }
+    
+    if (showOnlyAnomalies || showOnlyExtracted) {
+        let filterText = [];
+        if (showOnlyAnomalies) filterText.push(`${anomalyCount} anomalies`);
+        if (showOnlyExtracted) filterText.push(`${extractedCount} extracted`);
+        
+        statusEl.innerHTML = `<i class="fas fa-filter me-2"></i>Showing ${shownCount} of ${filterText.join(' and ')} (${totalCount} total connections)`;
+        statusEl.style.display = 'block';
+    } else {
+        statusEl.style.display = 'none';
+    }
 }
 
 // Toggle select all checkboxes
@@ -1640,11 +1743,11 @@ function toggleSelectAll(scanId) {
     const visibleCheckboxes = Array.from(checkboxes).filter(cb => 
         cb.closest('tr').style.display !== 'none'
     );
-    
+
     visibleCheckboxes.forEach(checkbox => {
         checkbox.checked = selectAll.checked;
     });
-    
+
     updateSelectedCount();
 }
 
@@ -1654,10 +1757,10 @@ function updateSelectedCount() {
     document.querySelectorAll('.connection-checkbox').forEach(checkbox => {
         checkbox.addEventListener('change', updateSelectedCount);
     });
-    
+
     const selectedCheckboxes = document.querySelectorAll('.connection-checkbox:checked');
     const count = selectedCheckboxes.length;
-    
+
     // Check how many selected connections are already extracted
     let alreadyExtractedCount = 0;
     selectedCheckboxes.forEach(checkbox => {
@@ -1666,16 +1769,16 @@ function updateSelectedCount() {
             alreadyExtractedCount++;
         }
     });
-    
+
     // Update the count display with warning if needed
     let countText = `${count} connection${count !== 1 ? 's' : ''} selected`;
     if (alreadyExtractedCount > 0) {
         countText += ` <span class="text-warning">(${alreadyExtractedCount} already extracted)</span>`;
     }
     document.getElementById('selectedCount').innerHTML = countText;
-    
+
     document.getElementById('extractBtn').disabled = count === 0;
-    
+
     // Update extract button text and style based on warnings
     const extractBtn = document.getElementById('extractBtn');
     if (extractBtn && alreadyExtractedCount > 0) {
@@ -1693,7 +1796,7 @@ function updateSelectedCount() {
         extractBtn.innerHTML = '<i class="fas fa-download me-1"></i>Extract Selected PCAPs';
         extractBtn.className = 'btn btn-primary';
     }
-    
+
     // Update select all checkbox state
     const allCheckboxes = Array.from(document.querySelectorAll('.connection-checkbox')).filter(cb => 
         cb.closest('tr').style.display !== 'none'
@@ -1701,7 +1804,7 @@ function updateSelectedCount() {
     const checkedBoxes = Array.from(document.querySelectorAll('.connection-checkbox:checked')).filter(cb => 
         cb.closest('tr').style.display !== 'none'
     );
-    
+
     const selectAllCheckbox = document.getElementById('selectAll');
     if (selectAllCheckbox) {
         selectAllCheckbox.indeterminate = checkedBoxes.length > 0 && checkedBoxes.length < allCheckboxes.length;
@@ -1715,7 +1818,7 @@ function showToast(message, isSuccess = true) {
     const toastBody = document.getElementById('toastBody');
     const toastHeader = toast.querySelector('.toast-header');
     const icon = toastHeader.querySelector('i');
-    
+
     // Update toast styling based on success/error
     if (isSuccess) {
         toast.className = 'toast border-success';
@@ -1726,9 +1829,9 @@ function showToast(message, isSuccess = true) {
         icon.className = 'fas fa-exclamation-circle me-2 text-danger';
         toastHeader.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
     }
-    
+
     toastBody.innerHTML = message;
-    
+
     // Show the toast
     const bsToast = new bootstrap.Toast(toast, {
         autohide: true,
@@ -1741,16 +1844,16 @@ function showToast(message, isSuccess = true) {
 function extractSelectedConnections(scanId) {
     const selectedCheckboxes = document.querySelectorAll('.connection-checkbox:checked');
     const selectedUIDs = Array.from(selectedCheckboxes).map(cb => cb.value);
-    
+
     if (selectedUIDs.length === 0) {
         showToast('Please select at least one connection to extract.', false);
         return;
     }
-    
+
     // Check for already extracted connections
     let alreadyExtractedUIDs = [];
     let newUIDs = [];
-    
+
     selectedCheckboxes.forEach(checkbox => {
         const row = checkbox.closest('tr');
         const uid = checkbox.value;
@@ -1760,7 +1863,7 @@ function extractSelectedConnections(scanId) {
             newUIDs.push(uid);
         }
     });
-    
+
     // Show confirmation dialog if there are already extracted connections
     if (alreadyExtractedUIDs.length > 0) {
         const message = alreadyExtractedUIDs.length === selectedUIDs.length 
@@ -1769,21 +1872,23 @@ function extractSelectedConnections(scanId) {
               `Already extracted: ${alreadyExtractedUIDs.slice(0, 3).join(', ')}${alreadyExtractedUIDs.length > 3 ? ` and ${alreadyExtractedUIDs.length - 3} more` : ''}\n` +
               `New extractions: ${newUIDs.length}\n\n` +
               `Continue anyway? This will re-extract existing PCAPs (overwriting files).`;
-        
+
         if (!confirm(message)) {
             return;
         }
     }
-    
+
     // Show loading state
     const extractBtn = document.getElementById('extractBtn');
     const originalText = extractBtn.innerHTML;
     extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Extracting...';
     extractBtn.disabled = true;
-    
+
     // Set extraction in progress flag for auto-refresh logic
     isExtractionInProgress = true;
-    
+
+    console.log('Sending extraction request with scan_id:', scanId, 'UIDs:', selectedUIDs);
+
     fetch('/api/reports/extract_pcaps', {
         method: 'POST',
         headers: {
@@ -1794,29 +1899,35 @@ function extractSelectedConnections(scanId) {
             connection_uids: selectedUIDs
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Extraction response status:', response.status);
+        return response.json();
+    })
     .then(data => {
+        console.log('Extraction response data:', data);
+
         if (data.success) {
             let message = `Successfully extracted ${data.extracted_count} PCAP file${data.extracted_count !== 1 ? 's' : ''} to:<br><code>${data.output_path}</code>`;
-            
+
             if (data.warnings && data.warnings.length > 0) {
                 message += `<br><br><small class="text-warning">Some extractions had warnings - check console for details.</small>`;
                 console.warn('Extraction warnings:', data.warnings);
             }
-            
+
             // Reset selections
             document.querySelectorAll('.connection-checkbox').forEach(cb => cb.checked = false);
             document.getElementById('selectAll').checked = false;
             updateSelectedCount();
-            
+
             // Show success message
             showToast(message, true);
-            
+
             // Trigger post-extraction refresh to show changes
             setTimeout(() => {
                 triggerPostExtractionRefresh();
             }, 1000); // Small delay to allow backend to complete file operations
         } else {
+            console.error('Extraction failed:', data.error);
             showToast(`Error extracting PCAPs: ${data.error}`, false);
         }
     })
@@ -1826,7 +1937,7 @@ function extractSelectedConnections(scanId) {
     .finally(() => {
         extractBtn.innerHTML = originalText;
         extractBtn.disabled = document.querySelectorAll('.connection-checkbox:checked').length === 0;
-        
+
         // Clear extraction in progress flag
         isExtractionInProgress = false;
     });
@@ -1864,7 +1975,5 @@ function openPcapFile(scanId, uid) {
     });
 }
 
-// Auto-refresh every 30 seconds
-setInterval(refreshReports, 30000);
 </script>
 {% endblock %}
