@@ -12,6 +12,20 @@ import time
 import csv
 import netifaces
 
+# Import metadata management
+try:
+    sys.path.append(os.path.join(os.path.dirname(__file__), 'ai-model'))
+    from pcap_metadata import create_metadata, update_metadata_with_analysis, get_analysis_origin_info
+except ImportError:
+    print("Warning: Could not import pcap_metadata module")
+    # Create dummy functions to prevent errors
+    def create_metadata(*args, **kwargs):
+        pass
+    def update_metadata_with_analysis(*args, **kwargs):
+        pass
+    def get_analysis_origin_info(*args, **kwargs):
+        return {'source_type': 'unknown', 'description': 'Unknown Source', 'details': 'Metadata unavailable'}
+
 # Set matplotlib backend to non-GUI to prevent threading warnings
 import matplotlib
 matplotlib.use('Agg')
@@ -108,14 +122,29 @@ def get_security_analytics():
                 analytics['anomaly_count'] += anomalies
                 analytics['normal_count'] += normals
                 
-                # Get scan timestamp from directory name
-                scan_time = scan_dir.replace('_', ' ')
+                # Get scan timestamp from directory name and format it
+                try:
+                    # Parse timestamp from directory name (format: YYYYMMDD_HHMMSS)
+                    dt = datetime.strptime(scan_dir, '%Y%m%d_%H%M%S')
+                    # Format as human-readable: "5 JUN 2025 10:23"
+                    scan_time = dt.strftime('%d %b %Y %H:%M').upper()
+                except ValueError:
+                    # Fallback for non-standard directory names
+                    scan_time = scan_dir.replace('_', ' ')
+                
+                # Get origin information for this analysis
+                pcap_dir = os.path.join(project_root, "ai-model", "pcaps")
+                origin_info = get_analysis_origin_info(scan_path, pcap_dir)
+                
                 analytics['recent_scans'].append({
                     'timestamp': scan_time,
                     'connections': len(df),
                     'anomalies': anomalies,
                     'anomaly_rate': round((anomalies / len(df)) * 100, 2) if len(df) > 0 else 0,
-                    'directory': scan_dir
+                    'directory': scan_dir,
+                    'origin_type': origin_info.get('source_type', 'unknown'),
+                    'origin_description': origin_info.get('description', 'Unknown Source'),
+                    'origin_details': origin_info.get('details', 'Origin unknown')
                 })
                 
                 # Protocol analysis with conn.log
@@ -415,6 +444,18 @@ def upload_pcap():
     # Save the file
     file.save(save_path)
     
+    # Create metadata for the uploaded PCAP
+    try:
+        create_metadata(
+            pcap_path=save_path,
+            origin_type="upload",
+            original_filename=file.filename,
+            file_size_bytes=os.path.getsize(save_path)
+        )
+        print(f"Metadata created for uploaded file: {save_path}")
+    except Exception as metadata_error:
+        print(f"Warning: Failed to create metadata for upload: {metadata_error}")
+    
     return jsonify({'success': True, 'path': save_path, 'filename': file.filename})
 
 @app.route('/api/analyze_pcap', methods=['POST'])
@@ -506,6 +547,22 @@ def analyze_pcap():
                     visualize_results.create_confusion_matrix(data, has_true_label, analysis_dir)
             except Exception as vis_error:
                 print(f"Warning: Failed to generate visualizations: {str(vis_error)}")
+
+            # Update PCAP metadata with analysis results
+            try:
+                anomaly_count = len([r for r in results if r.get('prediction') == 'anomaly'])
+                total_connections = len(results)
+                
+                update_metadata_with_analysis(
+                    pcap_path=pcap_path,
+                    analysis_dir=analysis_dir,
+                    csv_path=csv_path,
+                    anomaly_count=anomaly_count,
+                    total_connections=total_connections
+                )
+                print(f"Updated PCAP metadata with analysis results for {pcap_path}")
+            except Exception as metadata_error:
+                print(f"Warning: Failed to update PCAP metadata: {metadata_error}")
 
             # Step 5: Complete (100%)
             with app.app_context():
@@ -771,6 +828,25 @@ def get_scan_details(scan_id):
         for viz_file in viz_files:
             visualizations.append(os.path.basename(viz_file))
         
+        # Check which connections have extracted PCAPs
+        forensics_dir = os.path.join(project_root, "ai-model", "forensics", scan_id)
+        extracted_uids = set()
+        if os.path.exists(forensics_dir):
+            pcap_files = glob.glob(os.path.join(forensics_dir, "*.pcap"))
+            for pcap_file in pcap_files:
+                # Extract UID from filename (e.g., "CfGhSThA1Ds4RrWbb.pcap" -> "CfGhSThA1Ds4RrWbb")
+                uid = os.path.splitext(os.path.basename(pcap_file))[0]
+                extracted_uids.add(uid)
+        
+        # Add extraction status to connections
+        connections = df.to_dict('records')[:100]  # Limit to first 100 for performance
+        for conn in connections:
+            conn['has_extracted_pcap'] = conn['uid'] in extracted_uids
+        
+        # Get origin information for this scan
+        pcap_dir = os.path.join(project_root, "ai-model", "pcaps")
+        origin_info = get_analysis_origin_info(scan_path, pcap_dir)
+        
         scan_details = {
             'scan_id': scan_id,
             'total_connections': len(df),
@@ -778,7 +854,11 @@ def get_scan_details(scan_id):
             'normal': len(df[df['prediction'] == 'normal']),
             'anomaly_rate': round((len(df[df['prediction'] == 'anomaly']) / len(df)) * 100, 2) if len(df) > 0 else 0,
             'visualizations': visualizations,
-            'connections': df.to_dict('records')[:100]  # Limit to first 100 for performance
+            'connections': connections,
+            'origin_type': origin_info.get('source_type', 'unknown'),
+            'origin_description': origin_info.get('description', 'Unknown Source'),
+            'origin_details': origin_info.get('details', 'Origin unknown'),
+            'extracted_count': len(extracted_uids)
         }
         
         return jsonify(scan_details)
@@ -869,6 +949,80 @@ def extract_pcaps():
             response_data['warnings'] = extraction_errors
         
         return jsonify(response_data)
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/reports/open_forensics_folder/<scan_id>')
+def open_forensics_folder(scan_id):
+    """Open the forensics folder for a specific scan."""
+    try:
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        forensics_dir = os.path.join(project_root, "ai-model", "forensics", scan_id)
+        
+        if not os.path.exists(forensics_dir):
+            return jsonify({'error': 'No extracted PCAPs found', 'message': 'No PCAP has been extracted yet'}), 404
+        
+        # Check if directory has any .pcap files
+        pcap_files = glob.glob(os.path.join(forensics_dir, "*.pcap"))
+        if not pcap_files:
+            return jsonify({'error': 'No extracted PCAPs found', 'message': 'No PCAP has been extracted yet'}), 404
+        
+        # Try to open the folder with the default file manager
+        import platform
+        system = platform.system()
+        
+        try:
+            if system == "Windows":
+                os.startfile(forensics_dir)
+            elif system == "Darwin":  # macOS
+                subprocess.run(["open", forensics_dir])
+            else:  # Linux and others
+                subprocess.run(["xdg-open", forensics_dir])
+            
+            return jsonify({'success': True, 'message': f'Opened forensics folder with {len(pcap_files)} extracted PCAPs'})
+        except Exception as open_error:
+            # If opening fails, return the path so user can navigate manually
+            return jsonify({
+                'success': True, 
+                'message': f'Forensics folder: {forensics_dir}',
+                'path': forensics_dir,
+                'files_count': len(pcap_files)
+            })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/reports/open_pcap_file/<scan_id>/<uid>')
+def open_pcap_file(scan_id, uid):
+    """Open a specific PCAP file with the default application."""
+    try:
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        pcap_file = os.path.join(project_root, "ai-model", "forensics", scan_id, f"{uid}.pcap")
+        
+        if not os.path.exists(pcap_file):
+            return jsonify({'error': 'PCAP file not found', 'message': 'No PCAP has been extracted yet'}), 404
+        
+        # Try to open the file with the default application
+        import platform
+        system = platform.system()
+        
+        try:
+            if system == "Windows":
+                os.startfile(pcap_file)
+            elif system == "Darwin":  # macOS
+                subprocess.run(["open", pcap_file])
+            else:  # Linux and others
+                subprocess.run(["xdg-open", pcap_file])
+            
+            return jsonify({'success': True, 'message': f'Opened PCAP file {uid}.pcap'})
+        except Exception as open_error:
+            # If opening fails, return the path so user can navigate manually
+            return jsonify({
+                'success': True,
+                'message': f'PCAP file: {pcap_file}',
+                'path': pcap_file
+            })
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500

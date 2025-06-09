@@ -4,8 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience.">
+    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Clean up `.idea` shelf files and streamline `unknown_categories.json` structure with reordered entries for consistency.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/timed_capture.py" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/timed_capture.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/ai-model/training/unknown_categories.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/scanning_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/scanning_page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/reports.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/reports.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/scanning.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/scanning.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,7 +21,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="flask-rewrite" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -48,7 +54,7 @@
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;flask-rewrite&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/skam/github/MantaGuard/ai-model/pcaps&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -120,6 +126,8 @@
       <workItem from="1749104280831" duration="8112000" />
       <workItem from="1749114945870" duration="4833000" />
       <workItem from="1749197080593" duration="8929000" />
+      <workItem from="1749300014144" duration="335000" />
+      <workItem from="1749423009112" duration="1851000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project structure and configuration files for the AI">
       <option name="closed" value="true" />
@@ -305,7 +313,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749217196464</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Clean up `.idea` shelf files and streamline `unknown_categories.json` structure with reordered entries for consistency.">
+      <option name="closed" value="true" />
+      <created>1749299507808</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1749299507808</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -358,7 +374,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="refactor" />
+                        <option value="main" />
                       </list>
                     </value>
                   </entry>
@@ -389,6 +405,7 @@
     <MESSAGE value="Add comprehensive security analytics, API endpoints, and professional styling for the reports page." />
     <MESSAGE value="Revamp Home and Scanning pages with professional design: added advanced styling, interactive components, and enhanced UX elements." />
     <MESSAGE value="Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience." />
-    <option name="LAST_COMMIT_MESSAGE" value="Introduce parallax effects and fixed background to Home page, enhance hero section design, and add interactive scrolling animations for improved user experience." />
+    <MESSAGE value="Clean up `.idea` shelf files and streamline `unknown_categories.json` structure with reordered entries for consistency." />
+    <option name="LAST_COMMIT_MESSAGE" value="Clean up `.idea` shelf files and streamline `unknown_categories.json` structure with reordered entries for consistency." />
   </component>
 </project>

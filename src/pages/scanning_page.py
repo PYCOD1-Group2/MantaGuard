@@ -388,10 +388,15 @@ def render_upload_pcap_tab():
         st.rerun()
 
     # Show completion notification
-    if st.session_state.scan_completed and not st.session_state.success_message_displayed:
-        st.success("✅ Analysis Complete! Results are ready.")
-        st.info("Click on the 'Results' tab to view the analysis results.")
-        st.session_state.success_message_displayed = True
+    if st.session_state.scan_completed:
+        if not st.session_state.success_message_displayed:
+            st.success("✅ Analysis Complete! Results are ready.")
+            st.info("Click on the 'Results' tab to view the analysis results.")
+            st.session_state.success_message_displayed = True
+        else:
+            # Keep showing the success message even after it's been displayed once
+            st.success("✅ Analysis Complete! Results are ready.")
+            st.info("Click on the 'Results' tab to view the analysis results.")
 
 def render_results_tab():
     """Render the results tab content."""

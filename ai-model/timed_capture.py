@@ -12,6 +12,19 @@ import joblib
 import json
 from datetime import datetime
 
+# Import metadata management
+try:
+    from pcap_metadata import create_metadata, update_metadata_with_analysis
+except ImportError:
+    # Try importing from current directory
+    import importlib.util
+    metadata_path = os.path.join(os.path.dirname(__file__), 'pcap_metadata.py')
+    spec = importlib.util.spec_from_file_location("pcap_metadata", metadata_path)
+    pcap_metadata = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pcap_metadata)
+    create_metadata = pcap_metadata.create_metadata
+    update_metadata_with_analysis = pcap_metadata.update_metadata_with_analysis
+
 # Add current directory to path to import custom modules
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
 if current_script_dir not in sys.path:
@@ -66,10 +79,38 @@ def run_capture(interface, duration, output_path):
             raise Exception(f"tshark exited with code {process.returncode}")
 
         print(f"Packet capture completed. PCAP file saved to: {output_path}")
+        
+        # Create metadata for the captured PCAP
+        try:
+            create_metadata(
+                pcap_path=output_path,
+                origin_type="timed_capture",
+                interface=interface,
+                duration_seconds=duration,
+                capture_method="tshark"
+            )
+            print(f"Metadata created for capture: {output_path}")
+        except Exception as metadata_error:
+            print(f"Warning: Failed to create metadata: {metadata_error}")
+        
         return output_path
 
     except subprocess.TimeoutExpired:
         print(f"Packet capture timed out after {duration+5} seconds. This is expected.")
+        
+        # Create metadata for the captured PCAP
+        try:
+            create_metadata(
+                pcap_path=output_path,
+                origin_type="timed_capture",
+                interface=interface,
+                duration_seconds=duration,
+                capture_method="tshark"
+            )
+            print(f"Metadata created for capture: {output_path}")
+        except Exception as metadata_error:
+            print(f"Warning: Failed to create metadata: {metadata_error}")
+        
         return output_path
     except Exception as e:
         print(f"Error during packet capture: {str(e)}")
@@ -88,6 +129,20 @@ def run_capture(interface, duration, output_path):
             capture.close()
 
             print(f"Packet capture completed. PCAP file saved to: {output_path}")
+            
+            # Create metadata for the captured PCAP
+            try:
+                create_metadata(
+                    pcap_path=output_path,
+                    origin_type="timed_capture",
+                    interface=interface,
+                    duration_seconds=duration,
+                    capture_method="pyshark"
+                )
+                print(f"Metadata created for capture: {output_path}")
+            except Exception as metadata_error:
+                print(f"Warning: Failed to create metadata: {metadata_error}")
+            
             return output_path
         except Exception as pyshark_error:
             print(f"Error during pyshark fallback: {str(pyshark_error)}")
@@ -322,8 +377,25 @@ def analyze_pcap_with_zeek(pcap_path, model_dir=None, model_version='v2'):
                 'prediction': label
             })
 
-        print(f"Analysis complete. Found {sum(1 for r in results if r['prediction'] == 'anomaly')} anomalies "
-              f"out of {len(results)} connections.")
+        # Count anomalies and total connections
+        anomaly_count = sum(1 for r in results if r['prediction'] == 'anomaly')
+        total_connections = len(results)
+        
+        print(f"Analysis complete. Found {anomaly_count} anomalies out of {total_connections} connections.")
+
+        # Update PCAP metadata with analysis results
+        try:
+            csv_path = os.path.join(analysis_result_dir, 'prediction_results.csv')
+            update_metadata_with_analysis(
+                pcap_path=pcap_path,
+                analysis_dir=analysis_result_dir,
+                csv_path=csv_path,
+                anomaly_count=anomaly_count,
+                total_connections=total_connections
+            )
+            print(f"Updated PCAP metadata with analysis results")
+        except Exception as metadata_error:
+            print(f"Warning: Failed to update PCAP metadata: {metadata_error}")
 
         return results, analysis_result_dir
 

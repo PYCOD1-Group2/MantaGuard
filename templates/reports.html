@@ -502,6 +502,81 @@
         font-weight: 600 !important;
         font-size: 1.1rem !important;
     }
+    
+    /* Professional button styling for small buttons */
+    .btn-xs {
+        padding: 2px 6px;
+        font-size: 0.75rem;
+        border-radius: 3px;
+    }
+    
+    .btn-outline-secondary {
+        color: var(--cyber-text-secondary);
+        border-color: var(--cyber-border);
+        background: transparent;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: var(--cyber-text-secondary);
+        border-color: var(--cyber-text-secondary);
+        color: var(--cyber-bg-dark);
+    }
+    
+    /* Gap utility for flexbox */
+    .gap-3 {
+        gap: 1rem;
+    }
+    
+    /* Visual indicators for extracted connections */
+    .extracted-connection {
+        background: rgba(76, 175, 80, 0.05) !important;
+        border-left: 3px solid var(--cyber-primary) !important;
+    }
+    
+    .extracted-connection:hover {
+        background: rgba(76, 175, 80, 0.1) !important;
+    }
+    
+    /* Success button styling */
+    .btn-success {
+        background: var(--cyber-primary) !important;
+        border-color: var(--cyber-primary) !important;
+        color: var(--cyber-bg-dark) !important;
+    }
+    
+    .btn-success:hover {
+        background: #45a049 !important;
+        border-color: #45a049 !important;
+        color: var(--cyber-bg-dark) !important;
+    }
+    
+    /* Text color utilities */
+    .text-success {
+        color: var(--cyber-primary) !important;
+    }
+    
+    .text-warning {
+        color: var(--cyber-warning) !important;
+    }
+    
+    .text-info {
+        color: var(--cyber-secondary) !important;
+    }
+    
+    /* Warning button styling */
+    .btn-warning {
+        background: var(--cyber-warning) !important;
+        border-color: var(--cyber-warning) !important;
+        color: var(--cyber-bg-dark) !important;
+        font-weight: 600;
+    }
+    
+    .btn-warning:hover {
+        background: #e6a700 !important;
+        border-color: #e6a700 !important;
+        color: var(--cyber-bg-dark) !important;
+    }
 </style>
 {% endblock %}
 
@@ -621,7 +696,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5><i class="fas fa-history me-2"></i>Recent Scan History</h5>
+                        <h5><i class="fas fa-history me-2"></i>Scan History</h5>
                     </div>
                     <div class="card-body">
                         <div id="recent-scans">
@@ -629,8 +704,12 @@
                                 {% for scan in analytics.recent_scans %}
                                 <div class="scan-item" onclick="viewScanDetails('{{ scan.directory }}')">
                                     <div class="row align-items-center">
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <strong>{{ scan.timestamp }}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="fas fa-{% if scan.origin_type == 'timed_capture' %}clock{% elif scan.origin_type == 'upload' %}upload{% else %}question{% endif %} me-1"></i>
+                                            <small>{{ scan.origin_description }}</small>
                                         </div>
                                         <div class="col-md-2">
                                             <i class="fas fa-link me-1"></i>{{ scan.connections }} connections
@@ -643,7 +722,7 @@
                                                 {{ scan.anomaly_rate }}% anomaly rate
                                             </span>
                                         </div>
-                                        <div class="col-md-3 text-end">
+                                        <div class="col-md-2 text-end">
                                             <button class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-eye me-1"></i>View Details
                                             </button>
@@ -795,11 +874,48 @@ function updateRecentScans(scans) {
     let html = '';
     scans.forEach(scan => {
         const severityClass = scan.anomaly_rate > 50 ? 'high' : scan.anomaly_rate > 20 ? 'medium' : 'low';
+        
+        // Format timestamp if it's in the old format (YYYYMMDD_HHMMSS)
+        let formattedTimestamp = scan.timestamp;
+        if (scan.timestamp.match(/^\d{8}_\d{6}$/)) {
+            try {
+                const dt = new Date(
+                    scan.timestamp.slice(0, 4),  // year
+                    scan.timestamp.slice(4, 6) - 1,  // month (0-indexed)
+                    scan.timestamp.slice(6, 8),  // day
+                    scan.timestamp.slice(9, 11), // hour
+                    scan.timestamp.slice(11, 13), // minute
+                    scan.timestamp.slice(13, 15)  // second
+                );
+                formattedTimestamp = dt.toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }).toUpperCase();
+            } catch (e) {
+                formattedTimestamp = scan.timestamp.replace('_', ' ');
+            }
+        }
+        
+        // Get origin icon based on type
+        let originIcon = 'question';
+        if (scan.origin_type === 'timed_capture') {
+            originIcon = 'clock';
+        } else if (scan.origin_type === 'upload') {
+            originIcon = 'upload';
+        }
+        
         html += `
             <div class="scan-item" onclick="viewScanDetails('${scan.directory}')">
                 <div class="row align-items-center">
-                    <div class="col-md-3">
-                        <strong>${scan.timestamp}</strong>
+                    <div class="col-md-2">
+                        <strong>${formattedTimestamp}</strong>
+                    </div>
+                    <div class="col-md-2">
+                        <i class="fas fa-${originIcon} me-1"></i>
+                        <small>${scan.origin_description || 'Unknown Source'}</small>
                     </div>
                     <div class="col-md-2">
                         <i class="fas fa-link me-1"></i>${scan.connections} connections
@@ -812,7 +928,7 @@ function updateRecentScans(scans) {
                             ${scan.anomaly_rate}% anomaly rate
                         </span>
                     </div>
-                    <div class="col-md-3 text-end">
+                    <div class="col-md-2 text-end">
                         <button class="btn btn-sm btn-outline-primary">
                             <i class="fas fa-eye me-1"></i>View Details
                         </button>
@@ -886,7 +1002,16 @@ function viewScanDetails(scanId) {
             }).join('') : 
             '<div class="tab-pane fade show active"><div class="no-visualization">No visualizations available for this scan</div></div>';
 
+        // Update modal title with origin information
+        const originIcon = data.origin_type === 'timed_capture' ? 'clock' : data.origin_type === 'upload' ? 'upload' : 'question';
+        modalTitle.innerHTML = `<i class="fas fa-${originIcon} me-2"></i>Scan Details - ${data.origin_description}`;
+
         modalBody.innerHTML = `
+            <div class="alert alert-info mb-3">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Source:</strong> ${data.origin_details}
+            </div>
+            
             <div class="row mb-4">
                 <div class="col-md-3">
                     <div class="metric-card">
@@ -917,12 +1042,31 @@ function viewScanDetails(scanId) {
             <div class="row">
                 <div class="col-md-6">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6>Connection Details</h6>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="anomalyFilter" onchange="filterConnections('${scanId}')">
-                            <label class="form-check-label" for="anomalyFilter">
-                                Show only anomalies
-                            </label>
+                        <div>
+                            <h6 class="mb-1">Connection Details</h6>
+                            <small class="text-muted">
+                                <i class="fas fa-file-archive text-success me-1"></i>
+                                ${data.extracted_count || 0} connections have extracted PCAPs
+                            </small>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <button class="btn btn-sm btn-outline-primary" onclick="openForensicsFolder('${scanId}')">
+                                <i class="fas fa-folder-open me-1"></i>Open Forensics Folder
+                            </button>
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="anomalyFilter" onchange="filterConnections('${scanId}')">
+                                    <label class="form-check-label" for="anomalyFilter">
+                                        Show only anomalies
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="extractedFilter" onchange="filterConnections('${scanId}')">
+                                    <label class="form-check-label" for="extractedFilter">
+                                        Show only extracted
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div style="max-height: 400px; overflow-y: auto;">
@@ -936,16 +1080,30 @@ function viewScanDetails(scanId) {
                                     <th>Protocol</th>
                                     <th>Score</th>
                                     <th>Prediction</th>
+                                    <th width="80px">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="connectionsTableBody">
                                 ${data.connections.map(conn => `
-                                    <tr data-prediction="${conn.prediction}">
+                                    <tr data-prediction="${conn.prediction}" class="${conn.has_extracted_pcap ? 'extracted-connection' : ''}">
                                         <td><input type="checkbox" class="connection-checkbox" value="${conn.uid}"></td>
-                                        <td>${conn.uid}</td>
+                                        <td>
+                                            ${conn.has_extracted_pcap ? '<i class="fas fa-file-archive text-success me-1" title="PCAP extracted"></i>' : ''}
+                                            ${conn.uid}
+                                        </td>
                                         <td>${conn.proto || 'unknown'}</td>
                                         <td>${parseFloat(conn.score).toFixed(4)}</td>
                                         <td><span class="badge ${conn.prediction === 'anomaly' ? 'bg-danger' : 'bg-success'}">${conn.prediction}</span></td>
+                                        <td>
+                                            ${conn.has_extracted_pcap ? 
+                                                `<button class="btn btn-xs btn-success" onclick="openPcapFile('${scanId}', '${conn.uid}')" title="Open extracted PCAP file">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                </button>` :
+                                                `<button class="btn btn-xs btn-outline-secondary" onclick="openPcapFile('${scanId}', '${conn.uid}')" title="PCAP not extracted yet">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                </button>`
+                                            }
+                                        </td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -956,6 +1114,12 @@ function viewScanDetails(scanId) {
                             <i class="fas fa-download me-1"></i>Extract Selected PCAPs
                         </button>
                         <span class="ms-2 text-muted" id="selectedCount">0 connections selected</span>
+                        <div class="mt-2">
+                            <small class="text-info">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Tip: Connections with <i class="fas fa-file-archive text-success"></i> icons already have extracted PCAPs
+                            </small>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -982,19 +1146,30 @@ function viewScanDetails(scanId) {
 }
 
 
-// Filter connections based on anomaly toggle
+// Filter connections based on anomaly and extraction status toggles
 function filterConnections(scanId) {
     const showOnlyAnomalies = document.getElementById('anomalyFilter').checked;
+    const showOnlyExtracted = document.getElementById('extractedFilter').checked;
     const tableBody = document.getElementById('connectionsTableBody');
     const rows = tableBody.querySelectorAll('tr');
     
     rows.forEach(row => {
         const prediction = row.getAttribute('data-prediction');
-        if (showOnlyAnomalies) {
-            row.style.display = prediction === 'anomaly' ? '' : 'none';
-        } else {
-            row.style.display = '';
+        const hasExtractedClass = row.classList.contains('extracted-connection');
+        
+        let showRow = true;
+        
+        // Apply anomaly filter
+        if (showOnlyAnomalies && prediction !== 'anomaly') {
+            showRow = false;
         }
+        
+        // Apply extraction filter
+        if (showOnlyExtracted && !hasExtractedClass) {
+            showRow = false;
+        }
+        
+        row.style.display = showRow ? '' : 'none';
     });
     
     // Reset checkboxes when filtering
@@ -1028,8 +1203,41 @@ function updateSelectedCount() {
     const selectedCheckboxes = document.querySelectorAll('.connection-checkbox:checked');
     const count = selectedCheckboxes.length;
     
-    document.getElementById('selectedCount').textContent = `${count} connection${count !== 1 ? 's' : ''} selected`;
+    // Check how many selected connections are already extracted
+    let alreadyExtractedCount = 0;
+    selectedCheckboxes.forEach(checkbox => {
+        const row = checkbox.closest('tr');
+        if (row.classList.contains('extracted-connection')) {
+            alreadyExtractedCount++;
+        }
+    });
+    
+    // Update the count display with warning if needed
+    let countText = `${count} connection${count !== 1 ? 's' : ''} selected`;
+    if (alreadyExtractedCount > 0) {
+        countText += ` <span class="text-warning">(${alreadyExtractedCount} already extracted)</span>`;
+    }
+    document.getElementById('selectedCount').innerHTML = countText;
+    
     document.getElementById('extractBtn').disabled = count === 0;
+    
+    // Update extract button text and style based on warnings
+    const extractBtn = document.getElementById('extractBtn');
+    if (extractBtn && alreadyExtractedCount > 0) {
+        if (alreadyExtractedCount === count) {
+            // All selected are already extracted
+            extractBtn.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>All Already Extracted';
+            extractBtn.className = 'btn btn-warning';
+        } else {
+            // Some are already extracted
+            extractBtn.innerHTML = `<i class="fas fa-download me-1"></i>Extract Selected (${alreadyExtractedCount} duplicate${alreadyExtractedCount !== 1 ? 's' : ''})`;
+            extractBtn.className = 'btn btn-warning';
+        }
+    } else if (extractBtn) {
+        // Normal extraction
+        extractBtn.innerHTML = '<i class="fas fa-download me-1"></i>Extract Selected PCAPs';
+        extractBtn.className = 'btn btn-primary';
+    }
     
     // Update select all checkbox state
     const allCheckboxes = Array.from(document.querySelectorAll('.connection-checkbox')).filter(cb => 
@@ -1084,6 +1292,34 @@ function extractSelectedConnections(scanId) {
         return;
     }
     
+    // Check for already extracted connections
+    let alreadyExtractedUIDs = [];
+    let newUIDs = [];
+    
+    selectedCheckboxes.forEach(checkbox => {
+        const row = checkbox.closest('tr');
+        const uid = checkbox.value;
+        if (row.classList.contains('extracted-connection')) {
+            alreadyExtractedUIDs.push(uid);
+        } else {
+            newUIDs.push(uid);
+        }
+    });
+    
+    // Show confirmation dialog if there are already extracted connections
+    if (alreadyExtractedUIDs.length > 0) {
+        const message = alreadyExtractedUIDs.length === selectedUIDs.length 
+            ? `All ${alreadyExtractedUIDs.length} selected connections already have extracted PCAPs. This will re-extract them (overwriting existing files).`
+            : `${alreadyExtractedUIDs.length} of ${selectedUIDs.length} selected connections already have extracted PCAPs:\n\n` +
+              `Already extracted: ${alreadyExtractedUIDs.slice(0, 3).join(', ')}${alreadyExtractedUIDs.length > 3 ? ` and ${alreadyExtractedUIDs.length - 3} more` : ''}\n` +
+              `New extractions: ${newUIDs.length}\n\n` +
+              `Continue anyway? This will re-extract existing PCAPs (overwriting files).`;
+        
+        if (!confirm(message)) {
+            return;
+        }
+    }
+    
     // Show loading state
     const extractBtn = document.getElementById('extractBtn');
     const originalText = extractBtn.innerHTML;
@@ -1116,6 +1352,11 @@ function extractSelectedConnections(scanId) {
             document.querySelectorAll('.connection-checkbox').forEach(cb => cb.checked = false);
             document.getElementById('selectAll').checked = false;
             updateSelectedCount();
+            
+            // Refresh the scan details to show updated extraction status
+            setTimeout(() => {
+                viewScanDetails(scanId);
+            }, 1000);
         } else {
             showToast(`Error extracting PCAPs: ${data.error}`, false);
         }
@@ -1126,6 +1367,38 @@ function extractSelectedConnections(scanId) {
     .finally(() => {
         extractBtn.innerHTML = originalText;
         extractBtn.disabled = document.querySelectorAll('.connection-checkbox:checked').length === 0;
+    });
+}
+
+// Open forensics folder for a scan
+function openForensicsFolder(scanId) {
+    fetch(`/api/reports/open_forensics_folder/${scanId}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, true);
+        } else {
+            showToast(data.message || data.error, false);
+        }
+    })
+    .catch(error => {
+        showToast('Error opening forensics folder: ' + error.message, false);
+    });
+}
+
+// Open specific PCAP file
+function openPcapFile(scanId, uid) {
+    fetch(`/api/reports/open_pcap_file/${scanId}/${uid}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, true);
+        } else {
+            showToast(data.message || data.error, false);
+        }
+    })
+    .catch(error => {
+        showToast('Error opening PCAP file: ' + error.message, false);
     });
 }
 

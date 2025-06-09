@@ -318,6 +318,13 @@
                             <div class="progress-bar" id="analysis-progress-bar" style="width: 0%"></div>
                         </div>
                     </div>
+
+                    <!-- Upload Analysis Success Message -->
+                    <div id="upload-analysis-success" class="alert alert-success d-none mt-3">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Analysis Complete! Results are ready.
+                        <br><small>You can view the results by clicking on the 'Results' tab above.</small>
+                    </div>
                 </div>
 
                 <!-- Results Tab -->
@@ -644,6 +651,9 @@ document.getElementById('analyze-button').addEventListener('click', function() {
             console.log('Analysis progress div:', analysisProgressDiv);
             analysisProgressDiv.classList.remove('d-none');
             
+            // Hide any previous success message
+            document.getElementById('upload-analysis-success').classList.add('d-none');
+            
             // Start polling immediately with more aggressive timing
             console.log('Starting polling...');
             
@@ -674,6 +684,7 @@ document.getElementById('analyze-button').addEventListener('click', function() {
                         console.log('Analysis complete, clearing interval');
                         clearInterval(analysisInterval);
                         document.getElementById('analysis-progress').classList.add('d-none');
+                        document.getElementById('upload-analysis-success').classList.remove('d-none');
                         loadResults();
                     }
                 })
