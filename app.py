@@ -1,5 +1,6 @@
 import sys
 import os
+import json
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify, send_from_directory
 import threading
 import queue
@@ -1635,10 +1636,22 @@ def training_model_info():
             except:
                 labeled_count = 0
 
-        # Mock performance metrics (in real implementation, calculate from validation)
-        detection_rate = 85.7
-        false_positive_rate = 3.2
-        accuracy = 92.1
+        # Calculate real performance metrics
+        try:
+            from mantaguard.utils.model_metrics import ModelMetricsCalculator
+            metrics_calc = ModelMetricsCalculator()
+            current_version = model_info.get('version', 'base')
+            performance_metrics = metrics_calc.calculate_model_performance(current_version)
+            
+            detection_rate = performance_metrics['detection_rate']
+            false_positive_rate = performance_metrics['false_positive_rate']
+            accuracy = performance_metrics['accuracy']
+        except Exception as e:
+            logger.warning(f"Failed to calculate real metrics, using defaults: {e}")
+            # Fallback to conservative estimates
+            detection_rate = 75.0
+            false_positive_rate = 5.0
+            accuracy = 85.0
 
         return jsonify({
             'success': True,
@@ -1670,8 +1683,19 @@ def get_recent_anomalies():
                 'anomalies': []
             })
 
-        # Get the most recent analysis file
-        analysis_files = glob.glob(os.path.join(output_dir, "*_analysis_results.csv"))
+        # Get the most recent analysis file - try multiple patterns
+        analysis_patterns = [
+            "*_analysis_results.csv",
+            "prediction_results.csv",
+            "analysis_results.csv",
+            "*_predictions.csv"
+        ]
+        
+        analysis_files = []
+        for pattern in analysis_patterns:
+            files = glob.glob(os.path.join(output_dir, pattern))
+            analysis_files.extend(files)
+        
         if not analysis_files:
             return jsonify({
                 'success': True,
@@ -1898,8 +1922,42 @@ def start_reinforcement_training():
 def start_batch_retraining():
     """Start batch retraining to create new model version."""
     import uuid
+    from mantaguard.utils.model_safety import ModelSafetyManager
+    from mantaguard.utils.training_validation import TrainingValidator
 
+    # Check if training is already in progress
+    safety_manager = ModelSafetyManager()
+    
     task_id = str(uuid.uuid4())
+    
+    if not safety_manager.acquire_training_lock(task_id):
+        return jsonify({
+            'success': False,
+            'error': 'Another training operation is already in progress. Please wait for it to complete.'
+        }), 409
+
+    # Check system resources
+    resource_check = safety_manager.check_system_resources()
+    if not resource_check['overall_ready']:
+        safety_manager.release_training_lock(task_id)
+        return jsonify({
+            'success': False,
+            'error': f'Insufficient system resources. Memory: {resource_check["memory_available_gb"]}GB, Disk: {resource_check["disk_available_gb"]}GB',
+            'resource_check': resource_check
+        }), 400
+
+    # Validate training data
+    validator = TrainingValidator()
+    validation = validator.validate_labeled_data()
+    
+    if validation['risk_level'] == 'high' and not validation['training_recommended']:
+        safety_manager.release_training_lock(task_id)
+        return jsonify({
+            'success': False,
+            'error': 'Training data validation failed. High risk detected.',
+            'validation': validation
+        }), 400
+
     training_tasks[task_id] = {
         'progress': 0,
         'status': 'Starting batch retraining...',
@@ -1911,7 +1969,15 @@ def start_batch_retraining():
     def run_batch_retraining():
         try:
             # Update progress
-            training_tasks[task_id]['progress'] = 10
+            training_tasks[task_id]['progress'] = 5
+            training_tasks[task_id]['status'] = 'Creating model backup...'
+            
+            # Create backup before training
+            backup_name = safety_manager.create_model_backup(f'pre_training_{task_id[:8]}')
+            training_tasks[task_id]['backup_created'] = backup_name
+
+            # Update progress
+            training_tasks[task_id]['progress'] = 15
             training_tasks[task_id]['status'] = 'Preparing training data...'
 
             from mantaguard.core.ai.training.retrain_ocsvm import OCSVMRetrainer
@@ -1931,17 +1997,30 @@ def start_batch_retraining():
             training_tasks[task_id]['status'] = 'Training new model version...'
 
             # Perform full retraining
-            retrainer.retrain_with_labeled_data()
+            results = retrainer.retrain_with_labeled_data()
+            training_tasks[task_id]['training_results'] = results
 
             # Update progress
             training_tasks[task_id]['progress'] = 85
             training_tasks[task_id]['status'] = 'Validating new model...'
+            
+            # Validate new model
+            new_version = results.get('version', 'unknown')
+            model_validation = safety_manager.validate_model_files(new_version)
+            
+            if not model_validation.get('is_valid', False):
+                raise Exception(f"New model validation failed: {model_validation}")
 
-            time.sleep(2)  # Simulate validation
+            # Update progress
+            training_tasks[task_id]['progress'] = 95
+            training_tasks[task_id]['status'] = 'Cleaning up old backups...'
+            
+            # Clean up old backups (keep 5 most recent)
+            safety_manager.cleanup_old_backups(keep_count=5)
 
             # Update progress
             training_tasks[task_id]['progress'] = 100
-            training_tasks[task_id]['status'] = 'Batch retraining completed successfully!'
+            training_tasks[task_id]['status'] = f'Batch retraining completed successfully! New model version: {new_version}'
             training_tasks[task_id]['completed'] = True
             training_tasks[task_id]['success'] = True
 
@@ -1950,6 +2029,9 @@ def start_batch_retraining():
             training_tasks[task_id]['success'] = False
             training_tasks[task_id]['error'] = str(e)
             training_tasks[task_id]['status'] = f'Batch retraining failed: {str(e)}'
+        finally:
+            # Always release the training lock
+            safety_manager.release_training_lock(task_id)
 
     # Start retraining in background thread
     thread = threading.Thread(target=run_batch_retraining)
@@ -2037,6 +2119,36 @@ def incorporate_unknown_categories():
         return jsonify({
             'success': False,
             'error': str(e)
+        }), 500
+
+@app.route('/api/training/validate-data')
+def validate_training_data():
+    """Validate training data before retraining."""
+    try:
+        from mantaguard.utils.training_validation import TrainingValidator
+        
+        validator = TrainingValidator()
+        validation_results = validator.validate_labeled_data()
+        
+        # Add training recommendations
+        recommendations = validator.get_training_recommendations(validation_results)
+        validation_results['recommendations'] = recommendations
+        
+        # Add time estimation
+        sample_count = validation_results.get('total_samples', 0)
+        if sample_count > 0:
+            time_estimate = validator.estimate_training_time(sample_count)
+            validation_results['estimated_training_time'] = time_estimate
+        
+        return jsonify(validation_results)
+    
+    except Exception as e:
+        logger.error(f"Error validating training data: {e}")
+        return jsonify({
+            'success': False,
+            'is_valid': False,
+            'error': str(e),
+            'recommendations': ['Unable to validate training data. Check system logs.']
         }), 500
 
 if __name__ == '__main__':

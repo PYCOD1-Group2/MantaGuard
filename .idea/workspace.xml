@@ -4,19 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="">
+    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Refine &quot;Fix &amp; Patches&quot; naming, implement detailed styling enhancements for tables, modals, and tabs, and improve visualization generation error handling in `PcapAnalyzer`.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mantaguard/core/ai/models/analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/mantaguard/core/ai/models/analyzer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mantaguard/core/ai/training/train_ocsvm.py" beforeDir="false" afterPath="$PROJECT_DIR$/mantaguard/core/ai/training/train_ocsvm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mantaguard/data/unknown_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/mantaguard/data/unknown_categories.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mantaguard/utils/forensics.py" beforeDir="false" afterPath="$PROJECT_DIR$/mantaguard/utils/forensics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/fix_patches.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/fix_patches.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/reports.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/reports.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/scanning.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/scanning.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/legacy/test_zeek_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/legacy/test_zeek_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -356,7 +347,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749442569956</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Refine &quot;Fix &amp; Patches&quot; naming, implement detailed styling enhancements for tables, modals, and tabs, and improve visualization generation error handling in `PcapAnalyzer`.">
+      <option name="closed" value="true" />
+      <created>1749501122912</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1749501122912</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -443,6 +442,7 @@
     <MESSAGE value="Clean up `.idea` shelf files and streamline `unknown_categories.json` structure with reordered entries for consistency." />
     <MESSAGE value=" Remove legacy scripts and orphaned files during project restructuring&#10;&#10;This commit removes unused and redundant scripts/files as part of the restructuring process to streamline the project and improve maintainability." />
     <MESSAGE value=" Initiate project restructuring into professional Python package format&#10;&#10;This commit establishes a structured foundation for MantaGuard by reorganizing it into a professional Python package. Key additions include:&#10;&#10;- Standardized directory structure with `mantaguard` and `tests` modules.&#10;- Created base `__init__.py` files for core submodules (network, AI, web, security, utils, etc.).&#10;- Added `.gitkeep` for maintaining essential directory structure.&#10;&#10;Future commits will expand upon this restructuring to further enhance modularity, maintainability, and scalability for the project." />
-    <option name="LAST_COMMIT_MESSAGE" value=" Initiate project restructuring into professional Python package format&#10;&#10;This commit establishes a structured foundation for MantaGuard by reorganizing it into a professional Python package. Key additions include:&#10;&#10;- Standardized directory structure with `mantaguard` and `tests` modules.&#10;- Created base `__init__.py` files for core submodules (network, AI, web, security, utils, etc.).&#10;- Added `.gitkeep` for maintaining essential directory structure.&#10;&#10;Future commits will expand upon this restructuring to further enhance modularity, maintainability, and scalability for the project." />
+    <MESSAGE value="Refine &quot;Fix &amp; Patches&quot; naming, implement detailed styling enhancements for tables, modals, and tabs, and improve visualization generation error handling in `PcapAnalyzer`." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refine &quot;Fix &amp; Patches&quot; naming, implement detailed styling enhancements for tables, modals, and tabs, and improve visualization generation error handling in `PcapAnalyzer`." />
   </component>
 </project>

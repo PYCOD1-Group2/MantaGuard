@@ -118,6 +118,157 @@
     .badge.bg-info {
         background: #00BFFF !important;
     }
+    
+    /* Tooltip styling */
+    .tooltip-icon {
+        color: #00BFFF;
+        cursor: help;
+        margin-left: 5px;
+        font-size: 0.9em;
+    }
+    
+    .tooltip-icon:hover {
+        color: #0099CC;
+    }
+    
+    /* Warning modal styling */
+    .warning-modal .modal-header {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .warning-modal .modal-header .btn-close {
+        filter: invert(1);
+    }
+    
+    /* Validation alerts */
+    .validation-alert {
+        border-left: 4px solid #dc3545;
+        background: rgba(220, 53, 69, 0.1);
+        border-radius: 4px;
+        padding: 12px;
+        margin: 10px 0;
+    }
+    
+    .validation-alert.success {
+        border-left-color: #28a745;
+        background: rgba(40, 167, 69, 0.1);
+    }
+    
+    .validation-alert.warning {
+        border-left-color: #ffc107;
+        background: rgba(255, 193, 7, 0.1);
+    }
+    
+    /* Training recommendations */
+    .recommendation-item {
+        padding: 8px 12px;
+        margin: 5px 0;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.05);
+        border-left: 3px solid #00BFFF;
+    }
+    
+    .recommendation-item.critical {
+        border-left-color: #dc3545;
+        background: rgba(220, 53, 69, 0.1);
+    }
+    
+    .recommendation-item.warning {
+        border-left-color: #ffc107;
+        background: rgba(255, 193, 7, 0.1);
+    }
+    
+    .recommendation-item.success {
+        border-left-color: #28a745;
+        background: rgba(40, 167, 69, 0.1);
+    }
+    
+    /* Notification system */
+    .notification-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1060;
+        max-width: 400px;
+    }
+    
+    .notification {
+        background: #1e1e1e;
+        border: 1px solid rgba(0, 191, 255, 0.3);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+    }
+    
+    .notification.show {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    
+    .notification.success {
+        border-color: #28a745;
+        background: rgba(40, 167, 69, 0.1);
+    }
+    
+    .notification.error {
+        border-color: #dc3545;
+        background: rgba(220, 53, 69, 0.1);
+    }
+    
+    .notification.warning {
+        border-color: #ffc107;
+        background: rgba(255, 193, 7, 0.1);
+    }
+    
+    .notification .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    
+    .notification .notification-title {
+        font-weight: 600;
+        color: #ffffff;
+    }
+    
+    .notification .notification-close {
+        background: none;
+        border: none;
+        color: #ffffff;
+        cursor: pointer;
+        font-size: 18px;
+        opacity: 0.7;
+    }
+    
+    .notification .notification-close:hover {
+        opacity: 1;
+    }
+    
+    .notification .notification-body {
+        color: #ffffff;
+        font-size: 14px;
+    }
+    
+    /* Confirmation modal styling */
+    .confirmation-modal .modal-content {
+        background: #1e1e1e;
+        border: 2px solid rgba(0, 191, 255, 0.3);
+    }
+    
+    .confirmation-modal .modal-header {
+        background: rgba(0, 191, 255, 0.1);
+        border-bottom: 1px solid rgba(0, 191, 255, 0.3);
+    }
+    
+    .confirmation-modal .modal-title {
+        color: #ffffff;
+    }
 </style>
 {% endblock %}
 
@@ -196,12 +347,23 @@
                         <!-- Anomaly Labeling Section -->
                         <div class="card mb-4">
                             <div class="card-header">
-                                <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Anomaly Labeling & Reinforcement Learning</h5>
+                                <h5 class="mb-0">
+                                    <i class="fas fa-tags me-2"></i>Anomaly Labeling & Reinforcement Learning
+                                    <i class="fas fa-info-circle tooltip-icon" 
+                                       data-bs-toggle="tooltip" 
+                                       data-bs-placement="right" 
+                                       title="Label detected anomalies to improve model accuracy. Aim for at least 50 labeled samples per attack category for effective training."></i>
+                                </h5>
                             </div>
                             <div class="card-body">
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label for="attack-category" class="form-label">Attack Category</label>
+                                        <label for="attack-category" class="form-label">
+                                            Attack Category
+                                            <i class="fas fa-info-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               title="Choose the most appropriate attack category. Accurate categorization improves model performance."></i>
+                                        </label>
                                         <select class="form-select" id="attack-category">
                                             <option value="">Select attack type...</option>
                                             <option value="brute-force-attack">Brute Force Attack</option>
@@ -215,7 +377,12 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="confidence-level" class="form-label">Confidence Level</label>
+                                        <label for="confidence-level" class="form-label">
+                                            Confidence Level
+                                            <i class="fas fa-info-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               title="High confidence (90-100%) should only be used for verified attacks. Medium confidence is recommended for most cases."></i>
+                                        </label>
                                         <select class="form-select" id="confidence-level">
                                             <option value="high">High (90-100%)</option>
                                             <option value="medium" selected>Medium (70-89%)</option>
@@ -265,15 +432,26 @@
                         <!-- Batch Retraining Section -->
                         <div class="card mb-4">
                             <div class="card-header">
-                                <h5 class="mb-0"><i class="fas fa-sync-alt me-2"></i>Batch Model Retraining</h5>
+                                <h5 class="mb-0">
+                                    <i class="fas fa-sync-alt me-2"></i>Batch Model Retraining
+                                    <i class="fas fa-info-circle tooltip-icon" 
+                                       data-bs-toggle="tooltip" 
+                                       data-bs-placement="right" 
+                                       title="Creates a new model version using all labeled data. This will replace the current model - ensure you have sufficient labeled data first."></i>
+                                </h5>
                             </div>
                             <div class="card-body">
+                                <!-- Training Validation Alerts -->
+                                <div id="training-validation-alerts" style="display: none;">
+                                    <div id="validation-results" class="mb-3"></div>
+                                </div>
+                                
                                 <div class="row">
                                     <div class="col-md-8">
                                         <p>Retrain the model with all accumulated labeled data and feedback.</p>
                                         <div class="alert alert-warning" role="alert">
                                             <i class="fas fa-exclamation-triangle me-2"></i>
-                                            Retraining may take several minutes depending on the dataset size.
+                                            ⚠️ <strong>Important:</strong> Retraining will create a new model version. Ensure you have sufficient labeled data and consider creating a backup first.
                                         </div>
                                         
                                         <!-- Training Progress Bar -->
@@ -289,6 +467,9 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
+                                        <button class="btn btn-info w-100 mb-2" onclick="validateTrainingData()">
+                                            <i class="fas fa-check-circle me-2"></i>Validate Training Data
+                                        </button>
                                         <button class="btn btn-warning w-100" onclick="startBatchRetraining()">
                                             <i class="fas fa-sync-alt me-2"></i>Start Batch Retraining
                                         </button>
@@ -300,7 +481,13 @@
                         <!-- Unknown Categories Management -->
                         <div class="card mb-4">
                             <div class="card-header">
-                                <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>Unknown Categories Management</h5>
+                                <h5 class="mb-0">
+                                    <i class="fas fa-question-circle me-2"></i>Unknown Categories Management
+                                    <i class="fas fa-info-circle tooltip-icon" 
+                                       data-bs-toggle="tooltip" 
+                                       data-bs-placement="right" 
+                                       title="Review unknown network protocols, services, and connection patterns detected by the system. Incorporate them carefully to improve detection coverage."></i>
+                                </h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -398,12 +585,183 @@
     </div>
 </div>
 
+<!-- Notification Container -->
+<div class="notification-container" id="notification-container"></div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade confirmation-modal" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">
+                    <i class="fas fa-question-circle me-2"></i>Confirm Action
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="confirmation-content">
+                    <!-- Confirmation content will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirm-action-btn">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Training Validation Modal -->
+<div class="modal fade" id="trainingValidationModal" tabindex="-1" aria-labelledby="trainingValidationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="trainingValidationModalLabel">
+                    <i class="fas fa-check-circle me-2"></i>Training Data Validation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="validation-details">
+                    <div class="text-center">
+                        <i class="fas fa-spinner fa-spin me-2"></i>Validating training data...
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="proceed-training-btn" style="display: none;" onclick="confirmBatchRetraining()">
+                    <i class="fas fa-play me-1"></i>Proceed with Training
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Warning Modal -->
+<div class="modal fade warning-modal" id="warningModal" tabindex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="warningModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Training Warning
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="warning-content">
+                    <!-- Warning content will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="force-training-btn" onclick="forceBatchRetraining()">
+                    <i class="fas fa-exclamation-triangle me-1"></i>Continue Anyway
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+// Notification system
+function showNotification(title, message, type = 'info', duration = 5000) {
+    const container = document.getElementById('notification-container');
+    const notificationId = 'notification-' + Date.now();
+    
+    const notification = document.createElement('div');
+    notification.id = notificationId;
+    notification.className = `notification ${type}`;
+    
+    notification.innerHTML = `
+        <div class="notification-header">
+            <div class="notification-title">
+                <i class="fas fa-${getNotificationIcon(type)} me-2"></i>${title}
+            </div>
+            <button class="notification-close" onclick="closeNotification('${notificationId}')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notification-body">${message}</div>
+    `;
+    
+    container.appendChild(notification);
+    
+    // Trigger animation
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    // Auto-remove after duration
+    if (duration > 0) {
+        setTimeout(() => closeNotification(notificationId), duration);
+    }
+    
+    return notificationId;
+}
+
+function getNotificationIcon(type) {
+    switch(type) {
+        case 'success': return 'check-circle';
+        case 'error': return 'exclamation-circle';
+        case 'warning': return 'exclamation-triangle';
+        default: return 'info-circle';
+    }
+}
+
+function closeNotification(notificationId) {
+    const notification = document.getElementById(notificationId);
+    if (notification) {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }
+}
+
+// Confirmation dialog system
+function showConfirmation(title, message, confirmText = 'Confirm', confirmClass = 'btn-primary') {
+    return new Promise((resolve) => {
+        const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+        const confirmBtn = document.getElementById('confirm-action-btn');
+        
+        document.getElementById('confirmationModalLabel').innerHTML = `<i class="fas fa-question-circle me-2"></i>${title}`;
+        document.getElementById('confirmation-content').innerHTML = message;
+        confirmBtn.textContent = confirmText;
+        confirmBtn.className = `btn ${confirmClass}`;
+        
+        // Remove existing event listeners
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+        
+        // Add new event listener
+        newConfirmBtn.addEventListener('click', () => {
+            modal.hide();
+            resolve(true);
+        });
+        
+        // Handle modal close
+        document.getElementById('confirmationModal').addEventListener('hidden.bs.modal', () => {
+            resolve(false);
+        }, { once: true });
+        
+        modal.show();
+    });
+}
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
     refreshModelInfo();
     loadRecentAnomalies();
     refreshUnknownCategories();
+    
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 });
 
 // Model info functions
@@ -466,12 +824,12 @@ function labelSelectedAnomalies() {
     const confidence = document.getElementById('confidence-level').value;
     
     if (selected.length === 0) {
-        alert('Please select at least one anomaly to label');
+        showNotification('Selection Required', 'Please select at least one anomaly to label', 'warning');
         return;
     }
     
     if (!category) {
-        alert('Please select an attack category');
+        showNotification('Category Required', 'Please select an attack category', 'warning');
         return;
     }
     
@@ -489,8 +847,9 @@ function labelSelectedAnomalies() {
         if (data.success) {
             loadRecentAnomalies();
             refreshModelInfo();
+            showNotification('Success', `Successfully labeled ${selected.length} anomalies as ${category}`, 'success');
         } else {
-            alert('Error labeling anomalies: ' + data.error);
+            showNotification('Error', 'Error labeling anomalies: ' + data.error, 'error');
         }
     });
 }
@@ -500,16 +859,26 @@ function labelSingleAnomaly(uid) {
     const confidence = document.getElementById('confidence-level').value;
     
     if (!category) {
-        alert('Please select an attack category first');
+        showNotification('Category Required', 'Please select an attack category first', 'warning');
         return;
     }
     
-    labelSelectedAnomalies.call(this, [uid]);
+    // Simulate selecting this anomaly and call the main function
+    const checkboxes = document.querySelectorAll('.anomaly-checkbox');
+    checkboxes.forEach(cb => cb.checked = cb.value === uid);
+    labelSelectedAnomalies();
 }
 
 // Training functions
-function startReinforcementTraining() {
-    if (!confirm('Start reinforcement training with current labeled data?')) return;
+async function startReinforcementTraining() {
+    const confirmed = await showConfirmation(
+        'Start Reinforcement Training', 
+        'Start reinforcement training with current labeled data? This will improve the model based on your feedback.',
+        'Start Training',
+        'btn-success'
+    );
+    
+    if (!confirmed) return;
     
     showTrainingProgress();
     
@@ -518,15 +887,173 @@ function startReinforcementTraining() {
         .then(data => {
             if (data.success) {
                 pollTrainingProgress(data.task_id);
+                showNotification('Training Started', 'Reinforcement training has been started', 'success');
             } else {
                 hideTrainingProgress();
-                alert('Error starting training: ' + data.error);
+                showNotification('Training Error', 'Error starting training: ' + data.error, 'error');
             }
         });
 }
 
-function startBatchRetraining() {
-    if (!confirm('Start batch retraining? This will create a new model version.')) return;
+// Training validation functions
+function validateTrainingData() {
+    const modal = new bootstrap.Modal(document.getElementById('trainingValidationModal'));
+    modal.show();
+    
+    fetch('/api/training/validate-data')
+        .then(response => response.json())
+        .then(data => {
+            displayValidationResults(data);
+        })
+        .catch(error => {
+            console.error('Validation error:', error);
+            document.getElementById('validation-details').innerHTML = 
+                '<div class="alert alert-danger">Error validating training data: ' + error + '</div>';
+        });
+}
+
+function displayValidationResults(validation) {
+    const detailsDiv = document.getElementById('validation-details');
+    const proceedBtn = document.getElementById('proceed-training-btn');
+    
+    let html = '';
+    
+    // Overall status
+    if (validation.is_valid) {
+        html += '<div class="validation-alert success"><i class="fas fa-check-circle me-2"></i><strong>Validation Passed</strong> - Training data is ready for model retraining.</div>';
+        proceedBtn.style.display = 'block';
+    } else {
+        html += '<div class="validation-alert"><i class="fas fa-exclamation-circle me-2"></i><strong>Validation Issues Found</strong> - Review the issues below before training.</div>';
+        if (validation.training_recommended) {
+            proceedBtn.style.display = 'block';
+            proceedBtn.className = 'btn btn-warning';
+            proceedBtn.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>Proceed with Caution';
+        }
+    }
+    
+    // Sample count
+    html += `<div class="mt-3"><h6>Training Data Summary</h6>`;
+    html += `<p><strong>Total labeled samples:</strong> ${validation.total_samples || 0}</p>`;
+    
+    // Attack categories
+    if (validation.attack_categories) {
+        html += '<p><strong>Attack categories:</strong></p><ul>';
+        for (const [category, count] of Object.entries(validation.attack_categories)) {
+            html += `<li>${category}: ${count} samples</li>`;
+        }
+        html += '</ul>';
+    }
+    
+    // Recommendations
+    if (validation.recommendations && validation.recommendations.length > 0) {
+        html += '<h6>Recommendations</h6>';
+        validation.recommendations.forEach(rec => {
+            let cssClass = 'recommendation-item';
+            if (rec.includes('🔴') || rec.includes('Critical')) cssClass += ' critical';
+            else if (rec.includes('🟡') || rec.includes('Warning')) cssClass += ' warning';
+            else if (rec.includes('✅') || rec.includes('Good')) cssClass += ' success';
+            
+            html += `<div class="${cssClass}">${rec}</div>`;
+        });
+    }
+    
+    // Data quality issues
+    if (validation.data_quality_issues && validation.data_quality_issues.length > 0) {
+        html += '<h6 class="mt-3">Data Quality Issues</h6>';
+        validation.data_quality_issues.forEach(issue => {
+            html += `<div class="validation-alert"><i class="fas fa-exclamation-triangle me-2"></i>${issue}</div>`;
+        });
+    }
+    
+    detailsDiv.innerHTML = html;
+}
+
+async function startBatchRetraining() {
+    // First validate training data
+    try {
+        const response = await fetch('/api/training/validate-data');
+        const validation = await response.json();
+        
+        if (validation.risk_level === 'high' || !validation.training_recommended) {
+            showTrainingWarning(validation);
+        } else if (validation.risk_level === 'medium') {
+            const recommendations = validation.recommendations.slice(0, 3).join('<br>• ');
+            const confirmed = await showConfirmation(
+                'Training Data Issues Detected',
+                `⚠️ Training data has some issues but training can proceed.<br><br><strong>Recommendations:</strong><br>• ${recommendations}<br><br>Continue with training?`,
+                'Continue Training',
+                'btn-warning'
+            );
+            
+            if (confirmed) {
+                confirmBatchRetraining();
+            }
+        } else {
+            const confirmed = await showConfirmation(
+                'Start Batch Retraining',
+                'This will create a new model version using all labeled data. The process may take several minutes.',
+                'Start Retraining',
+                'btn-warning'
+            );
+            
+            if (confirmed) {
+                confirmBatchRetraining();
+            }
+        }
+    } catch (error) {
+        console.error('Validation error:', error);
+        const confirmed = await showConfirmation(
+            'Validation Error',
+            'Unable to validate training data. This might indicate system issues.<br><br>Continue with training anyway?',
+            'Continue Anyway',
+            'btn-danger'
+        );
+        
+        if (confirmed) {
+            confirmBatchRetraining();
+        }
+    }
+}
+
+function showTrainingWarning(validation) {
+    const modal = new bootstrap.Modal(document.getElementById('warningModal'));
+    const warningContent = document.getElementById('warning-content');
+    
+    let html = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>';
+    html += '<strong>High Risk Training Detected</strong></div>';
+    
+    html += '<p>Training is not recommended due to the following issues:</p><ul>';
+    
+    if (validation.total_samples < 50) {
+        html += '<li>Insufficient labeled samples (minimum 50 recommended)</li>';
+    }
+    
+    if (validation.data_quality_issues) {
+        validation.data_quality_issues.forEach(issue => {
+            html += `<li>${issue}</li>`;
+        });
+    }
+    
+    html += '</ul>';
+    html += '<p><strong>Recommendations:</strong></p><ul>';
+    validation.recommendations.slice(0, 5).forEach(rec => {
+        html += `<li>${rec.replace(/[🔴🟡✅⚠️]/g, '').trim()}</li>`;
+    });
+    html += '</ul>';
+    
+    html += '<p class="text-warning"><strong>Warning:</strong> Training with insufficient or poor quality data may degrade model performance.</p>';
+    
+    warningContent.innerHTML = html;
+    modal.show();
+}
+
+function confirmBatchRetraining() {
+    // Close any open modals
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        if (modalInstance) modalInstance.hide();
+    });
     
     showTrainingProgress();
     
@@ -537,9 +1064,15 @@ function startBatchRetraining() {
                 pollTrainingProgress(data.task_id);
             } else {
                 hideTrainingProgress();
-                alert('Error starting batch retraining: ' + data.error);
+                showNotification('Training Error', 'Error starting batch retraining: ' + data.error, 'error');
             }
         });
+}
+
+function forceBatchRetraining() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('warningModal'));
+    modal.hide();
+    confirmBatchRetraining();
 }
 
 function showTrainingProgress() {
@@ -571,9 +1104,9 @@ function pollTrainingProgress(taskId) {
                     hideTrainingProgress();
                     refreshModelInfo();
                     if (data.success) {
-                        alert('Training completed successfully!');
+                        showNotification('Training Complete', 'Training completed successfully!', 'success');
                     } else {
-                        alert('Training failed: ' + data.error);
+                        showNotification('Training Failed', 'Training failed: ' + data.error, 'error');
                     }
                 }
             });
@@ -606,8 +1139,15 @@ function updateUnknownCategoriesDisplay(categories) {
         (categories.history.length > 20 ? `<span class="text-muted">... and ${categories.history.length - 20} more</span>` : '');
 }
 
-function incorporateUnknownCategories() {
-    if (!confirm('Incorporate all unknown categories into the model? This will trigger a model update.')) return;
+async function incorporateUnknownCategories() {
+    const confirmed = await showConfirmation(
+        'Incorporate Unknown Categories',
+        'Incorporate all unknown categories into the model? This will trigger a model update and may affect detection accuracy.',
+        'Incorporate Categories',
+        'btn-warning'
+    );
+    
+    if (!confirmed) return;
     
     fetch('/api/training/incorporate-unknown', { method: 'POST' })
         .then(response => response.json())
@@ -615,9 +1155,9 @@ function incorporateUnknownCategories() {
             if (data.success) {
                 refreshUnknownCategories();
                 refreshModelInfo();
-                alert('Unknown categories incorporated successfully!');
+                showNotification('Categories Incorporated', 'Unknown categories incorporated successfully!', 'success');
             } else {
-                alert('Error incorporating categories: ' + data.error);
+                showNotification('Incorporation Error', 'Error incorporating categories: ' + data.error, 'error');
             }
         });
 }
