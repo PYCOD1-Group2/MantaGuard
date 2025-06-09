@@ -10,14 +10,214 @@
                 <i class="fas fa-tools me-2"></i>Fix & Patches
             </h1>
             
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle me-2"></i>
-                Fix & Patches functionality is under development. This page will provide automated security fixes and system patches.
-            </div>
-            
-            <div class="row">
-                <div class="col-md-6 mb-4">
-                    <div class="card">
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-tabs" id="fixPatchesTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="ml-training-tab" data-bs-toggle="tab" data-bs-target="#ml-training" type="button" role="tab" aria-controls="ml-training" aria-selected="true">
+                        <i class="fas fa-brain me-2"></i>ML Model Training
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="vulnerabilities-tab" data-bs-toggle="tab" data-bs-target="#vulnerabilities" type="button" role="tab" aria-controls="vulnerabilities" aria-selected="false">
+                        <i class="fas fa-bug me-2"></i>Vulnerability Fixes
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="system-updates-tab" data-bs-toggle="tab" data-bs-target="#system-updates" type="button" role="tab" aria-controls="system-updates" aria-selected="false">
+                        <i class="fas fa-download me-2"></i>System Updates
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="config-fixes-tab" data-bs-toggle="tab" data-bs-target="#config-fixes" type="button" role="tab" aria-controls="config-fixes" aria-selected="false">
+                        <i class="fas fa-cog me-2"></i>Configuration Fixes
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="security-rec-tab" data-bs-toggle="tab" data-bs-target="#security-rec" type="button" role="tab" aria-controls="security-rec" aria-selected="false">
+                        <i class="fas fa-shield-alt me-2"></i>Security Recommendations
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="fixPatchesTabContent">
+                <!-- ML Model Training Tab -->
+                <div class="tab-pane fade show active" id="ml-training" role="tabpanel" aria-labelledby="ml-training-tab">
+                    <div class="mt-4">
+                        
+                        <!-- Model Overview Section -->
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Model Overview</h5>
+                                <button class="btn btn-sm btn-outline-primary" onclick="refreshModelInfo()">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div id="current-model-info">
+                                            <p><strong>Current Model:</strong> <span id="model-version">Loading...</span></p>
+                                            <p><strong>Training Date:</strong> <span id="model-date">Loading...</span></p>
+                                            <p><strong>Training Samples:</strong> <span id="training-samples">Loading...</span></p>
+                                            <p><strong>Labeled Anomalies:</strong> <span id="labeled-count">Loading...</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div id="model-performance">
+                                            <p><strong>Detection Rate:</strong> <span id="detection-rate">Loading...</span></p>
+                                            <p><strong>False Positive Rate:</strong> <span id="false-positive-rate">Loading...</span></p>
+                                            <p><strong>Model Accuracy:</strong> <span id="model-accuracy">Loading...</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Anomaly Labeling Section -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Anomaly Labeling & Reinforcement Learning</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="attack-category" class="form-label">Attack Category</label>
+                                        <select class="form-select" id="attack-category">
+                                            <option value="">Select attack type...</option>
+                                            <option value="brute-force-attack">Brute Force Attack</option>
+                                            <option value="port-scan">Port Scan</option>
+                                            <option value="ddos-attack">DDoS Attack</option>
+                                            <option value="malware-communication">Malware Communication</option>
+                                            <option value="data-exfiltration">Data Exfiltration</option>
+                                            <option value="lateral-movement">Lateral Movement</option>
+                                            <option value="privilege-escalation">Privilege Escalation</option>
+                                            <option value="custom-threat">Custom Threat</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="confidence-level" class="form-label">Confidence Level</label>
+                                        <select class="form-select" id="confidence-level">
+                                            <option value="high">High (90-100%)</option>
+                                            <option value="medium" selected>Medium (70-89%)</option>
+                                            <option value="low">Low (50-69%)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Recent Anomalies Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-sm" id="anomalies-table">
+                                        <thead>
+                                            <tr>
+                                                <th><input type="checkbox" id="select-all-anomalies"></th>
+                                                <th>Timestamp</th>
+                                                <th>Source IP</th>
+                                                <th>Destination IP</th>
+                                                <th>Anomaly Score</th>
+                                                <th>Current Label</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="anomalies-tbody">
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted">
+                                                    <i class="fas fa-spinner fa-spin me-2"></i>Loading recent anomalies...
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <button class="btn btn-primary me-2" onclick="labelSelectedAnomalies()">
+                                        <i class="fas fa-tag me-1"></i>Label Selected
+                                    </button>
+                                    <button class="btn btn-success me-2" onclick="startReinforcementTraining()">
+                                        <i class="fas fa-play me-1"></i>Start Reinforcement Training
+                                    </button>
+                                    <button class="btn btn-info" onclick="loadMoreAnomalies()">
+                                        <i class="fas fa-plus me-1"></i>Load More
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Batch Retraining Section -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-sync-alt me-2"></i>Batch Model Retraining</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <p>Retrain the model with all accumulated labeled data and feedback.</p>
+                                        <div class="alert alert-warning" role="alert">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            Retraining may take several minutes depending on the dataset size.
+                                        </div>
+                                        
+                                        <!-- Training Progress Bar -->
+                                        <div id="training-progress" class="mb-3" style="display: none;">
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                                     role="progressbar" id="training-progress-bar" 
+                                                     style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                                    0%
+                                                </div>
+                                            </div>
+                                            <small class="text-muted" id="training-status">Initializing...</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-warning w-100" onclick="startBatchRetraining()">
+                                            <i class="fas fa-sync-alt me-2"></i>Start Batch Retraining
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Unknown Categories Management -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>Unknown Categories Management</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <h6>Protocols (<span id="unknown-proto-count">0</span>)</h6>
+                                        <div id="unknown-protocols" class="border p-2 mb-3" style="height: 150px; overflow-y: auto;">
+                                            Loading...
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6>Services (<span id="unknown-service-count">0</span>)</h6>
+                                        <div id="unknown-services" class="border p-2 mb-3" style="height: 150px; overflow-y: auto;">
+                                            Loading...
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6>History Patterns (<span id="unknown-history-count">0</span>)</h6>
+                                        <div id="unknown-history" class="border p-2 mb-3" style="height: 150px; overflow-y: auto;">
+                                            Loading...
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-info" onclick="refreshUnknownCategories()">
+                                    <i class="fas fa-sync-alt me-1"></i>Refresh Categories
+                                </button>
+                                <button class="btn btn-success" onclick="incorporateUnknownCategories()">
+                                    <i class="fas fa-plus me-1"></i>Incorporate New Categories
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vulnerability Fixes Tab -->
+                <div class="tab-pane fade" id="vulnerabilities" role="tabpanel" aria-labelledby="vulnerabilities-tab">
+                    <div class="card mt-4">
                         <div class="card-header">
                             <h5><i class="fas fa-bug me-2"></i>Vulnerability Fixes</h5>
                         </div>
@@ -29,9 +229,10 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6 mb-4">
-                    <div class="card">
+
+                <!-- System Updates Tab -->
+                <div class="tab-pane fade" id="system-updates" role="tabpanel" aria-labelledby="system-updates-tab">
+                    <div class="card mt-4">
                         <div class="card-header">
                             <h5><i class="fas fa-download me-2"></i>System Updates</h5>
                         </div>
@@ -43,9 +244,10 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6 mb-4">
-                    <div class="card">
+
+                <!-- Configuration Fixes Tab -->
+                <div class="tab-pane fade" id="config-fixes" role="tabpanel" aria-labelledby="config-fixes-tab">
+                    <div class="card mt-4">
                         <div class="card-header">
                             <h5><i class="fas fa-cog me-2"></i>Configuration Fixes</h5>
                         </div>
@@ -57,9 +259,10 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6 mb-4">
-                    <div class="card">
+
+                <!-- Security Recommendations Tab -->
+                <div class="tab-pane fade" id="security-rec" role="tabpanel" aria-labelledby="security-rec-tab">
+                    <div class="card mt-4">
                         <div class="card-header">
                             <h5><i class="fas fa-shield-alt me-2"></i>Security Recommendations</h5>
                         </div>
@@ -75,4 +278,243 @@
         </div>
     </div>
 </div>
+
+<script>
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    refreshModelInfo();
+    loadRecentAnomalies();
+    refreshUnknownCategories();
+});
+
+// Model info functions
+function refreshModelInfo() {
+    fetch('/api/training/model-info')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('model-version').textContent = data.version;
+                document.getElementById('model-date').textContent = data.training_date;
+                document.getElementById('training-samples').textContent = data.training_samples;
+                document.getElementById('labeled-count').textContent = data.labeled_count;
+                document.getElementById('detection-rate').textContent = data.detection_rate + '%';
+                document.getElementById('false-positive-rate').textContent = data.false_positive_rate + '%';
+                document.getElementById('model-accuracy').textContent = data.accuracy + '%';
+            }
+        })
+        .catch(error => console.error('Error loading model info:', error));
+}
+
+// Anomaly labeling functions
+function loadRecentAnomalies() {
+    fetch('/api/training/recent-anomalies')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateAnomaliesTable(data.anomalies);
+            }
+        })
+        .catch(error => console.error('Error loading anomalies:', error));
+}
+
+function updateAnomaliesTable(anomalies) {
+    const tbody = document.getElementById('anomalies-tbody');
+    if (anomalies.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No recent anomalies found</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = anomalies.map(anomaly => `
+        <tr>
+            <td><input type="checkbox" class="anomaly-checkbox" value="${anomaly.uid}"></td>
+            <td>${anomaly.timestamp}</td>
+            <td>${anomaly.source_ip}</td>
+            <td>${anomaly.dest_ip}</td>
+            <td><span class="badge bg-${anomaly.score > 0.8 ? 'danger' : anomaly.score > 0.6 ? 'warning' : 'info'}">${anomaly.score.toFixed(3)}</span></td>
+            <td>${anomaly.current_label || '<span class="text-muted">Unlabeled</span>'}</td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="labelSingleAnomaly('${anomaly.uid}')">
+                    <i class="fas fa-tag"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function labelSelectedAnomalies() {
+    const selected = Array.from(document.querySelectorAll('.anomaly-checkbox:checked')).map(cb => cb.value);
+    const category = document.getElementById('attack-category').value;
+    const confidence = document.getElementById('confidence-level').value;
+    
+    if (selected.length === 0) {
+        alert('Please select at least one anomaly to label');
+        return;
+    }
+    
+    if (!category) {
+        alert('Please select an attack category');
+        return;
+    }
+    
+    fetch('/api/training/label-anomalies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            anomaly_ids: selected,
+            attack_category: category,
+            confidence: confidence
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadRecentAnomalies();
+            refreshModelInfo();
+        } else {
+            alert('Error labeling anomalies: ' + data.error);
+        }
+    });
+}
+
+function labelSingleAnomaly(uid) {
+    const category = document.getElementById('attack-category').value;
+    const confidence = document.getElementById('confidence-level').value;
+    
+    if (!category) {
+        alert('Please select an attack category first');
+        return;
+    }
+    
+    labelSelectedAnomalies.call(this, [uid]);
+}
+
+// Training functions
+function startReinforcementTraining() {
+    if (!confirm('Start reinforcement training with current labeled data?')) return;
+    
+    showTrainingProgress();
+    
+    fetch('/api/training/reinforcement-train', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                pollTrainingProgress(data.task_id);
+            } else {
+                hideTrainingProgress();
+                alert('Error starting training: ' + data.error);
+            }
+        });
+}
+
+function startBatchRetraining() {
+    if (!confirm('Start batch retraining? This will create a new model version.')) return;
+    
+    showTrainingProgress();
+    
+    fetch('/api/training/batch-retrain', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                pollTrainingProgress(data.task_id);
+            } else {
+                hideTrainingProgress();
+                alert('Error starting batch retraining: ' + data.error);
+            }
+        });
+}
+
+function showTrainingProgress() {
+    document.getElementById('training-progress').style.display = 'block';
+    updateTrainingProgress(0, 'Initializing...');
+}
+
+function hideTrainingProgress() {
+    document.getElementById('training-progress').style.display = 'none';
+}
+
+function updateTrainingProgress(percent, status) {
+    const progressBar = document.getElementById('training-progress-bar');
+    progressBar.style.width = percent + '%';
+    progressBar.setAttribute('aria-valuenow', percent);
+    progressBar.textContent = percent + '%';
+    document.getElementById('training-status').textContent = status;
+}
+
+function pollTrainingProgress(taskId) {
+    const poll = setInterval(() => {
+        fetch(`/api/training/progress/${taskId}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTrainingProgress(data.progress, data.status);
+                
+                if (data.completed) {
+                    clearInterval(poll);
+                    hideTrainingProgress();
+                    refreshModelInfo();
+                    if (data.success) {
+                        alert('Training completed successfully!');
+                    } else {
+                        alert('Training failed: ' + data.error);
+                    }
+                }
+            });
+    }, 1000);
+}
+
+// Unknown categories functions
+function refreshUnknownCategories() {
+    fetch('/api/training/unknown-categories')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateUnknownCategoriesDisplay(data.categories);
+            }
+        })
+        .catch(error => console.error('Error loading unknown categories:', error));
+}
+
+function updateUnknownCategoriesDisplay(categories) {
+    document.getElementById('unknown-proto-count').textContent = categories.proto.length;
+    document.getElementById('unknown-service-count').textContent = categories.service.length;
+    document.getElementById('unknown-history-count').textContent = categories.history.length;
+    
+    document.getElementById('unknown-protocols').innerHTML = 
+        categories.proto.map(p => `<span class="badge bg-secondary me-1 mb-1">${p}</span>`).join('');
+    document.getElementById('unknown-services').innerHTML = 
+        categories.service.map(s => `<span class="badge bg-secondary me-1 mb-1">${s}</span>`).join('');
+    document.getElementById('unknown-history').innerHTML = 
+        categories.history.slice(0, 20).map(h => `<span class="badge bg-secondary me-1 mb-1">${h}</span>`).join('') +
+        (categories.history.length > 20 ? `<span class="text-muted">... and ${categories.history.length - 20} more</span>` : '');
+}
+
+function incorporateUnknownCategories() {
+    if (!confirm('Incorporate all unknown categories into the model? This will trigger a model update.')) return;
+    
+    fetch('/api/training/incorporate-unknown', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                refreshUnknownCategories();
+                refreshModelInfo();
+                alert('Unknown categories incorporated successfully!');
+            } else {
+                alert('Error incorporating categories: ' + data.error);
+            }
+        });
+}
+
+// Utility functions
+function loadMoreAnomalies() {
+    // Implementation for pagination
+    loadRecentAnomalies();
+}
+
+// Select all checkbox functionality
+document.addEventListener('change', function(e) {
+    if (e.target.id === 'select-all-anomalies') {
+        const checkboxes = document.querySelectorAll('.anomaly-checkbox');
+        checkboxes.forEach(cb => cb.checked = e.target.checked);
+    }
+});
+</script>
 {% endblock %}

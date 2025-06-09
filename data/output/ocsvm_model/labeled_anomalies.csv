@@ -1,4 +1,4 @@
-timestamp,uid,score,original_label,user_label,feature_vector
-2023-05-13T12:00:00,CXWvJ44KHBjMcJGN7k,0.987654,anomaly,anomaly,"[ 0.123456, -0.654321,  1.234567, -0.987654,  0.456789]"
-2023-05-13T12:15:00,CXWvJ44KHBjMcJGN8k,0.876543,anomaly,port_scan,"[ 0.234567, -0.765432,  1.345678, -0.876543,  0.567890]"
-2023-05-13T12:30:00,CXWvJ44KHBjMcJGN9k,0.765432,anomaly,ddos,"[ 0.345678, -0.876543,  1.456789, -0.765432,  0.678901]"
+timestamp,uid,score,attack_category,attack_subcategory,confidence,source_ip,dest_ip,user_feedback,training_source,feature_vector,suricata_rule_candidate
+2023-05-13T12:00:00,CXWvJ44KHBjMcJGN7k,0.987654,custom-threat,,medium,Unknown,Unknown,migrated_label,legacy_migration,"[ 0.123456, -0.654321,  1.234567, -0.987654,  0.456789]",
+2023-05-13T12:15:00,CXWvJ44KHBjMcJGN8k,0.876543,port-scan,,medium,Unknown,Unknown,migrated_label,legacy_migration,"[ 0.234567, -0.765432,  1.345678, -0.876543,  0.567890]",
+2023-05-13T12:30:00,CXWvJ44KHBjMcJGN9k,0.765432,ddos-attack,,medium,Unknown,Unknown,migrated_label,legacy_migration,"[ 0.345678, -0.876543,  1.456789, -0.765432,  0.678901]",
