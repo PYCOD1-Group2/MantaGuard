@@ -497,9 +497,9 @@ def home():
                          hero_banner_base64=hero_banner_base64,
                          logo_base64=logo_base64)
 
-@app.route('/scanning')
-def scanning():
-    """Render the scanning page."""
+@app.route('/monitoring')
+def monitoring():
+    """Render the network monitoring page."""
     return render_template('scanning.html', 
                          interfaces=session['network_interfaces'],
                          scanning=session['scanning'],
@@ -507,17 +507,38 @@ def scanning():
                          scan_completed=session['scan_completed'],
                          active_tab=session['active_tab'])
 
-@app.route('/reports')
-def reports():
-    """Render the reports page."""
+@app.route('/analysis')
+def analysis():
+    """Render the analysis & reports page."""
     # Get analytics data
     analytics = get_security_analytics()
     return render_template('reports.html', analytics=analytics)
 
+@app.route('/training')
+def training():
+    """Render the ML training center page."""
+    return render_template('training.html')
+
+# Legacy route redirects for backwards compatibility
+@app.route('/scanning')
+def scanning_redirect():
+    """Redirect old scanning route to monitoring."""
+    return redirect(url_for('monitoring'))
+
+@app.route('/reports')
+def reports_redirect():
+    """Redirect old reports route to analysis."""
+    return redirect(url_for('analysis'))
+
 @app.route('/fix-patches')
-def fix_patches():
-    """Render the fix & patches page."""
-    return render_template('fix_patches.html')
+def fix_patches_redirect():
+    """Redirect old fix-patches route to training."""
+    return redirect(url_for('training'))
+
+@app.route('/connection-browser')
+def connection_browser_redirect():
+    """Redirect old connection-browser route to training."""
+    return redirect(url_for('training'))
 
 @app.route('/api/refresh_interfaces', methods=['POST'])
 def refresh_interfaces():
@@ -625,6 +646,9 @@ def start_capture():
             except Exception as metadata_error:
                 print(f"Warning: Failed to update PCAP metadata: {metadata_error}")
 
+            # Note: Auto-import removed - connections must be manually imported via Browser & Labeling page
+            import_count = 0
+
             # Store results in global variables (thread-safe)
             with app.app_context():
                 app.analysis_results = {
@@ -632,6 +656,7 @@ def start_capture():
                     'predictions_file': csv_path,
                     'processing': False,
                     'scan_completed': True,
+                    'import_count': import_count,
                     'scanning': False
                 }
 
@@ -881,10 +906,21 @@ def analyze_pcap():
                 except Exception as metadata_error:
                     print(f"Warning: Failed to update PCAP metadata: {metadata_error}")
 
-                # Step 5: Complete (100%)
+                # Step 5: Import into training repository (90%)
+                app.analysis_progress = {
+                    'progress': 0.9,
+                    'status': 'Importing results into training repository...',
+                    'processing': True
+                }
+                
+                # Note: Auto-import removed - connections must be manually imported via Browser & Labeling page
+                import_count = 0
+                import_status = 'Analysis completed - use Browser & Labeling to import anomalies'
+
+                # Step 6: Complete (100%)
                 app.analysis_progress = {
                     'progress': 1.0,
-                    'status': 'Analysis completed successfully!',
+                    'status': f'Analysis completed! {import_status}',
                     'processing': False
                 }
 
@@ -894,7 +930,8 @@ def analyze_pcap():
                     'analysis_dir': analysis_dir,
                     'predictions_file': csv_path,
                     'scan_completed': True,
-                    'processing': False
+                    'processing': False,
+                    'import_count': import_count if 'import_count' in locals() else 0
                 }
 
             except Exception as e:
@@ -2149,6 +2186,1259 @@ def validate_training_data():
             'is_valid': False,
             'error': str(e),
             'recommendations': ['Unable to validate training data. Check system logs.']
+        }), 500
+
+# Enhanced Connection Management APIs
+
+@app.route('/api/connections')
+def get_connections():
+    """Get connections with filtering and pagination."""
+    try:
+        from mantaguard.data.storage.training_repository import TrainingRepository
+        
+        repository = TrainingRepository()
+        
+        # Parse query parameters
+        limit = min(int(request.args.get('limit', 100)), 1000)  # Max 1000
+        offset = int(request.args.get('offset', 0))
+        
+        # Build filter parameters
+        filter_params = {}
+        
+        if request.args.get('is_anomaly') is not None:
+            filter_params['is_anomaly'] = request.args.get('is_anomaly').lower() == 'true'
+        
+        if request.args.get('label_category'):
+            filter_params['label_category'] = request.args.get('label_category')
+        
+        if request.args.get('review_status'):
+            filter_params['review_status'] = request.args.get('review_status')
+        
+        if request.args.get('training_source'):
+            filter_params['training_source'] = request.args.get('training_source')
+        
+        if request.args.get('start_date'):
+            filter_params['start_date'] = request.args.get('start_date')
+        
+        if request.args.get('end_date'):
+            filter_params['end_date'] = request.args.get('end_date')
+        
+        # Get connections
+        connections = repository.get_connections(
+            limit=limit,
+            offset=offset,
+            filter_params=filter_params
+        )
+        
+        # Convert to JSON-serializable format
+        connections_data = []
+        for conn in connections:
+            conn_dict = {
+                'uid': conn.uid,
+                'timestamp': conn.timestamp.isoformat() if conn.timestamp else None,
+                'source_ip': conn.source_ip,
+                'dest_ip': conn.dest_ip,
+                'source_port': conn.source_port,
+                'dest_port': conn.dest_port,
+                'proto': conn.proto,
+                'service': conn.service,
+                'duration': conn.duration,
+                'orig_bytes': conn.orig_bytes,
+                'resp_bytes': conn.resp_bytes,
+                'anomaly_score': conn.anomaly_score,
+                'is_anomaly': conn.is_anomaly,
+                'label_category': conn.label_category,
+                'label_subcategory': conn.label_subcategory,
+                'confidence_level': conn.confidence_level.value if conn.confidence_level else None,
+                'labeled_by': conn.labeled_by,
+                'labeled_at': conn.labeled_at.isoformat() if conn.labeled_at else None,
+                'training_source': conn.training_source,
+                'review_status': conn.review_status.value,
+                'notes': conn.notes,
+                'has_extracted_pcap': conn.has_extracted_pcap
+            }
+            connections_data.append(conn_dict)
+        
+        return jsonify({
+            'success': True,
+            'connections': connections_data,
+            'count': len(connections_data),
+            'limit': limit,
+            'offset': offset,
+            'filter_params': filter_params
+        })
+    
+    except Exception as e:
+        logger.error(f"Error retrieving connections: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/connections/label', methods=['POST'])
+def bulk_label_connections():
+    """Bulk label multiple connections."""
+    try:
+        from mantaguard.data.storage.training_repository import TrainingRepository, ConfidenceLevel
+        
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['uids', 'category', 'subcategory', 'confidence', 'labeled_by']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({
+                    'success': False,
+                    'error': f'Missing required field: {field}'
+                }), 400
+        
+        repository = TrainingRepository()
+        
+        # Convert confidence string to enum
+        try:
+            confidence_level = ConfidenceLevel(data['confidence'])
+        except ValueError:
+            return jsonify({
+                'success': False,
+                'error': f'Invalid confidence level: {data["confidence"]}'
+            }), 400
+        
+        # Update labels
+        updated_count = repository.update_labels(
+            uids=data['uids'],
+            category=data['category'],
+            subcategory=data['subcategory'],
+            confidence=confidence_level,
+            labeled_by=data['labeled_by'],
+            notes=data.get('notes')
+        )
+        
+        return jsonify({
+            'success': True,
+            'updated_count': updated_count,
+            'total_requested': len(data['uids'])
+        })
+    
+    except Exception as e:
+        logger.error(f"Error bulk labeling connections: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/training-repository')
+def get_training_repository_info():
+    """Get training repository statistics and information."""
+    try:
+        from mantaguard.data.storage.training_repository import TrainingRepository
+        
+        repository = TrainingRepository()
+        
+        # Get statistics
+        stats = repository.get_label_statistics()
+        
+        # Get label definitions
+        label_definitions = repository.get_label_definitions()
+        
+        # Convert label definitions to dict format
+        labels_dict = {}
+        for label_def in label_definitions:
+            if label_def.category not in labels_dict:
+                labels_dict[label_def.category] = {}
+            labels_dict[label_def.category][label_def.subcategory] = {
+                'description': label_def.description,
+                'color_hex': label_def.color_hex,
+                'is_active': label_def.is_active
+            }
+        
+        return jsonify({
+            'success': True,
+            'statistics': stats,
+            'label_definitions': labels_dict,
+            'retrieved_at': datetime.now().isoformat()
+        })
+    
+    except Exception as e:
+        logger.error(f"Error getting training repository info: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/models/multi-class-train', methods=['POST'])
+def train_multi_class_model():
+    """Train the multi-class classifier."""
+    try:
+        from mantaguard.core.ai.models.multi_class_classifier import MultiClassNetworkClassifier
+        from mantaguard.data.storage.training_repository import TrainingRepository, ConfidenceLevel
+        
+        data = request.get_json() or {}
+        
+        # Parse parameters
+        classifier_type = data.get('classifier_type', 'random_forest')
+        min_confidence = data.get('min_confidence', 'medium')
+        hyperparameter_tuning = data.get('hyperparameter_tuning', False)
+        
+        try:
+            min_confidence_level = ConfidenceLevel(min_confidence)
+        except ValueError:
+            return jsonify({
+                'success': False,
+                'error': f'Invalid confidence level: {min_confidence}'
+            }), 400
+        
+        # Create classifier and repository
+        classifier = MultiClassNetworkClassifier(classifier_type=classifier_type)
+        repository = TrainingRepository()
+        
+        # Train model
+        training_metrics = classifier.train_from_repository(
+            repository=repository,
+            min_confidence=min_confidence_level,
+            hyperparameter_tuning=hyperparameter_tuning
+        )
+        
+        # Save trained model
+        model_version = data.get('version', 'v1')
+        model_path = classifier.save_model(version=model_version)
+        
+        return jsonify({
+            'success': True,
+            'training_metrics': training_metrics,
+            'model_path': model_path,
+            'model_version': model_version
+        })
+    
+    except Exception as e:
+        logger.error(f"Error training multi-class model: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/models/hybrid-predict', methods=['POST'])
+def hybrid_predict():
+    """Perform hybrid prediction on connection data."""
+    try:
+        from mantaguard.core.ai.models.hybrid_classifier import HybridNetworkClassifier
+        
+        data = request.get_json()
+        
+        if 'connection_data' not in data:
+            return jsonify({
+                'success': False,
+                'error': 'Missing connection_data field'
+            }), 400
+        
+        # Initialize hybrid classifier
+        classifier = HybridNetworkClassifier()
+        
+        # Load models
+        anomaly_version = data.get('anomaly_version', 'base')
+        classification_version = data.get('classification_version', 'v1')
+        
+        if not classifier.load_models(anomaly_version, classification_version):
+            return jsonify({
+                'success': False,
+                'error': 'Failed to load required models'
+            }), 500
+        
+        # Perform prediction
+        result = classifier.predict_connection(data['connection_data'])
+        
+        return jsonify({
+            'success': True,
+            'prediction': result
+        })
+    
+    except Exception as e:
+        logger.error(f"Error in hybrid prediction: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/models/performance')
+def get_model_performance():
+    """Get performance metrics for all models."""
+    try:
+        from mantaguard.core.ai.models.hybrid_classifier import HybridNetworkClassifier
+        from mantaguard.data.storage.training_repository import TrainingRepository
+        
+        # Initialize components
+        classifier = HybridNetworkClassifier()
+        repository = TrainingRepository()
+        
+        # Try to load models
+        models_loaded = classifier.load_models()
+        
+        # Get model information
+        model_info = classifier.get_model_info()
+        
+        # Get repository statistics
+        repo_stats = repository.get_label_statistics()
+        
+        # Evaluate models if loaded
+        evaluation_results = None
+        if models_loaded and classifier.attack_classifier:
+            try:
+                evaluation_results = classifier.attack_classifier.evaluate_on_test_data(repository)
+            except Exception as e:
+                evaluation_results = {'error': str(e)}
+        
+        return jsonify({
+            'success': True,
+            'model_info': model_info,
+            'repository_statistics': repo_stats,
+            'evaluation_results': evaluation_results,
+            'models_loaded': models_loaded,
+            'retrieved_at': datetime.now().isoformat()
+        })
+    
+    except Exception as e:
+        logger.error(f"Error getting model performance: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+def import_anomalies_from_analysis(csv_path, analysis_dir):
+    """Import only anomalies from analysis results into training repository for attack labeling."""
+    try:
+        from mantaguard.data.storage.training_repository import TrainingRepository, TrainingConnection, ReviewStatus
+        from mantaguard.core.ai.parsers.zeek_loader import zeek_to_features
+        import pandas as pd
+        import numpy as np
+        from datetime import datetime
+        
+        # Initialize repository
+        repository = TrainingRepository()
+        
+        # Load the analysis results
+        if not os.path.exists(csv_path):
+            print(f"Analysis file not found: {csv_path}")
+            return 0
+            
+        df = pd.read_csv(csv_path)
+        if df.empty:
+            print("Analysis file is empty")
+            return 0
+        
+        # Look for corresponding Zeek log files in the analysis directory
+        zeek_files = []
+        zeek_log_dir = os.path.join(analysis_dir, 'zeek_logs')
+        
+        # Check both root directory and zeek_logs subdirectory
+        possible_locations = [analysis_dir, zeek_log_dir]
+        
+        for base_dir in possible_locations:
+            for log_type in ['conn.log', 'http.log', 'dns.log']:
+                log_path = os.path.join(base_dir, log_type)
+                if os.path.exists(log_path):
+                    zeek_files.append(log_path)
+                    break  # Found logs in this location, use this one
+            if zeek_files:  # If we found logs, don't check other locations
+                break
+        
+        # Load connection data from Zeek logs if available
+        zeek_data = None
+        if zeek_files:
+            try:
+                # Determine the correct conn.log path
+                conn_log_path = None
+                if os.path.exists(os.path.join(zeek_log_dir, 'conn.log')):
+                    conn_log_path = os.path.join(zeek_log_dir, 'conn.log')
+                elif os.path.exists(os.path.join(analysis_dir, 'conn.log')):
+                    conn_log_path = os.path.join(analysis_dir, 'conn.log')
+                
+                if conn_log_path:
+                    # Read Zeek conn.log format - first parse the header to get field names
+                    with open(conn_log_path, 'r') as f:
+                        lines = f.readlines()
+                    
+                    # Find the fields line to get proper column names
+                    field_names = None
+                    for line in lines:
+                        if line.startswith('#fields'):
+                            field_names = line.strip().split('\t')[1:]  # Skip '#fields'
+                            break
+                    
+                    if field_names:
+                        # Read data with proper field names
+                        zeek_data = pd.read_csv(conn_log_path, sep='\t', comment='#', header=None,
+                                              names=field_names)
+                        print(f"Loaded {len(zeek_data)} connections from Zeek logs with fields: {field_names[:6]}...")
+                    else:
+                        # Fallback to default names if no fields line found
+                        zeek_data = pd.read_csv(conn_log_path, sep='\t', comment='#', header=None,
+                                              names=['ts', 'uid', 'id.orig_h', 'id.orig_p', 'id.resp_h', 'id.resp_p',
+                                                    'proto', 'service', 'duration', 'orig_bytes', 'resp_bytes',
+                                                    'conn_state', 'local_orig', 'local_resp', 'missed_bytes',
+                                                    'history', 'orig_pkts', 'orig_ip_bytes', 'resp_pkts', 'resp_ip_bytes',
+                                                    'tunnel_parents', 'ip_proto'])
+                        print(f"Loaded {len(zeek_data)} connections from Zeek logs with fallback names")
+            except Exception as e:
+                print(f"Warning: Could not load Zeek data: {e}")
+        
+        imported_count = 0
+        
+        # Process each connection in the analysis results
+        for _, row in df.iterrows():
+            try:
+                uid = str(row.get('uid', f'imported_{imported_count}_{datetime.now().timestamp()}'))
+                
+                # Get corresponding Zeek data if available
+                zeek_row = None
+                if zeek_data is not None and 'uid' in row and not pd.isna(row['uid']):
+                    zeek_matches = zeek_data[zeek_data['uid'] == row['uid']]
+                    if not zeek_matches.empty:
+                        zeek_row = zeek_matches.iloc[0]
+                        print(f"Found Zeek data for UID: {uid}")
+                    else:
+                        print(f"No Zeek match for UID: {uid}")
+                else:
+                    print(f"Zeek data not available or UID missing for row {imported_count}")
+                
+                # Extract connection details
+                if zeek_row is not None:
+                    # Use data from Zeek logs
+                    try:
+                        # Convert to datetime, not pandas Timestamp
+                        timestamp_val = pd.to_datetime(float(zeek_row['ts']), unit='s') if pd.notna(zeek_row['ts']) else datetime.now()
+                        timestamp = timestamp_val.to_pydatetime() if hasattr(timestamp_val, 'to_pydatetime') else timestamp_val
+                    except (ValueError, TypeError):
+                        timestamp = datetime.now()
+                    
+                    source_ip = str(zeek_row.get('id.orig_h', '0.0.0.0'))
+                    dest_ip = str(zeek_row.get('id.resp_h', '0.0.0.0'))
+                    
+                    # Handle port conversion
+                    try:
+                        source_port = int(zeek_row['id.orig_p']) if pd.notna(zeek_row.get('id.orig_p')) and zeek_row['id.orig_p'] != '-' else None
+                    except (ValueError, TypeError):
+                        source_port = None
+                    
+                    try:
+                        dest_port = int(zeek_row['id.resp_p']) if pd.notna(zeek_row.get('id.resp_p')) and zeek_row['id.resp_p'] != '-' else None
+                    except (ValueError, TypeError):
+                        dest_port = None
+                    
+                    proto = str(zeek_row.get('proto', 'unknown'))
+                    service = zeek_row.get('service') if pd.notna(zeek_row.get('service')) and zeek_row.get('service') != '-' else None
+                    
+                    # Handle numeric fields
+                    try:
+                        duration = float(zeek_row['duration']) if pd.notna(zeek_row.get('duration')) and zeek_row['duration'] != '-' else None
+                    except (ValueError, TypeError):
+                        duration = None
+                    
+                    try:
+                        orig_bytes = int(zeek_row['orig_bytes']) if pd.notna(zeek_row.get('orig_bytes')) and zeek_row['orig_bytes'] != '-' else None
+                    except (ValueError, TypeError):
+                        orig_bytes = None
+                    
+                    try:
+                        resp_bytes = int(zeek_row['resp_bytes']) if pd.notna(zeek_row.get('resp_bytes')) and zeek_row['resp_bytes'] != '-' else None
+                    except (ValueError, TypeError):
+                        resp_bytes = None
+                    
+                    try:
+                        orig_pkts = int(zeek_row['orig_pkts']) if pd.notna(zeek_row.get('orig_pkts')) and zeek_row['orig_pkts'] != '-' else None
+                    except (ValueError, TypeError):
+                        orig_pkts = None
+                    
+                    try:
+                        resp_pkts = int(zeek_row['resp_pkts']) if pd.notna(zeek_row.get('resp_pkts')) and zeek_row['resp_pkts'] != '-' else None
+                    except (ValueError, TypeError):
+                        resp_pkts = None
+                    
+                    history = zeek_row.get('history') if pd.notna(zeek_row.get('history')) and zeek_row.get('history') != '-' else None
+                else:
+                    # Use data from analysis results (limited info)
+                    timestamp = datetime.now()
+                    source_ip = str(row.get('source_ip', '0.0.0.0'))
+                    dest_ip = str(row.get('dest_ip', '0.0.0.0'))
+                    source_port = row.get('source_port') if pd.notna(row.get('source_port')) else None
+                    dest_port = row.get('dest_port') if pd.notna(row.get('dest_port')) else None
+                    proto = str(row.get('proto', 'unknown'))
+                    service = row.get('service') if pd.notna(row.get('service')) else None
+                    duration = row.get('duration') if pd.notna(row.get('duration')) else None
+                    orig_bytes = row.get('orig_bytes') if pd.notna(row.get('orig_bytes')) else None
+                    resp_bytes = row.get('resp_bytes') if pd.notna(row.get('resp_bytes')) else None
+                    orig_pkts = row.get('orig_pkts') if pd.notna(row.get('orig_pkts')) else None
+                    resp_pkts = row.get('resp_pkts') if pd.notna(row.get('resp_pkts')) else None
+                    history = row.get('history') if pd.notna(row.get('history')) else None
+                
+                # Get anomaly information from analysis results
+                anomaly_score = row.get('score', row.get('anomaly_score', 0.0))
+                is_anomaly = bool(row.get('is_anomaly', False) or row.get('prediction', '') == 'anomaly')
+                
+                # SKIP NON-ANOMALIES: Only import anomalies for attack labeling
+                if not is_anomaly:
+                    continue
+                
+                # Extract feature vector if available
+                feature_vector = None
+                if 'feature_vector' in row and pd.notna(row['feature_vector']):
+                    try:
+                        # Try to parse feature vector from string representation
+                        feature_str = str(row['feature_vector']).strip('[]')
+                        if feature_str:
+                            feature_vector = np.array([float(x.strip()) for x in feature_str.split(',')])
+                    except:
+                        feature_vector = None
+                
+                # Create training connection
+                training_conn = TrainingConnection(
+                    uid=uid,
+                    timestamp=timestamp,
+                    source_ip=source_ip,
+                    dest_ip=dest_ip,
+                    source_port=source_port,
+                    dest_port=dest_port,
+                    proto=proto,
+                    service=service,
+                    duration=duration,
+                    orig_bytes=orig_bytes,
+                    resp_bytes=resp_bytes,
+                    orig_pkts=orig_pkts,
+                    resp_pkts=resp_pkts,
+                    history=history,
+                    feature_vector=feature_vector,
+                    anomaly_score=anomaly_score,
+                    is_anomaly=is_anomaly,
+                    label_category=None,  # No automatic labeling
+                    label_subcategory=None,
+                    confidence_level=None,
+                    labeled_by=None,
+                    labeled_at=None,
+                    training_source='analysis_import',
+                    review_status=ReviewStatus.PENDING,
+                    notes=None
+                )
+                
+                # Add to repository
+                repository.add_connection(training_conn)
+                imported_count += 1
+                
+            except Exception as e:
+                print(f"Warning: Failed to import connection {imported_count}: {e}")
+                continue
+        
+        print(f"Auto-imported {imported_count} connections from analysis results")
+        return imported_count
+        
+    except Exception as e:
+        print(f"Error during auto-import: {e}")
+        return 0
+
+@app.route('/api/connections/reimport-latest', methods=['POST'])
+def reimport_latest_analysis():
+    """Re-import the most recent analysis results with corrected data parsing."""
+    try:
+        # Find the most recent analysis directory
+        output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "output", "analysis_results")
+        
+        if not os.path.exists(output_dir):
+            return jsonify({
+                'success': False,
+                'error': 'No analysis results directory found'
+            }), 404
+        
+        # Get the most recent directory
+        analysis_dirs = [d for d in os.listdir(output_dir) if os.path.isdir(os.path.join(output_dir, d))]
+        if not analysis_dirs:
+            return jsonify({
+                'success': False,
+                'error': 'No analysis results found'
+            }), 404
+        
+        latest_dir = max(analysis_dirs)
+        analysis_path = os.path.join(output_dir, latest_dir)
+        csv_path = os.path.join(analysis_path, 'prediction_results.csv')
+        
+        if not os.path.exists(csv_path):
+            return jsonify({
+                'success': False,
+                'error': f'No prediction results found in {latest_dir}'
+            }), 404
+        
+        # Clear existing imported data from this analysis (to avoid duplicates)
+        from mantaguard.data.storage.training_repository import TrainingRepository
+        repository = TrainingRepository()
+        
+        # Re-import with corrected logic
+        imported_count = import_anomalies_from_analysis(csv_path, analysis_path)
+        
+        return jsonify({
+            'success': True,
+            'imported_count': imported_count,
+            'analysis_dir': latest_dir,
+            'message': f'Re-imported {imported_count} connections with corrected data parsing'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/scans/available')
+def get_available_scans():
+    """Get list of available scans for import with metadata."""
+    try:
+        from mantaguard.data.storage.training_repository import TrainingRepository
+        import pandas as pd
+        import os
+        
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        analysis_dir = os.path.join(project_root, "data", "output", "analysis_results")
+        
+        if not os.path.exists(analysis_dir):
+            return jsonify({'success': True, 'scans': []})
+        
+        # Get repository to check import status
+        repository = TrainingRepository()
+        imported_scan_ids = set()
+        
+        # Get list of already imported scan sources
+        try:
+            connections = repository.get_connections(limit=10000)
+            for conn in connections:
+                if hasattr(conn, 'training_source') and conn.training_source == 'analysis_import':
+                    # Extract scan ID from timestamp (connections imported together have similar timestamps)
+                    if conn.timestamp:
+                        scan_id = conn.timestamp.strftime("%Y%m%d_%H%M%S")
+                        imported_scan_ids.add(scan_id)
+        except:
+            pass  # If we can't check, just show all scans
+        
+        scans = []
+        for scan_folder in sorted(os.listdir(analysis_dir), reverse=True):  # Most recent first
+            scan_path = os.path.join(analysis_dir, scan_folder)
+            if not os.path.isdir(scan_path):
+                continue
+                
+            csv_path = os.path.join(scan_path, 'prediction_results.csv')
+            if not os.path.exists(csv_path):
+                continue
+            
+            try:
+                # Read scan metadata
+                df = pd.read_csv(csv_path)
+                total_connections = len(df)
+                anomaly_count = len(df[df.get('prediction', '') == 'anomaly'])
+                
+                # Check if scan has been imported (rough heuristic)
+                is_imported = any(scan_folder in sid for sid in imported_scan_ids)
+                
+                # Get scan timestamp from folder name or file modification time
+                try:
+                    from datetime import datetime
+                    scan_timestamp = datetime.strptime(scan_folder, "%Y%m%d_%H%M%S")
+                except:
+                    scan_timestamp = datetime.fromtimestamp(os.path.getmtime(csv_path))
+                
+                scan_info = {
+                    'scan_id': scan_folder,
+                    'timestamp': scan_timestamp.isoformat(),
+                    'timestamp_display': scan_timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                    'total_connections': total_connections,
+                    'anomaly_count': anomaly_count,
+                    'normal_count': total_connections - anomaly_count,
+                    'is_imported': is_imported,
+                    'csv_path': csv_path,
+                    'analysis_path': scan_path
+                }
+                scans.append(scan_info)
+                
+            except Exception as e:
+                print(f"Error processing scan {scan_folder}: {e}")
+                continue
+        
+        return jsonify({
+            'success': True,
+            'scans': scans
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/connections/import-from-scan', methods=['POST'])
+def import_connections_from_scan():
+    """Import anomalies from a specific scan into training repository."""
+    try:
+        data = request.get_json() or {}
+        scan_id = data.get('scan_id')
+        
+        if not scan_id:
+            return jsonify({
+                'success': False,
+                'error': 'scan_id is required'
+            }), 400
+        
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        analysis_path = os.path.join(project_root, "data", "output", "analysis_results", scan_id)
+        csv_path = os.path.join(analysis_path, 'prediction_results.csv')
+        
+        if not os.path.exists(csv_path):
+            return jsonify({
+                'success': False,
+                'error': f'Scan {scan_id} not found or has no prediction results'
+            }), 404
+        
+        # Use the import function with anomaly filtering
+        imported_count = import_anomalies_from_analysis(csv_path, analysis_path)
+        
+        return jsonify({
+            'success': True,
+            'imported_count': imported_count,
+            'scan_id': scan_id,
+            'message': f'Successfully imported {imported_count} anomalies from scan {scan_id}'
+        })
+    
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/labeling/extract-pcap/<uid>', methods=['POST'])
+def extract_pcap_for_labeling(uid):
+    """Extract PCAP for a specific connection UID for labeling purposes."""
+    try:
+        from mantaguard.data.storage.training_repository import TrainingRepository
+        from mantaguard.utils.forensics import extract_flow_by_uid
+        from mantaguard.data.models.metadata import find_pcap_for_analysis
+        import glob
+        
+        # Get connection info from repository
+        repository = TrainingRepository()
+        connections = repository.get_connections(limit=10000)  # Get all to find the UID
+        
+        target_connection = None
+        for conn in connections:
+            if conn.uid == uid:
+                target_connection = conn
+                break
+        
+        if not target_connection:
+            return jsonify({
+                'success': False,
+                'error': f'Connection with UID {uid} not found'
+            }), 404
+        
+        # Create dedicated labeling directory
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        labeling_dir = os.path.join(project_root, "data", "labeling", "extracted_pcaps")
+        os.makedirs(labeling_dir, exist_ok=True)
+        
+        # Check if PCAP already exists
+        final_pcap_path = os.path.join(labeling_dir, f"{uid}.pcap")
+        if os.path.exists(final_pcap_path):
+            return jsonify({
+                'success': True,
+                'message': f'PCAP for UID {uid} already extracted',
+                'path': final_pcap_path,
+                'already_exists': True
+            })
+        
+        # Find the original scan and PCAP file
+        # Extract timestamp from connection to find corresponding scan
+        if target_connection.timestamp:
+            scan_timestamp = target_connection.timestamp.strftime("%Y%m%d_%H%M%S")
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Connection has no timestamp - cannot locate source scan'
+            }), 400
+        
+        # Find the analysis directory by searching for the UID
+        analysis_results_dir = os.path.join(project_root, "data", "output", "analysis_results")
+        analysis_path = None
+        
+        # Look for exact match first (by connection timestamp)
+        exact_match = os.path.join(analysis_results_dir, scan_timestamp)
+        if os.path.exists(exact_match):
+            analysis_path = exact_match
+        else:
+            # Search all analysis directories for the UID
+            if os.path.exists(analysis_results_dir):
+                for scan_dir in os.listdir(analysis_results_dir):
+                    scan_path = os.path.join(analysis_results_dir, scan_dir)
+                    if os.path.isdir(scan_path):
+                        conn_log_path = os.path.join(scan_path, 'zeek_logs', 'conn.log')
+                        if os.path.exists(conn_log_path):
+                            # Check if UID exists in this conn.log
+                            with open(conn_log_path, 'r') as f:
+                                for line in f:
+                                    if not line.startswith('#') and uid in line:
+                                        analysis_path = scan_path
+                                        print(f"Found UID {uid} in analysis directory: {scan_dir}")
+                                        break
+                            if analysis_path:
+                                break
+        
+        if not analysis_path or not os.path.exists(analysis_path):
+            return jsonify({
+                'success': False,
+                'error': f'Cannot find analysis directory for connection timestamp {scan_timestamp}'
+            }), 404
+        
+        # Find conn.log in the analysis path
+        conn_log_path = os.path.join(analysis_path, 'zeek_logs', 'conn.log')
+        if not os.path.exists(conn_log_path):
+            return jsonify({
+                'success': False,
+                'error': f'conn.log not found in {analysis_path}'
+            }), 404
+        
+        # Find the original PCAP file
+        pcaps_dir = os.path.join(project_root, "data", "pcaps")
+        original_pcap = None
+        
+        # Try metadata first
+        result = find_pcap_for_analysis(analysis_path, pcaps_dir)
+        if result:
+            original_pcap, _ = result
+        
+        # Fallback: find by timestamp pattern with tolerance
+        if not original_pcap:
+            from datetime import datetime, timedelta
+            
+            # Parse scan timestamp
+            try:
+                scan_dt = datetime.strptime(scan_timestamp, "%Y%m%d_%H%M%S")
+            except:
+                scan_dt = None
+            
+            best_match = None
+            best_diff = None
+            
+            for pcap_file in glob.glob(os.path.join(pcaps_dir, "*.pcap*")):
+                basename = os.path.basename(pcap_file)
+                
+                # Direct match first
+                if scan_timestamp in basename:
+                    original_pcap = pcap_file
+                    break
+                
+                # Try to extract timestamp from PCAP filename and find closest
+                if scan_dt:
+                    # Look for patterns like capture_YYYYMMDD_HHMMSS.pcap
+                    import re
+                    timestamp_match = re.search(r'(\d{8}_\d{6})', basename)
+                    if timestamp_match:
+                        try:
+                            pcap_timestamp = timestamp_match.group(1)
+                            pcap_dt = datetime.strptime(pcap_timestamp, "%Y%m%d_%H%M%S")
+                            diff = abs((scan_dt - pcap_dt).total_seconds())
+                            
+                            # Accept if within 5 minutes
+                            if diff <= 300:  # 5 minutes tolerance
+                                if best_diff is None or diff < best_diff:
+                                    best_match = pcap_file
+                                    best_diff = diff
+                        except:
+                            continue
+            
+            if not original_pcap and best_match:
+                original_pcap = best_match
+                print(f"Using closest PCAP match: {best_match} (diff: {best_diff}s)")
+        
+        if not original_pcap or not os.path.exists(original_pcap):
+            return jsonify({
+                'success': False,
+                'error': 'Original PCAP file not found for this connection'
+            }), 404
+        
+        # Extract the connection PCAP
+        success, message, output_path = extract_flow_by_uid(
+            uid, conn_log_path, original_pcap, labeling_dir
+        )
+        
+        if success:
+            # Move the extracted PCAP to the dedicated labeling directory
+            import shutil
+            
+            if output_path and os.path.exists(output_path):
+                # Move the file to the labeling directory
+                shutil.move(output_path, final_pcap_path)
+                print(f"Moved PCAP from {output_path} to {final_pcap_path}")
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': f'Extraction succeeded but output file not found: {output_path}'
+                }), 500
+            
+            # Update extraction status in database
+            repository.update_extraction_status(uid, True)
+            
+            return jsonify({
+                'success': True,
+                'message': f'Successfully extracted PCAP for UID {uid}',
+                'path': final_pcap_path,
+                'uid': uid
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': f'Failed to extract PCAP: {message}'
+            }), 500
+    
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/labeling/open-pcap/<uid>', methods=['POST'])
+def open_pcap_for_labeling(uid):
+    """Open extracted PCAP for a specific connection UID."""
+    try:
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        pcap_file = os.path.join(project_root, "data", "labeling", "extracted_pcaps", f"{uid}.pcap")
+        
+        if not os.path.exists(pcap_file):
+            return jsonify({
+                'success': False,
+                'error': 'PCAP file not found. Extract it first.',
+                'path': pcap_file
+            }), 404
+        
+        # Try to open the file with the default application
+        import platform
+        system = platform.system()
+        
+        try:
+            if system == "Windows":
+                os.startfile(pcap_file)
+            elif system == "Darwin":  # macOS
+                result = subprocess.run(["open", pcap_file], capture_output=True, text=True)
+                if result.returncode != 0:
+                    raise Exception(f"Failed to open file: {result.stderr}")
+            else:  # Linux and others
+                result = subprocess.run(["xdg-open", pcap_file], capture_output=True, text=True)
+                if result.returncode != 0:
+                    raise Exception(f"Failed to open file: {result.stderr}")
+            
+            return jsonify({
+                'success': True,
+                'message': f'Opened PCAP file for UID {uid}. File location: {pcap_file}',
+                'path': pcap_file
+            })
+        except Exception as open_error:
+            # If opening fails, return the path so user can navigate manually
+            return jsonify({
+                'success': True,
+                'message': f'Could not auto-open file. PCAP location: {pcap_file}',
+                'path': pcap_file,
+                'note': f'Auto-open failed: {str(open_error)}. Please navigate to the file manually.'
+            })
+    
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/connections/delete', methods=['POST'])
+def delete_connections():
+    """Delete multiple connections from the training repository."""
+    try:
+        from mantaguard.data.storage.training_repository import TrainingRepository
+        import os
+        
+        data = request.get_json()
+        uids = data.get('uids', [])
+        
+        if not uids:
+            return jsonify({
+                'success': False,
+                'error': 'No UIDs provided'
+            }), 400
+        
+        repository = TrainingRepository()
+        deleted_count = repository.delete_connections(uids)
+        
+        # Also clean up any extracted PCAP files
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        pcap_dir = os.path.join(project_root, "data", "labeling", "extracted_pcaps")
+        
+        cleaned_pcaps = 0
+        for uid in uids:
+            pcap_file = os.path.join(pcap_dir, f"{uid}.pcap")
+            if os.path.exists(pcap_file):
+                try:
+                    os.remove(pcap_file)
+                    cleaned_pcaps += 1
+                except Exception as e:
+                    logger.warning(f"Failed to remove PCAP file {pcap_file}: {e}")
+        
+        return jsonify({
+            'success': True,
+            'message': f'Deleted {deleted_count} connections' + 
+                      (f' and cleaned up {cleaned_pcaps} PCAP files' if cleaned_pcaps > 0 else ''),
+            'deleted_count': deleted_count,
+            'cleaned_pcaps': cleaned_pcaps
+        })
+    
+    except Exception as e:
+        logger.error(f"Error deleting connections: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/connections/delete/<uid>', methods=['DELETE'])
+def delete_single_connection(uid):
+    """Delete a single connection from the training repository."""
+    try:
+        from mantaguard.data.storage.training_repository import TrainingRepository
+        import os
+        
+        repository = TrainingRepository()
+        deleted = repository.delete_connection(uid)
+        
+        if not deleted:
+            return jsonify({
+                'success': False,
+                'error': f'Connection with UID {uid} not found'
+            }), 404
+        
+        # Also clean up extracted PCAP file if it exists
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        pcap_file = os.path.join(project_root, "data", "labeling", "extracted_pcaps", f"{uid}.pcap")
+        
+        pcap_cleaned = False
+        if os.path.exists(pcap_file):
+            try:
+                os.remove(pcap_file)
+                pcap_cleaned = True
+            except Exception as e:
+                logger.warning(f"Failed to remove PCAP file {pcap_file}: {e}")
+        
+        return jsonify({
+            'success': True,
+            'message': f'Deleted connection {uid}' + (' and cleaned up PCAP file' if pcap_cleaned else ''),
+            'pcap_cleaned': pcap_cleaned
+        })
+    
+    except Exception as e:
+        logger.error(f"Error deleting connection {uid}: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/labeling/extract-pcaps-bulk', methods=['POST'])
+def extract_pcaps_bulk():
+    """Extract PCAPs for multiple connections for labeling purposes."""
+    try:
+        from mantaguard.data.storage.training_repository import TrainingRepository
+        from mantaguard.utils.forensics import extract_flow_by_uid
+        from mantaguard.data.models.metadata import find_pcap_for_analysis
+        import glob
+        import shutil
+        
+        data = request.get_json()
+        uids = data.get('uids', [])
+        
+        if not uids:
+            return jsonify({
+                'success': False,
+                'error': 'No UIDs provided'
+            }), 400
+        
+        # Get connection info from repository
+        repository = TrainingRepository()
+        connections = repository.get_connections(limit=10000)  # Get all to find the UIDs
+        
+        # Create dedicated labeling directory
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        labeling_dir = os.path.join(project_root, "data", "labeling", "extracted_pcaps")
+        os.makedirs(labeling_dir, exist_ok=True)
+        
+        results = []
+        successful = 0
+        failed = 0
+        
+        for uid in uids:
+            try:
+                # Find the target connection
+                target_connection = None
+                for conn in connections:
+                    if conn.uid == uid:
+                        target_connection = conn
+                        break
+                
+                if not target_connection:
+                    results.append({
+                        'uid': uid,
+                        'success': False,
+                        'error': f'Connection with UID {uid} not found'
+                    })
+                    failed += 1
+                    continue
+                
+                # Check if PCAP already exists
+                final_pcap_path = os.path.join(labeling_dir, f"{uid}.pcap")
+                if os.path.exists(final_pcap_path):
+                    results.append({
+                        'uid': uid,
+                        'success': True,
+                        'message': f'PCAP for UID {uid} already extracted',
+                        'already_exists': True
+                    })
+                    successful += 1
+                    continue
+                
+                # Find original PCAP and conn.log - same logic as single extraction
+                scan_timestamp = target_connection.timestamp.strftime("%Y%m%d_%H%M%S") if target_connection.timestamp else None
+                
+                analysis_dir = None
+                conn_log_path = None
+                original_pcap = None
+                
+                # Search for analysis directories in output folder
+                analysis_dirs = glob.glob(os.path.join(project_root, "data", "output", "analysis_results", "*"))
+                analysis_dirs = [d for d in analysis_dirs if os.path.isdir(d)]
+                
+                # Find UID in conn.log files
+                for dir_path in analysis_dirs:
+                    zeek_dir = os.path.join(dir_path, "zeek_logs")
+                    potential_conn_log = os.path.join(zeek_dir, "conn.log")
+                    
+                    if os.path.exists(potential_conn_log):
+                        with open(potential_conn_log, 'r') as f:
+                            content = f.read()
+                            if uid in content:
+                                analysis_dir = dir_path
+                                conn_log_path = potential_conn_log
+                                break
+                
+                if not analysis_dir or not conn_log_path:
+                    results.append({
+                        'uid': uid,
+                        'success': False,
+                        'error': f'Could not find analysis directory or conn.log for UID {uid}'
+                    })
+                    failed += 1
+                    continue
+                
+                # Find original PCAP file - use the same logic as single extraction
+                from mantaguard.data.models.metadata import find_pcap_for_analysis
+                
+                # Try metadata-based matching first
+                result = find_pcap_for_analysis(analysis_dir, os.path.join(project_root, "data", "pcaps"))
+                if result:
+                    original_pcap, _ = result
+                else:
+                    # Fallback: comprehensive PCAP matching
+                    pcap_files = glob.glob(os.path.join(project_root, "data", "pcaps", "*.pcap*"))  # Include .pcapng
+                    
+                    if target_connection.timestamp:
+                        best_match = None
+                        best_diff = float('inf')
+                        
+                        for pcap_file in pcap_files:
+                            try:
+                                filename = os.path.basename(pcap_file)
+                                pcap_time = None
+                                
+                                # Handle different filename patterns
+                                if filename.startswith("capture_") and ".pcap" in filename:
+                                    # Format: capture_20250609_211815.pcap
+                                    timestamp_str = filename[8:].split('.')[0]  # Remove "capture_" and extension
+                                    pcap_time = datetime.strptime(timestamp_str, "%Y%m%d_%H%M%S")
+                                elif filename.startswith("uploaded_") and ".pcap" in filename:
+                                    # Format: uploaded_20250609_233007_external.pcapng
+                                    parts = filename.split('_')
+                                    if len(parts) >= 3:
+                                        timestamp_str = f"{parts[1]}_{parts[2]}"
+                                        pcap_time = datetime.strptime(timestamp_str, "%Y%m%d_%H%M%S")
+                                
+                                if pcap_time:
+                                    diff = abs((target_connection.timestamp - pcap_time).total_seconds())
+                                    
+                                    if diff < 1800 and diff < best_diff:  # Within 30 minutes (more tolerant)
+                                        best_match = pcap_file
+                                        best_diff = diff
+                            except Exception as e:
+                                logger.debug(f"Could not parse timestamp from {filename}: {e}")
+                                continue
+                    
+                        if best_match:
+                            original_pcap = best_match
+                
+                if not original_pcap or not os.path.exists(original_pcap):
+                    results.append({
+                        'uid': uid,
+                        'success': False,
+                        'error': f'Original PCAP file not found for UID {uid}'
+                    })
+                    failed += 1
+                    continue
+                
+                # Extract the connection PCAP
+                success, message, output_path = extract_flow_by_uid(
+                    uid, conn_log_path, original_pcap, analysis_dir
+                )
+                
+                if success:
+                    # Move the extracted PCAP to the labeling directory
+                    if output_path and os.path.exists(output_path):
+                        shutil.move(output_path, final_pcap_path)
+                        
+                        # Update extraction status in database
+                        repository.update_extraction_status(uid, True)
+                        
+                        results.append({
+                            'uid': uid,
+                            'success': True,
+                            'message': f'Successfully extracted PCAP for UID {uid}'
+                        })
+                        successful += 1
+                    else:
+                        results.append({
+                            'uid': uid,
+                            'success': False,
+                            'error': f'Extraction succeeded but output file not found for UID {uid}'
+                        })
+                        failed += 1
+                else:
+                    results.append({
+                        'uid': uid,
+                        'success': False,
+                        'error': f'Failed to extract PCAP for UID {uid}: {message}'
+                    })
+                    failed += 1
+                    
+            except Exception as e:
+                results.append({
+                    'uid': uid,
+                    'success': False,
+                    'error': f'Error processing UID {uid}: {str(e)}'
+                })
+                failed += 1
+        
+        return jsonify({
+            'success': True,
+            'message': f'Processed {len(uids)} connections: {successful} successful, {failed} failed',
+            'results': results,
+            'successful': successful,
+            'failed': failed,
+            'total': len(uids)
+        })
+    
+    except Exception as e:
+        logger.error(f"Error in bulk PCAP extraction: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
         }), 500
 
 if __name__ == '__main__':

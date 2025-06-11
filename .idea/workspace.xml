@@ -4,10 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Refine &quot;Fix &amp; Patches&quot; naming, implement detailed styling enhancements for tables, modals, and tabs, and improve visualization generation error handling in `PcapAnalyzer`.">
+    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mantaguard/data/unknown_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/mantaguard/data/unknown_categories.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/fix_patches.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/fix_patches.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/reports.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/reports.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,6 +65,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Flask server.Flask (app.py).executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -70,7 +77,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "ml.llm.LLMConfigurable",
+    "settings.editor.selected.configurable": "application.passwordSafe",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -80,11 +87,28 @@
       <recent name="$PROJECT_DIR$/ai-model/output/analysis_results" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/data/labeling/extracted_pcaps" />
       <recent name="$PROJECT_DIR$/ai-model/training" />
       <recent name="$PROJECT_DIR$/ai-model/test" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Shell Script.start.sh">
+    <configuration name="Flask (app.py)" type="Python.FlaskServer" temporary="true" nameIsGenerated="true">
+      <module name="MantaGuard" />
+      <option name="target" value="$PROJECT_DIR$/app.py" />
+      <option name="targetType" value="PATH" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <method v="2" />
+    </configuration>
     <configuration name="MantaGuard" type="Python.FlaskServer">
       <module name="MantaGuard" />
       <option name="target" value="$PROJECT_DIR$/app.py" />
@@ -101,6 +125,27 @@
       <option name="launchJavascriptDebuger" value="false" />
       <method v="2" />
     </configuration>
+    <configuration name="start.sh" type="ShConfigurationType" temporary="true">
+      <option name="SCRIPT_TEXT" value="" />
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/start.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="EXECUTE_IN_TERMINAL" value="true" />
+      <option name="EXECUTE_SCRIPT_FILE" value="true" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Shell Script.start.sh" />
+        <item itemvalue="Flask server.Flask (app.py)" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -138,6 +183,9 @@
       <workItem from="1749423009112" duration="12568000" />
       <workItem from="1749467182162" duration="114000" />
       <workItem from="1749467306762" duration="1635000" />
+      <workItem from="1749541668997" duration="14493000" />
+      <workItem from="1749636891694" duration="55000" />
+      <workItem from="1749637280002" duration="1177000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project structure and configuration files for the AI">
       <option name="closed" value="true" />
@@ -355,7 +403,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749501122912</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Add utilities for model metrics, safety, and training validation  &#10;&#10;This update introduces new utility modules to enhance model evaluation, safety, and training workflows.  &#10;&#10;**Key Additions:**  &#10;- **`model_metrics.py`**: Provides real-world metrics calculation for trained models using validation data.  &#10;- **`model_safety.py`**: Implements backup, validation, and rollback features for model safety operations.  &#10;- **`training_validation.py`**: Validates training data and parameters before retraining, ensuring data quality and readiness.  &#10;&#10;These tools improve model reliability, data management, and training robustness.">
+      <option name="closed" value="true" />
+      <created>1749503155764</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1749503155764</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -443,6 +499,10 @@
     <MESSAGE value=" Remove legacy scripts and orphaned files during project restructuring&#10;&#10;This commit removes unused and redundant scripts/files as part of the restructuring process to streamline the project and improve maintainability." />
     <MESSAGE value=" Initiate project restructuring into professional Python package format&#10;&#10;This commit establishes a structured foundation for MantaGuard by reorganizing it into a professional Python package. Key additions include:&#10;&#10;- Standardized directory structure with `mantaguard` and `tests` modules.&#10;- Created base `__init__.py` files for core submodules (network, AI, web, security, utils, etc.).&#10;- Added `.gitkeep` for maintaining essential directory structure.&#10;&#10;Future commits will expand upon this restructuring to further enhance modularity, maintainability, and scalability for the project." />
     <MESSAGE value="Refine &quot;Fix &amp; Patches&quot; naming, implement detailed styling enhancements for tables, modals, and tabs, and improve visualization generation error handling in `PcapAnalyzer`." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refine &quot;Fix &amp; Patches&quot; naming, implement detailed styling enhancements for tables, modals, and tabs, and improve visualization generation error handling in `PcapAnalyzer`." />
+    <MESSAGE value="Add utilities for model metrics, safety, and training validation  &#10;&#10;This update introduces new utility modules to enhance model evaluation, safety, and training workflows.  &#10;&#10;**Key Additions:**  &#10;- **`model_metrics.py`**: Provides real-world metrics calculation for trained models using validation data.  &#10;- **`model_safety.py`**: Implements backup, validation, and rollback features for model safety operations.  &#10;- **`training_validation.py`**: Validates training data and parameters before retraining, ensuring data quality and readiness.  &#10;&#10;These tools improve model reliability, data management, and training robustness." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add utilities for model metrics, safety, and training validation  &#10;&#10;This update introduces new utility modules to enhance model evaluation, safety, and training workflows.  &#10;&#10;**Key Additions:**  &#10;- **`model_metrics.py`**: Provides real-world metrics calculation for trained models using validation data.  &#10;- **`model_safety.py`**: Implements backup, validation, and rollback features for model safety operations.  &#10;- **`training_validation.py`**: Validates training data and parameters before retraining, ensuring data quality and readiness.  &#10;&#10;These tools improve model reliability, data management, and training robustness." />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/MantaGuard$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1749637428639" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

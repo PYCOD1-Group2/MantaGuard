@@ -22,20 +22,51 @@ uv.lock
 *~
 .DS_Store
 
-# Data directories - preserve structure but ignore large files
+# Data directories - preserve structure but ignore all data files for security
+# PCAP and network capture files
 data/pcaps/*
 !data/pcaps/.gitkeep
+
+# Database files
+*.db
+data/*.db
+
+# Analysis and output files
+data/analysis/*
+!data/analysis/.gitkeep
+data/output/*
+!data/output/.gitkeep
+!data/output/analysis_results/
+data/output/analysis_results/*
+!data/output/analysis_results/.gitkeep
+
+# Training and model files
+data/models/*
+!data/models/.gitkeep
+
+# Log files
+data/logs/*
+!data/logs/.gitkeep
+
+# Forensics data
 data/forensics/*
 !data/forensics/.gitkeep
 !data/forensics/README.md
-data/output/analysis_results/*
-!data/output/analysis_results/.gitkeep
-data/output/ocsvm_model/*.pkl
-data/output/retrained_model/*.pkl
-data/logs/*
-!data/logs/.gitkeep
-data/models/*
-!data/models/.gitkeep
+
+# Labeling and extracted data
+data/labeling/*
+!data/labeling/.gitkeep
+!data/labeling/extracted_pcaps/
+data/labeling/extracted_pcaps/*
+!data/labeling/extracted_pcaps/.gitkeep
+
+# Attack data samples
+data/AttackData/*
+!data/AttackData/.gitkeep
+
+# Generated CSV and analysis files
+data/*.csv
+data/labeled_anomalies.csv
 
 # Temporary and runtime files
 *.log

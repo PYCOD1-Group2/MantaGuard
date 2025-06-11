@@ -1,0 +1,2176 @@
+{% extends "base.html" %}
+
+{% block title %}Connection Browser{% endblock %}
+
+{% block extra_css %}
+<style>
+    .connection-browser {
+        background-color: #1E1E1E;
+        color: #ffffff;
+        min-height: 100vh;
+    }
+    
+    /* Filter panel styling */
+    .filter-panel {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(0, 191, 255, 0.3);
+    }
+    
+    .filter-row {
+        display: flex;
+        gap: 15px;
+        align-items: end;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 150px;
+    }
+    
+    .filter-group label {
+        color: #b0b0b0;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+    
+    .filter-group select,
+    .filter-group input {
+        background: #262730;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        padding: 8px 12px;
+        border-radius: 4px;
+    }
+    
+    /* Connection table styling */
+    .connections-table {
+        background: #1e1e1e !important;
+        border: 2px solid rgba(0, 191, 255, 0.3) !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+        margin-bottom: 20px;
+    }
+    
+    .connections-table th {
+        background: rgba(255, 255, 255, 0.03) !important;
+        color: #b0b0b0 !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        border-color: rgba(255, 255, 255, 0.12) !important;
+        font-size: 0.8rem !important;
+        border-bottom: 2px solid #00BFFF !important;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .connections-table td {
+        border-color: rgba(255, 255, 255, 0.12) !important;
+        color: #ffffff !important;
+        background: #1e1e1e !important;
+        padding: 8px 12px !important;
+        font-size: 0.85rem;
+    }
+    
+    .connections-table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    .connections-table tbody tr.selected {
+        background: rgba(0, 191, 255, 0.2) !important;
+    }
+    
+    /* Badge styling for labels */
+    .label-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .label-badge.reconnaissance { background: #FF6B6B; color: #ffffff; }
+    .label-badge.exploitation { background: #4ECDC4; color: #000000; }
+    .label-badge.persistence { background: #FFE66D; color: #000000; }
+    .label-badge.denial-of-service { background: #A8E6CF; color: #000000; }
+    .label-badge.malware { background: #B19CD9; color: #ffffff; }
+    .label-badge.unknown { background: #95A5A6; color: #ffffff; }
+    .label-badge.normal { background: #2ECC71; color: #ffffff; }
+    .label-badge.unlabeled { background: #34495E; color: #ffffff; }
+    
+    /* Bulk labeling panel */
+    .bulk-labeling-panel {
+        background: rgba(0, 191, 255, 0.1);
+        border: 1px solid rgba(0, 191, 255, 0.3);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        display: none;
+    }
+    
+    .bulk-labeling-panel.show {
+        display: block;
+        animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Pagination styling */
+    .pagination-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding: 15px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .pagination-info {
+        color: #b0b0b0;
+        font-size: 0.9rem;
+    }
+    
+    .pagination-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .pagination-controls button {
+        background: #262730;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .pagination-controls button:hover:not(:disabled) {
+        background: rgba(0, 191, 255, 0.2);
+        border-color: rgba(0, 191, 255, 0.5);
+    }
+    
+    .pagination-controls button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    /* Connection details modal */
+    .connection-details-modal .modal-content {
+        background: #1e1e1e;
+        border: 2px solid rgba(0, 191, 255, 0.3);
+        color: #ffffff;
+    }
+    
+    .connection-details-modal .modal-header {
+        background: rgba(0, 191, 255, 0.1);
+        border-bottom: 1px solid rgba(0, 191, 255, 0.3);
+    }
+    
+    .connection-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin: 15px 0;
+    }
+    
+    .connection-detail-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 10px;
+        border-radius: 4px;
+        border-left: 3px solid #00BFFF;
+    }
+    
+    .connection-detail-item .label {
+        color: #b0b0b0;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+    }
+    
+    .connection-detail-item .value {
+        color: #ffffff;
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+    
+    /* Statistics cards */
+    .stats-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(0, 191, 255, 0.3);
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+    }
+    
+    .stats-card .number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #00BFFF;
+        margin-bottom: 5px;
+    }
+    
+    .stats-card .label {
+        color: #b0b0b0;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Loading states */
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #00BFFF;
+        animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    .loading-overlay {
+        position: relative;
+    }
+    
+    .loading-overlay::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+    
+    /* Notification system */
+    .notification-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1060;
+        max-width: 400px;
+    }
+    
+    .notification {
+        background: #1e1e1e;
+        border: 1px solid rgba(0, 191, 255, 0.3);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+    }
+    
+    .notification.show {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    
+    .notification.success {
+        border-color: #28a745;
+        background: rgba(40, 167, 69, 0.1);
+    }
+    
+    .notification.error {
+        border-color: #dc3545;
+        background: rgba(220, 53, 69, 0.1);
+    }
+    
+    .notification.warning {
+        border-color: #ffc107;
+        background: rgba(255, 193, 7, 0.1);
+    }
+    
+    .notification .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    
+    .notification .notification-title {
+        font-weight: 600;
+        color: #ffffff;
+    }
+    
+    .notification .notification-close {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        padding: 0;
+        font-size: 0.9rem;
+    }
+    
+    .notification .notification-close:hover {
+        color: #ffffff;
+    }
+    
+    .notification .notification-body {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.9rem;
+    }
+    
+    /* Sortable table headers */
+    .sortable {
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+    }
+    
+    .sortable:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .sort-icon {
+        font-size: 0.8em;
+        margin-left: 5px;
+        opacity: 0.5;
+    }
+    
+    .sort-icon.active {
+        opacity: 1;
+    }
+    
+    .sort-icon.fa-sort-up {
+        color: #0dcaf0;
+    }
+    
+    .sort-icon.fa-sort-down {
+        color: #0dcaf0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid connection-browser">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-network-wired me-2"></i>Connection Browser & Labeling
+            </h1>
+            
+            <!-- Quick Start Workflow -->
+            <div class="alert alert-info mb-4" role="alert">
+                <h6><i class="fas fa-info-circle me-2"></i>How This Works</h6>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>1. Get Data</strong><br>
+                        <small>First run network scans or upload PCAP files in the <strong>Scanning</strong> tab</small>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>2. Label Anomalies</strong><br>
+                        <small>Filter for anomalies below, select them, and apply attack type labels</small>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>3. Train Classifier</strong><br>
+                        <small>Once you have 20+ labeled connections, click "Train This Model" above</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="number" id="total-connections">-</div>
+                        <div class="label">Total Connections</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="number" id="anomaly-count">-</div>
+                        <div class="label">Anomalies</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="number" id="labeled-count">-</div>
+                        <div class="label">Labeled</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="number" id="selected-count">0</div>
+                        <div class="label">Selected</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filter Panel -->
+            <div class="filter-panel">
+                <h5 class="mb-3"><i class="fas fa-filter me-2"></i>Filters</h5>
+                
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>Anomaly Status</label>
+                        <select id="filter-anomaly" class="form-select">
+                            <option value="">All Connections</option>
+                            <option value="true">Anomalies Only</option>
+                            <option value="false">Normal Only</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Label Category</label>
+                        <select id="filter-category" class="form-select">
+                            <option value="">All Categories</option>
+                            <option value="reconnaissance">Reconnaissance</option>
+                            <option value="exploitation">Exploitation</option>
+                            <option value="persistence">Persistence</option>
+                            <option value="denial-of-service">Denial of Service</option>
+                            <option value="malware">Malware</option>
+                            <option value="unknown">Unknown</option>
+                            <option value="normal">Normal</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Review Status</label>
+                        <select id="filter-review" class="form-select">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="reviewed">Reviewed</option>
+                            <option value="needs_review">Needs Review</option>
+                            <option value="verified">Verified</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Training Source</label>
+                        <select id="filter-source" class="form-select">
+                            <option value="">All Sources</option>
+                            <option value="analysis_import">Analysis Import</option>
+                            <option value="hybrid_pipeline">Hybrid Pipeline</option>
+                            <option value="manual_entry">Manual Entry</option>
+                            <option value="legacy_migration">Legacy Migration</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Start Date</label>
+                        <input type="datetime-local" id="filter-start-date" class="form-control">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>End Date</label>
+                        <input type="datetime-local" id="filter-end-date" class="form-control">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <button class="btn btn-primary" onclick="applyFilters()">
+                            <i class="fas fa-search me-1"></i>Apply Filters
+                        </button>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <button class="btn btn-secondary" onclick="clearFilters()">
+                            <i class="fas fa-times me-1"></i>Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI System Status Cards -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card" style="background: rgba(255, 107, 107, 0.1); border-color: rgba(255, 107, 107, 0.3);">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-search me-2" style="color: #FF6B6B;"></i>
+                                Anomaly Detection (OneClassSVM)
+                            </h6>
+                            <p class="card-text small">
+                                <strong>Purpose:</strong> Detects normal vs suspicious network behavior<br>
+                                <strong>Status:</strong> <span id="anomaly-model-status">Pre-trained model active</span><br>
+                                <strong>Training:</strong> Uses normal traffic patterns (not manual labels)
+                            </p>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                This model finds "anomalies" - you can't train it with manual labels
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card" style="background: rgba(76, 205, 196, 0.1); border-color: rgba(76, 205, 196, 0.3);">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-brain me-2" style="color: #4ECDC4;"></i>
+                                Attack Classification (Multi-Class)
+                            </h6>
+                            <p class="card-text small">
+                                <strong>Purpose:</strong> Categorizes anomalies into attack types<br>
+                                <strong>Status:</strong> <span id="classifier-model-status">Ready for training</span><br>
+                                <strong>Training:</strong> Uses your manual labels below
+                            </p>
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-success" onclick="trainMultiClassModel()" id="train-classifier-btn">
+                                    <i class="fas fa-brain me-1"></i>Train This Model
+                                </button>
+                                <span class="small text-muted ms-2" id="training-requirements">
+                                    Need 20+ labeled connections
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <button class="btn btn-info me-2" onclick="showScanSelectionModal()">
+                        <i class="fas fa-download me-1"></i>Import Anomalies from Scan
+                    </button>
+                    <button class="btn btn-outline-primary me-2" onclick="refreshConnections()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                    
+                    <!-- Selection-based actions -->
+                    <span class="selection-actions" id="selection-actions" style="display: none;">
+                        <span class="badge bg-primary me-2" id="action-bar-selected-count">0 selected</span>
+                        <button class="btn btn-outline-info me-2" onclick="extractSelectedPcaps()">
+                            <i class="fas fa-file-export me-1"></i>Extract PCAPs
+                        </button>
+                        <button class="btn btn-outline-warning me-2" onclick="openSelectedPcaps()">
+                            <i class="fas fa-external-link-alt me-1"></i>Open PCAPs
+                        </button>
+                        <button class="btn btn-outline-danger me-2" onclick="deleteSelectedConnections()">
+                            <i class="fas fa-trash me-1"></i>Delete
+                        </button>
+                    </span>
+                </div>
+                
+                <div>
+                    <button class="btn btn-success" onclick="exportTrainingData()">
+                        <i class="fas fa-download me-1"></i>Export Data
+                    </button>
+                    <button class="btn btn-outline-info" onclick="viewTrainingProgress()">
+                        <i class="fas fa-chart-line me-1"></i>View Progress
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Connections Table -->
+            <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                <table class="table table-sm connections-table" id="connections-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="select-all-connections" onchange="toggleSelectAll()">
+                            </th>
+                            <th class="sortable" onclick="sortTable('timestamp')" data-sort="timestamp">
+                                Timestamp 
+                                <i class="fas fa-sort sort-icon" id="sort-timestamp"></i>
+                            </th>
+                            <th class="sortable" onclick="sortTable('source')" data-sort="source">
+                                Source → Dest 
+                                <i class="fas fa-sort sort-icon" id="sort-source"></i>
+                            </th>
+                            <th class="sortable" onclick="sortTable('proto')" data-sort="proto">
+                                Proto/Service 
+                                <i class="fas fa-sort sort-icon" id="sort-proto"></i>
+                            </th>
+                            <th class="sortable" onclick="sortTable('bytes')" data-sort="bytes">
+                                Bytes 
+                                <i class="fas fa-sort sort-icon" id="sort-bytes"></i>
+                            </th>
+                            <th class="sortable" onclick="sortTable('anomaly_score')" data-sort="anomaly_score">
+                                Anomaly Score 
+                                <i class="fas fa-sort sort-icon" id="sort-anomaly_score"></i>
+                            </th>
+                            <th>PCAP</th>
+                            <th class="sortable" onclick="sortTable('label')" data-sort="label">
+                                Current Label 
+                                <i class="fas fa-sort sort-icon" id="sort-label"></i>
+                            </th>
+                            <th class="sortable" onclick="sortTable('review_status')" data-sort="review_status">
+                                Review Status 
+                                <i class="fas fa-sort sort-icon" id="sort-review_status"></i>
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="connections-tbody">
+                        <tr>
+                            <td colspan="10" class="text-center text-muted">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Loading connections...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <div class="pagination-info">
+                    Showing <span id="showing-start">0</span> to <span id="showing-end">0</span> of <span id="total-count">0</span> connections
+                </div>
+                
+                <div class="pagination-controls">
+                    <button id="prev-page" onclick="previousPage()" disabled>
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                    
+                    <select id="page-size" onchange="changePageSize()" class="form-select" style="width: auto;">
+                        <option value="50">50 per page</option>
+                        <option value="100" selected>100 per page</option>
+                        <option value="200">200 per page</option>
+                        <option value="500">500 per page</option>
+                    </select>
+                    
+                    <button id="next-page" onclick="nextPage()">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Labeling Panel -->
+<div class="container-fluid mt-4">
+    <div class="bulk-labeling-panel" id="bulk-labeling-panel">
+        <h5 class="mb-3">
+            <i class="fas fa-tags me-2"></i>Bulk Label <span id="bulk-selected-count">0</span> Connections
+        </h5>
+        
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">Category</label>
+                <select id="bulk-category" class="form-select">
+                    <option value="">Select category...</option>
+                    <option value="reconnaissance">Reconnaissance</option>
+                    <option value="exploitation">Exploitation</option>
+                    <option value="persistence">Persistence</option>
+                    <option value="denial-of-service">Denial of Service</option>
+                    <option value="malware">Malware</option>
+                    <option value="unknown">Unknown</option>
+                    <option value="normal">Normal</option>
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label class="form-label">Subcategory</label>
+                <select id="bulk-subcategory" class="form-select">
+                    <option value="">Select subcategory...</option>
+                </select>
+            </div>
+            
+            <div class="col-md-2">
+                <label class="form-label">Confidence</label>
+                <select id="bulk-confidence" class="form-select">
+                    <option value="high">High</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+            
+            <div class="col-md-2">
+                <label class="form-label">Labeled By</label>
+                <input type="text" id="bulk-labeled-by" class="form-control" placeholder="Your name">
+            </div>
+            
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <div>
+                    <button class="btn btn-success me-2" onclick="applyBulkLabels()">
+                        <i class="fas fa-check me-1"></i>Apply Labels
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearSelection()">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-3">
+            <div class="col-12">
+                <label class="form-label">Notes (Optional)</label>
+                <textarea id="bulk-notes" class="form-control" rows="2" placeholder="Add notes about this labeling decision..."></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Container -->
+<div class="notification-container" id="notification-container"></div>
+
+<!-- Connection Details Modal -->
+<div class="modal fade connection-details-modal" id="connectionDetailsModal" tabindex="-1" aria-labelledby="connectionDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="connectionDetailsModalLabel">
+                    <i class="fas fa-info-circle me-2"></i>Connection Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="connection-details-content">
+                    <!-- Connection details will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="deleteCurrentConnection()">
+                    <i class="fas fa-trash me-1"></i>Delete Connection
+                </button>
+                <button type="button" class="btn btn-info" onclick="extractPcapForConnection()" id="extractPcapBtn">
+                    <i class="fas fa-file-export me-1"></i>Extract PCAP
+                </button>
+                <button type="button" class="btn btn-success" onclick="openPcapForConnection()" id="openPcapBtn" style="display: none;">
+                    <i class="fas fa-external-link-alt me-1"></i>Open PCAP
+                </button>
+                <button type="button" class="btn btn-primary" onclick="editConnectionLabel()">
+                    <i class="fas fa-edit me-1"></i>Edit Label
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scan Selection Modal -->
+<div class="modal fade" id="scanSelectionModal" tabindex="-1" aria-labelledby="scanSelectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background: #1e1e1e; border: 2px solid rgba(0, 191, 255, 0.3); color: #ffffff;">
+            <div class="modal-header" style="background: rgba(0, 191, 255, 0.1); border-bottom: 1px solid rgba(0, 191, 255, 0.3);">
+                <h5 class="modal-title" id="scanSelectionModalLabel">
+                    <i class="fas fa-search me-2"></i>Select Scan to Import Anomalies
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <p class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Select a scan to import its anomalies for labeling. Only connections marked as anomalies will be imported.
+                    </p>
+                </div>
+                
+                <div id="scansLoadingIndicator" class="text-center">
+                    <i class="fas fa-spinner fa-spin me-2"></i>Loading available scans...
+                </div>
+                
+                <div id="scansContainer" style="display: none;">
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-sm" style="color: #ffffff;">
+                            <thead style="background: rgba(255, 255, 255, 0.05);">
+                                <tr>
+                                    <th>Scan Date</th>
+                                    <th>Total Connections</th>
+                                    <th>Anomalies</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scansTableBody">
+                                <!-- Scan rows will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="scansErrorMessage" style="display: none;" class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span id="scansErrorText"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="refreshAvailableScans()">
+                    <i class="fas fa-sync-alt me-1"></i>Refresh Scans
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background: #1e1e1e; border: 2px solid rgba(220, 53, 69, 0.3); color: #ffffff;">
+            <div class="modal-header" style="background: rgba(220, 53, 69, 0.1); border-bottom: 1px solid rgba(220, 53, 69, 0.3);">
+                <h5 class="modal-title" id="confirmationModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2" style="color: #dc3545;"></i>Confirm Action
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmationMessage">Are you sure you want to proceed?</p>
+                <div class="alert alert-warning" style="background: rgba(255, 193, 7, 0.1); border-color: rgba(255, 193, 7, 0.3); color: #fff3cd;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    This action cannot be undone.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmActionBtn">
+                    <i class="fas fa-trash me-1"></i>Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global variables
+let currentConnections = [];
+let currentPage = 0;
+let pageSize = 100;
+let totalConnections = 0;
+let selectedConnections = new Set();
+let currentFilters = {};
+let pendingConfirmAction = null;
+let currentSort = { field: 'timestamp', direction: 'desc' };
+
+// Category to subcategory mapping
+const categorySubcategories = {
+    'reconnaissance': ['port-scan', 'host-discovery', 'service-enumeration'],
+    'exploitation': ['brute-force-attack', 'buffer-overflow', 'privilege-escalation'],
+    'persistence': ['backdoor', 'lateral-movement', 'data-exfiltration'],
+    'denial-of-service': ['ddos-attack', 'resource-exhaustion'],
+    'malware': ['c2-communication', 'malware-download', 'infected-host'],
+    'unknown': ['unknown', 'suspicious'],
+    'normal': ['benign', 'maintenance']
+};
+
+// Helper function to show extraction confirmation modal
+function showExtractionConfirmationModal(count, onConfirm) {
+    const modal = document.getElementById('confirmationModal');
+    const messageEl = document.getElementById('confirmationMessage');
+    const confirmBtn = document.getElementById('confirmActionBtn');
+    const modalTitle = document.querySelector('#confirmationModal .modal-title');
+    const warningAlert = document.querySelector('#confirmationModal .alert-warning');
+    
+    // Update modal content for extraction
+    modalTitle.innerHTML = '<i class="fas fa-file-export me-2" style="color: #0dcaf0;"></i>Extract PCAPs';
+    messageEl.textContent = `Extract PCAPs for ${count} selected connection${count > 1 ? 's' : ''}?`;
+    confirmBtn.innerHTML = '<i class="fas fa-file-export me-1"></i>Extract PCAPs';
+    confirmBtn.className = 'btn btn-info';
+    
+    // Update warning message
+    warningAlert.innerHTML = `
+        <i class="fas fa-info-circle me-2"></i>
+        This will create individual PCAP files for forensic analysis in the labeling directory.
+    `;
+    warningAlert.className = 'alert alert-info';
+    warningAlert.style.background = 'rgba(13, 202, 240, 0.1)';
+    warningAlert.style.borderColor = 'rgba(13, 202, 240, 0.3)';
+    warningAlert.style.color = '#9eeaf9';
+    
+    // Store the callback
+    pendingConfirmAction = onConfirm;
+    
+    // Show the modal
+    const modalInstance = new bootstrap.Modal(modal);
+    modalInstance.show();
+}
+
+// Helper function to show confirmation modal
+function showConfirmationModal(message, onConfirm, buttonText = 'Delete', buttonIcon = 'fas fa-trash') {
+    document.getElementById('confirmationMessage').textContent = message;
+    const confirmBtn = document.getElementById('confirmActionBtn');
+    confirmBtn.innerHTML = `<i class="${buttonIcon} me-1"></i>${buttonText}`;
+    
+    // Store the callback
+    pendingConfirmAction = onConfirm;
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+    modal.show();
+}
+
+// Table sorting functions
+function sortTable(field) {
+    // Toggle sort direction if clicking the same field
+    if (currentSort.field === field) {
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+        // Default to descending for new field
+        currentSort.field = field;
+        currentSort.direction = 'desc';
+    }
+    
+    // Update sort icons
+    updateSortIcons();
+    
+    // Sort the current connections data
+    sortConnections();
+    
+    // Re-render the table
+    displayConnections(currentConnections);
+}
+
+function updateSortIcons() {
+    // Reset all sort icons
+    document.querySelectorAll('.sort-icon').forEach(icon => {
+        icon.className = 'fas fa-sort sort-icon';
+    });
+    
+    // Set active sort icon
+    const activeIcon = document.getElementById(`sort-${currentSort.field}`);
+    if (activeIcon) {
+        activeIcon.className = `fas fa-sort-${currentSort.direction === 'asc' ? 'up' : 'down'} sort-icon active`;
+    }
+}
+
+function sortConnections() {
+    currentConnections.sort((a, b) => {
+        let aVal, bVal;
+        
+        switch (currentSort.field) {
+            case 'timestamp':
+                aVal = new Date(a.timestamp);
+                bVal = new Date(b.timestamp);
+                break;
+            case 'source':
+                aVal = `${a.source_ip}:${a.source_port || '0'}`;
+                bVal = `${b.source_ip}:${b.source_port || '0'}`;
+                break;
+            case 'proto':
+                aVal = a.proto || '';
+                bVal = b.proto || '';
+                break;
+            case 'bytes':
+                aVal = (a.orig_bytes || 0) + (a.resp_bytes || 0);
+                bVal = (b.orig_bytes || 0) + (b.resp_bytes || 0);
+                break;
+            case 'anomaly_score':
+                aVal = a.anomaly_score || 0;
+                bVal = b.anomaly_score || 0;
+                break;
+            case 'label':
+                aVal = a.label_category || '';
+                bVal = b.label_category || '';
+                break;
+            case 'review_status':
+                aVal = a.review_status || '';
+                bVal = b.review_status || '';
+                break;
+            default:
+                aVal = a[currentSort.field] || '';
+                bVal = b[currentSort.field] || '';
+        }
+        
+        // Handle numeric comparison
+        if (typeof aVal === 'number' && typeof bVal === 'number') {
+            return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+        }
+        
+        // Handle date comparison
+        if (aVal instanceof Date && bVal instanceof Date) {
+            return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+        }
+        
+        // Handle string comparison
+        const comparison = String(aVal).localeCompare(String(bVal));
+        return currentSort.direction === 'asc' ? comparison : -comparison;
+    });
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadRepositoryStatistics();
+    loadConnections();
+    loadTrainingStatus();
+    
+    // Initialize sort icons
+    updateSortIcons();
+    
+    // Setup category change handler
+    document.getElementById('bulk-category').addEventListener('change', function() {
+        updateSubcategoryOptions(this.value, 'bulk-subcategory');
+    });
+    
+    // Setup confirmation modal handler
+    document.getElementById('confirmActionBtn').addEventListener('click', function() {
+        if (pendingConfirmAction) {
+            pendingConfirmAction();
+            pendingConfirmAction = null;
+        }
+        
+        // Hide the modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
+        modal.hide();
+    });
+});
+
+function updateSubcategoryOptions(category, selectId) {
+    const subcategorySelect = document.getElementById(selectId);
+    subcategorySelect.innerHTML = '<option value="">Select subcategory...</option>';
+    
+    if (category && categorySubcategories[category]) {
+        categorySubcategories[category].forEach(sub => {
+            const option = document.createElement('option');
+            option.value = sub;
+            option.textContent = sub.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            subcategorySelect.appendChild(option);
+        });
+    }
+}
+
+function loadRepositoryStatistics() {
+    fetch('/api/training-repository')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const stats = data.statistics.overall;
+                document.getElementById('total-connections').textContent = stats.total_connections || 0;
+                document.getElementById('anomaly-count').textContent = stats.anomaly_count || 0;
+                document.getElementById('labeled-count').textContent = stats.labeled_count || 0;
+            }
+        })
+        .catch(error => console.error('Error loading statistics:', error));
+}
+
+function loadTrainingStatus() {
+    fetch('/api/training-repository')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const stats = data.statistics.overall;
+                const labeledCount = stats.labeled_count || 0;
+                
+                // Update training requirements
+                updateTrainingRequirements(labeledCount);
+                
+                // Update model status
+                const statusSpan = document.getElementById('classifier-model-status');
+                if (labeledCount >= 20) {
+                    statusSpan.textContent = 'Ready for training';
+                    document.getElementById('train-classifier-btn').disabled = false;
+                } else {
+                    statusSpan.textContent = `Need ${20 - labeledCount} more labeled connections`;
+                    document.getElementById('train-classifier-btn').disabled = true;
+                }
+                
+                // Check if there are recent unlabeled anomalies to highlight
+                if (stats.anomaly_count > 0 && stats.labeled_count === 0) {
+                    showDataAvailableAlert(stats.anomaly_count);
+                }
+            }
+        })
+        .catch(error => console.error('Error loading training status:', error));
+}
+
+function showDataAvailableAlert(anomalyCount) {
+    // Create a helpful alert if there are unlabeled anomalies
+    const existingAlert = document.getElementById('data-available-alert');
+    if (existingAlert) return; // Don't show multiple alerts
+    
+    const alertHtml = `
+        <div class="alert alert-success alert-dismissible fade show" role="alert" id="data-available-alert">
+            <h6><i class="fas fa-check-circle me-2"></i>Great! You have ${anomalyCount} anomalies ready for labeling</h6>
+            <p class="mb-2">These were automatically imported from your recent network scans. To start training:</p>
+            <ol class="mb-0">
+                <li>Filter for "Anomalies Only" below</li>
+                <li>Select the connections you want to label</li>
+                <li>Apply attack type labels using the bulk labeling panel</li>
+            </ol>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    
+    // Insert after the workflow info
+    const workflowAlert = document.querySelector('.alert.alert-info');
+    if (workflowAlert) {
+        workflowAlert.insertAdjacentHTML('afterend', alertHtml);
+    }
+}
+
+function loadConnections() {
+    const params = new URLSearchParams({
+        limit: pageSize,
+        offset: currentPage * pageSize,
+        ...currentFilters
+    });
+    
+    document.getElementById('connections-tbody').innerHTML = `
+        <tr>
+            <td colspan="9" class="text-center text-muted">
+                <i class="fas fa-spinner fa-spin me-2"></i>Loading connections...
+            </td>
+        </tr>
+    `;
+    
+    fetch(`/api/connections?${params}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                currentConnections = data.connections;
+                displayConnections(data.connections);
+                updatePaginationInfo(data.count);
+            } else {
+                showNotification('Error', 'Failed to load connections: ' + data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading connections:', error);
+            showNotification('Error', 'Failed to load connections', 'error');
+        });
+}
+
+function displayConnections(connections) {
+    const tbody = document.getElementById('connections-tbody');
+    
+    if (connections.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10" class="text-center text-muted">
+                    No connections found matching the current filters.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    // Store the connections globally and apply sorting
+    currentConnections = [...connections];
+    sortConnections();
+    
+    tbody.innerHTML = currentConnections.map((conn, index) => {
+        const isSelected = selectedConnections.has(conn.uid);
+        const labelBadge = getLabelBadge(conn.label_category, conn.label_subcategory);
+        const reviewBadge = getReviewBadge(conn.review_status);
+        const anomalyScore = conn.anomaly_score ? conn.anomaly_score.toFixed(3) : 'N/A';
+        const totalBytes = (conn.orig_bytes || 0) + (conn.resp_bytes || 0);
+        
+        return `
+            <tr class="${isSelected ? 'selected' : ''}" data-uid="${conn.uid}">
+                <td>
+                    <input type="checkbox" class="connection-checkbox" 
+                           value="${conn.uid}" ${isSelected ? 'checked' : ''}
+                           onchange="toggleConnectionSelection('${conn.uid}')">
+                </td>
+                <td>
+                    <small>${new Date(conn.timestamp).toLocaleString()}</small>
+                </td>
+                <td>
+                    <strong>${conn.source_ip}</strong>:${conn.source_port || '?'}<br>
+                    <i class="fas fa-arrow-right text-muted"></i> ${conn.dest_ip}:${conn.dest_port || '?'}
+                </td>
+                <td>
+                    <span class="badge bg-secondary">${conn.proto}</span><br>
+                    <small class="text-muted">${conn.service || 'unknown'}</small>
+                </td>
+                <td>
+                    <small>${formatBytes(totalBytes)}</small><br>
+                    <small class="text-muted">${conn.duration ? conn.duration.toFixed(2) + 's' : 'N/A'}</small>
+                </td>
+                <td>
+                    <span class="badge ${conn.is_anomaly ? 'bg-danger' : 'bg-success'}">
+                        ${anomalyScore}
+                    </span>
+                </td>
+                <td class="text-center">
+                    ${conn.has_extracted_pcap ? 
+                        '<i class="fas fa-file-archive text-success" title="PCAP extracted"></i>' : 
+                        '<i class="fas fa-minus text-muted" title="No PCAP"></i>'
+                    }
+                </td>
+                <td>${labelBadge}</td>
+                <td>${reviewBadge}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" 
+                            onclick="showConnectionDetails('${conn.uid}')"
+                            title="View Details">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    ${conn.has_extracted_pcap ? 
+                        `<button class="btn btn-sm btn-outline-success" 
+                                onclick="openPcapDirect('${conn.uid}')"
+                                title="Open PCAP">
+                            <i class="fas fa-external-link-alt"></i>
+                        </button>` : ''
+                    }
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function getLabelBadge(category, subcategory) {
+    if (!category) {
+        return '<span class="label-badge unlabeled">Unlabeled</span>';
+    }
+    
+    const displayText = subcategory ? 
+        `${category}.${subcategory}`.replace(/-/g, ' ') : 
+        category.replace(/-/g, ' ');
+    
+    return `<span class="label-badge ${category}">${displayText}</span>`;
+}
+
+function getReviewBadge(status) {
+    const badgeClasses = {
+        'pending': 'bg-warning',
+        'reviewed': 'bg-info',
+        'needs_review': 'bg-danger',
+        'verified': 'bg-success'
+    };
+    
+    const displayText = status ? status.replace(/_/g, ' ') : 'pending';
+    const badgeClass = badgeClasses[status] || 'bg-secondary';
+    
+    return `<span class="badge ${badgeClass}">${displayText}</span>`;
+}
+
+function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+function toggleConnectionSelection(uid) {
+    if (selectedConnections.has(uid)) {
+        selectedConnections.delete(uid);
+    } else {
+        selectedConnections.add(uid);
+    }
+    
+    updateSelectionUI();
+}
+
+function toggleSelectAll() {
+    const selectAllCheckbox = document.getElementById('select-all-connections');
+    const connectionCheckboxes = document.querySelectorAll('.connection-checkbox');
+    
+    if (selectAllCheckbox.checked) {
+        connectionCheckboxes.forEach(checkbox => {
+            selectedConnections.add(checkbox.value);
+            checkbox.checked = true;
+        });
+    } else {
+        connectionCheckboxes.forEach(checkbox => {
+            selectedConnections.delete(checkbox.value);
+            checkbox.checked = false;
+        });
+    }
+    
+    updateSelectionUI();
+}
+
+function updateSelectionUI() {
+    const count = selectedConnections.size;
+    document.getElementById('selected-count').textContent = count;
+    document.getElementById('bulk-selected-count').textContent = count;
+    document.getElementById('action-bar-selected-count').textContent = `${count} selected`;
+    
+    const bulkPanel = document.getElementById('bulk-labeling-panel');
+    const selectionActions = document.getElementById('selection-actions');
+    
+    if (count > 0) {
+        bulkPanel.classList.add('show');
+        selectionActions.style.display = 'inline';
+    } else {
+        bulkPanel.classList.remove('show');
+        selectionActions.style.display = 'none';
+    }
+    
+    // Update table row styling
+    document.querySelectorAll('.connection-checkbox').forEach(checkbox => {
+        const row = checkbox.closest('tr');
+        if (selectedConnections.has(checkbox.value)) {
+            row.classList.add('selected');
+        } else {
+            row.classList.remove('selected');
+        }
+    });
+}
+
+function clearSelection() {
+    selectedConnections.clear();
+    document.querySelectorAll('.connection-checkbox').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    document.getElementById('select-all-connections').checked = false;
+    updateSelectionUI();
+}
+
+function applyFilters() {
+    currentFilters = {};
+    
+    const anomalyFilter = document.getElementById('filter-anomaly').value;
+    if (anomalyFilter) currentFilters.is_anomaly = anomalyFilter;
+    
+    const categoryFilter = document.getElementById('filter-category').value;
+    if (categoryFilter) currentFilters.label_category = categoryFilter;
+    
+    const reviewFilter = document.getElementById('filter-review').value;
+    if (reviewFilter) currentFilters.review_status = reviewFilter;
+    
+    const sourceFilter = document.getElementById('filter-source').value;
+    if (sourceFilter) currentFilters.training_source = sourceFilter;
+    
+    const startDate = document.getElementById('filter-start-date').value;
+    if (startDate) currentFilters.start_date = startDate;
+    
+    const endDate = document.getElementById('filter-end-date').value;
+    if (endDate) currentFilters.end_date = endDate;
+    
+    currentPage = 0;
+    clearSelection();
+    loadConnections();
+}
+
+function clearFilters() {
+    currentFilters = {};
+    currentPage = 0;
+    
+    document.getElementById('filter-anomaly').value = '';
+    document.getElementById('filter-category').value = '';
+    document.getElementById('filter-review').value = '';
+    document.getElementById('filter-source').value = '';
+    document.getElementById('filter-start-date').value = '';
+    document.getElementById('filter-end-date').value = '';
+    
+    clearSelection();
+    loadConnections();
+}
+
+function applyBulkLabels() {
+    const category = document.getElementById('bulk-category').value;
+    const subcategory = document.getElementById('bulk-subcategory').value;
+    const confidence = document.getElementById('bulk-confidence').value;
+    const labeledBy = document.getElementById('bulk-labeled-by').value;
+    const notes = document.getElementById('bulk-notes').value;
+    
+    if (!category || !subcategory) {
+        showNotification('Validation Error', 'Please select both category and subcategory', 'warning');
+        return;
+    }
+    
+    if (!labeledBy.trim()) {
+        showNotification('Validation Error', 'Please enter your name in the "Labeled By" field', 'warning');
+        return;
+    }
+    
+    if (selectedConnections.size === 0) {
+        showNotification('No Selection', 'Please select connections to label', 'warning');
+        return;
+    }
+    
+    const requestData = {
+        uids: Array.from(selectedConnections),
+        category: category,
+        subcategory: subcategory,
+        confidence: confidence,
+        labeled_by: labeledBy.trim(),
+        notes: notes.trim() || null
+    };
+    
+    fetch('/api/connections/label', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Success', 
+                `Successfully labeled ${data.updated_count} connections as ${category}.${subcategory}`, 
+                'success'
+            );
+            clearSelection();
+            loadConnections();
+            loadRepositoryStatistics();
+        } else {
+            showNotification('Error', 'Failed to apply labels: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Labeling error:', error);
+        showNotification('Error', 'Failed to apply labels', 'error');
+    });
+}
+
+function previousPage() {
+    if (currentPage > 0) {
+        currentPage--;
+        clearSelection();
+        loadConnections();
+    }
+}
+
+function nextPage() {
+    currentPage++;
+    clearSelection();
+    loadConnections();
+}
+
+function changePageSize() {
+    pageSize = parseInt(document.getElementById('page-size').value);
+    currentPage = 0;
+    clearSelection();
+    loadConnections();
+}
+
+function updatePaginationInfo(count) {
+    const start = currentPage * pageSize + 1;
+    const end = Math.min(start + count - 1, start + pageSize - 1);
+    
+    document.getElementById('showing-start').textContent = count > 0 ? start : 0;
+    document.getElementById('showing-end').textContent = count > 0 ? end : 0;
+    document.getElementById('total-count').textContent = totalConnections;
+    
+    document.getElementById('prev-page').disabled = currentPage === 0;
+    document.getElementById('next-page').disabled = count < pageSize;
+}
+
+function refreshConnections() {
+    clearSelection();
+    loadConnections();
+    loadRepositoryStatistics();
+    showNotification('Refreshed', 'Connection data has been refreshed', 'success');
+}
+
+function showScanSelectionModal() {
+    const modal = new bootstrap.Modal(document.getElementById('scanSelectionModal'));
+    modal.show();
+    loadAvailableScans();
+}
+
+function loadAvailableScans() {
+    const loadingIndicator = document.getElementById('scansLoadingIndicator');
+    const scansContainer = document.getElementById('scansContainer');
+    const errorMessage = document.getElementById('scansErrorMessage');
+    
+    // Show loading, hide others
+    loadingIndicator.style.display = 'block';
+    scansContainer.style.display = 'none';
+    errorMessage.style.display = 'none';
+    
+    fetch('/api/scans/available')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayAvailableScans(data.scans);
+                loadingIndicator.style.display = 'none';
+                scansContainer.style.display = 'block';
+            } else {
+                showScanError('Failed to load scans: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading scans:', error);
+            showScanError('Failed to load available scans');
+        });
+}
+
+function displayAvailableScans(scans) {
+    const tbody = document.getElementById('scansTableBody');
+    
+    if (scans.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    No scans available for import
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = scans.map(scan => {
+        const statusBadge = scan.is_imported 
+            ? '<span class="badge bg-success">Imported</span>'
+            : '<span class="badge bg-secondary">Available</span>';
+        
+        const actionButton = scan.anomaly_count > 0
+            ? `<button class="btn btn-sm btn-primary" onclick="importFromScan('${scan.scan_id}')" ${scan.is_imported ? 'disabled' : ''}>
+                 <i class="fas fa-download me-1"></i>Import ${scan.anomaly_count} Anomalies
+               </button>`
+            : '<span class="text-muted">No anomalies</span>';
+        
+        return `
+            <tr>
+                <td><small>${scan.timestamp_display}</small></td>
+                <td>${scan.total_connections}</td>
+                <td><strong class="${scan.anomaly_count > 0 ? 'text-warning' : 'text-muted'}">${scan.anomaly_count}</strong></td>
+                <td>${statusBadge}</td>
+                <td>${actionButton}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function importFromScan(scanId) {
+    const importBtn = document.querySelector(`button[onclick="importFromScan('${scanId}')"]`);
+    const originalText = importBtn.innerHTML;
+    
+    importBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Importing...';
+    importBtn.disabled = true;
+    
+    fetch('/api/connections/import-from-scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scan_id: scanId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Import Complete', 
+                `Successfully imported ${data.imported_count} anomalies from scan ${scanId}`, 
+                'success'
+            );
+            
+            // Close modal and refresh data
+            const modal = bootstrap.Modal.getInstance(document.getElementById('scanSelectionModal'));
+            modal.hide();
+            
+            refreshConnections();
+            loadRepositoryStatistics();
+            loadTrainingStatus();
+        } else {
+            showNotification('Import Failed', 'Failed to import anomalies: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Import error:', error);
+        showNotification('Import Failed', 'Failed to import anomalies', 'error');
+    })
+    .finally(() => {
+        importBtn.innerHTML = originalText;
+        importBtn.disabled = false;
+    });
+}
+
+function refreshAvailableScans() {
+    loadAvailableScans();
+}
+
+function showScanError(message) {
+    const loadingIndicator = document.getElementById('scansLoadingIndicator');
+    const scansContainer = document.getElementById('scansContainer');
+    const errorMessage = document.getElementById('scansErrorMessage');
+    const errorText = document.getElementById('scansErrorText');
+    
+    loadingIndicator.style.display = 'none';
+    scansContainer.style.display = 'none';
+    errorMessage.style.display = 'block';
+    errorText.textContent = message;
+}
+
+// Removed reimportLatest function - no longer needed with scan selection
+
+function trainMultiClassModel() {
+    // Update UI to show training in progress
+    const trainBtn = document.getElementById('train-classifier-btn');
+    const statusSpan = document.getElementById('classifier-model-status');
+    const originalBtnText = trainBtn.innerHTML;
+    
+    trainBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Training...';
+    trainBtn.disabled = true;
+    statusSpan.textContent = 'Training in progress...';
+    
+    showNotification('Training Started', 'Multi-class model training has been started', 'info');
+    
+    fetch('/api/models/multi-class-train', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            classifier_type: 'random_forest',
+            min_confidence: 'medium',
+            hyperparameter_tuning: false
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const metrics = data.training_metrics;
+            showNotification('Training Complete', 
+                `Model training completed! Accuracy: ${(metrics.accuracy * 100).toFixed(1)}%, Classes: ${metrics.classes_count}`, 
+                'success'
+            );
+            statusSpan.textContent = `Trained model ready (Accuracy: ${(metrics.accuracy * 100).toFixed(1)}%)`;
+            updateTrainingRequirements(metrics.training_samples);
+        } else {
+            showNotification('Training Failed', 'Failed to train model: ' + data.error, 'error');
+            statusSpan.textContent = 'Training failed - check data';
+        }
+    })
+    .catch(error => {
+        console.error('Training error:', error);
+        showNotification('Training Failed', 'Failed to train model', 'error');
+        statusSpan.textContent = 'Training error occurred';
+    })
+    .finally(() => {
+        trainBtn.innerHTML = originalBtnText;
+        trainBtn.disabled = false;
+    });
+}
+
+function updateTrainingRequirements(sampleCount) {
+    const reqSpan = document.getElementById('training-requirements');
+    if (sampleCount >= 20) {
+        reqSpan.innerHTML = `<i class="fas fa-check text-success me-1"></i>${sampleCount} labeled connections`;
+        reqSpan.className = 'small text-success ms-2';
+    } else {
+        reqSpan.innerHTML = `<i class="fas fa-exclamation-triangle text-warning me-1"></i>Need ${20 - sampleCount} more labeled connections`;
+        reqSpan.className = 'small text-warning ms-2';
+    }
+}
+
+function viewTrainingProgress() {
+    // Navigate to the Fix & Patches page for detailed training progress
+    window.location.href = '/fix-patches#ml-training-tab';
+}
+
+function exportTrainingData() {
+    showNotification('Export Started', 'Training data export has been initiated', 'info');
+    
+    fetch('/api/training-repository')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const stats = data.statistics.overall;
+                const exportData = {
+                    timestamp: new Date().toISOString(),
+                    total_connections: stats.total_connections,
+                    labeled_connections: stats.labeled_count,
+                    anomaly_count: stats.anomaly_count,
+                    export_url: '/api/connections?format=csv&limit=10000'
+                };
+                
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `mantaguard_training_data_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                showNotification('Export Complete', 
+                    `Exported ${stats.labeled_count} labeled connections`, 
+                    'success'
+                );
+            }
+        })
+        .catch(error => {
+            console.error('Export error:', error);
+            showNotification('Export Failed', 'Failed to export training data', 'error');
+        });
+}
+
+// Remove duplicate function - already implemented above
+
+function showConnectionDetails(uid) {
+    const connection = currentConnections.find(conn => conn.uid === uid);
+    if (!connection) return;
+    
+    const detailsContent = document.getElementById('connection-details-content');
+    detailsContent.innerHTML = `
+        <div class="connection-details">
+            <div class="connection-detail-item">
+                <div class="label">UID</div>
+                <div class="value">${connection.uid}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Timestamp</div>
+                <div class="value">${new Date(connection.timestamp).toLocaleString()}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Source</div>
+                <div class="value">${connection.source_ip}:${connection.source_port || '?'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Destination</div>
+                <div class="value">${connection.dest_ip}:${connection.dest_port || '?'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Protocol</div>
+                <div class="value">${connection.proto}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Service</div>
+                <div class="value">${connection.service || 'Unknown'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Duration</div>
+                <div class="value">${connection.duration ? connection.duration.toFixed(2) + ' seconds' : 'N/A'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Bytes Transferred</div>
+                <div class="value">${formatBytes((connection.orig_bytes || 0) + (connection.resp_bytes || 0))}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Anomaly Score</div>
+                <div class="value">${connection.anomaly_score ? connection.anomaly_score.toFixed(6) : 'N/A'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Is Anomaly</div>
+                <div class="value">${connection.is_anomaly ? 'Yes' : 'No'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Current Label</div>
+                <div class="value">${connection.label_category ? `${connection.label_category}.${connection.label_subcategory}` : 'Unlabeled'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Review Status</div>
+                <div class="value">${connection.review_status || 'Pending'}</div>
+            </div>
+        </div>
+        
+        ${connection.notes ? `
+        <div class="mt-3">
+            <h6>Notes:</h6>
+            <p class="text-muted">${connection.notes}</p>
+        </div>
+        ` : ''}
+        
+        ${connection.labeled_by ? `
+        <div class="mt-3">
+            <small class="text-muted">
+                Labeled by ${connection.labeled_by} on ${new Date(connection.labeled_at).toLocaleString()}
+            </small>
+        </div>
+        ` : ''}
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('connectionDetailsModal'));
+    modal.show();
+    
+    // Store current connection UID for PCAP operations
+    window.currentConnectionUID = uid;
+    
+    // Update PCAP button visibility based on extraction status
+    updatePcapButtonsVisibility(connection);
+}
+
+function updatePcapButtonsVisibility(connection) {
+    const extractBtn = document.getElementById('extractPcapBtn');
+    const openBtn = document.getElementById('openPcapBtn');
+    
+    if (connection.has_extracted_pcap) {
+        extractBtn.style.display = 'none';
+        openBtn.style.display = 'inline-block';
+    } else {
+        extractBtn.style.display = 'inline-block';
+        openBtn.style.display = 'none';
+    }
+}
+
+function extractPcapForConnection() {
+    const uid = window.currentConnectionUID;
+    if (!uid) {
+        showNotification('Error', 'No connection selected', 'error');
+        return;
+    }
+    
+    const extractBtn = document.getElementById('extractPcapBtn');
+    const originalText = extractBtn.innerHTML;
+    extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Extracting...';
+    extractBtn.disabled = true;
+    
+    fetch(`/api/labeling/extract-pcap/${uid}`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const title = data.already_exists ? 'PCAP Already Available' : 'PCAP Extracted';
+            showNotification(title, data.message || 'PCAP file ready for inspection', 'success');
+            
+            // Update button visibility
+            extractBtn.style.display = 'none';
+            document.getElementById('openPcapBtn').style.display = 'inline-block';
+            
+            // Update the connection object
+            const connection = currentConnections.find(conn => conn.uid === uid);
+            if (connection) {
+                connection.has_extracted_pcap = true;
+            }
+            
+            // Reload the table to show updated status
+            loadConnections();
+        } else {
+            showNotification('Extraction Failed', data.error || 'Failed to extract PCAP', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('PCAP extraction error:', error);
+        showNotification('Extraction Failed', 'Failed to extract PCAP', 'error');
+    })
+    .finally(() => {
+        extractBtn.innerHTML = originalText;
+        extractBtn.disabled = false;
+    });
+}
+
+function openPcapForConnection() {
+    const uid = window.currentConnectionUID;
+    if (!uid) {
+        showNotification('Error', 'No connection selected', 'error');
+        return;
+    }
+    
+    fetch(`/api/labeling/open-pcap/${uid}`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const message = data.note ? `${data.message}\n${data.note}` : data.message;
+            showNotification('PCAP File', message || 'PCAP file opened successfully', 'success');
+        } else {
+            showNotification('Open Failed', data.error || 'Failed to open PCAP', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('PCAP open error:', error);
+        showNotification('Open Failed', 'Failed to open PCAP', 'error');
+    });
+}
+
+function deleteCurrentConnection() {
+    const uid = window.currentConnectionUID;
+    if (!uid) {
+        showNotification('Error', 'No connection selected', 'error');
+        return;
+    }
+    
+    showConfirmationModal(
+        `Are you sure you want to delete connection ${uid}?`,
+        function() {
+            fetch(`/api/connections/delete/${uid}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Connection Deleted', data.message, 'success');
+                    
+                    // Close the modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('connectionDetailsModal'));
+                    modal.hide();
+                    
+                    // Reload the connections table
+                    loadConnections();
+                } else {
+                    showNotification('Delete Failed', data.error || 'Failed to delete connection', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Delete error:', error);
+                showNotification('Delete Failed', 'Failed to delete connection', 'error');
+            });
+        }
+    );
+}
+
+function deleteSelectedConnections() {
+    if (selectedConnections.size === 0) {
+        showNotification('No Selection', 'Please select connections to delete', 'warning');
+        return;
+    }
+    
+    const count = selectedConnections.size;
+    showConfirmationModal(
+        `Are you sure you want to delete ${count} selected connection${count > 1 ? 's' : ''}?`,
+        function() {
+            const uids = Array.from(selectedConnections);
+            
+            fetch('/api/connections/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ uids: uids })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Connections Deleted', data.message, 'success');
+                    
+                    // Clear selection and reload table
+                    clearSelection();
+                    loadConnections();
+                } else {
+                    showNotification('Delete Failed', data.error || 'Failed to delete connections', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Bulk delete error:', error);
+                showNotification('Delete Failed', 'Failed to delete connections', 'error');
+            });
+        }
+    );
+}
+
+function deleteConnectionRow(uid) {
+    showConfirmationModal(
+        `Are you sure you want to delete connection ${uid}?`,
+        function() {
+            fetch(`/api/connections/delete/${uid}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Connection Deleted', data.message, 'success');
+                    
+                    // Remove from selection if it was selected
+                    selectedConnections.delete(uid);
+                    updateSelectionUI();
+                    
+                    // Reload the connections table
+                    loadConnections();
+                } else {
+                    showNotification('Delete Failed', data.error || 'Failed to delete connection', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Delete error:', error);
+                showNotification('Delete Failed', 'Failed to delete connection', 'error');
+            });
+        }
+    );
+}
+
+function openPcapDirect(uid) {
+    fetch(`/api/labeling/open-pcap/${uid}`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const message = data.note ? `${data.message}\n${data.note}` : data.message;
+            showNotification('PCAP File', message || 'PCAP file opened successfully', 'success');
+        } else {
+            showNotification('Open Failed', data.error || 'Failed to open PCAP', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('PCAP open error:', error);
+        showNotification('Open Failed', 'Failed to open PCAP', 'error');
+    });
+}
+
+function extractSelectedPcaps() {
+    if (selectedConnections.size === 0) {
+        showNotification('No Selection', 'Please select connections to extract PCAPs for', 'warning');
+        return;
+    }
+    
+    const count = selectedConnections.size;
+    
+    // Show custom extraction confirmation modal
+    showExtractionConfirmationModal(count, function() {
+            const uids = Array.from(selectedConnections);
+            
+            // Show initial progress
+            showNotification('PCAP Extraction', `Starting extraction for ${count} connections...`, 'info');
+            
+            // Use bulk API for better performance
+            fetch('/api/labeling/extract-pcaps-bulk', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ uids: uids })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const successful = data.successful;
+                    const failed = data.failed;
+                    const total = data.total;
+                    
+                    if (successful === total) {
+                        showNotification('PCAP Extraction Complete', 
+                            `Successfully extracted PCAPs for all ${successful} connections`, 'success');
+                    } else if (successful > 0) {
+                        showNotification('PCAP Extraction Partial', 
+                            `Extracted ${successful} PCAPs, ${failed} failed`, 'warning');
+                    } else {
+                        showNotification('PCAP Extraction Failed', 
+                            `Failed to extract any PCAPs (${failed} failed)`, 'error');
+                    }
+                    
+                    // Log detailed results for debugging
+                    console.log('PCAP extraction results:', data.results);
+                    
+                    // Reload table to show updated PCAP status
+                    loadConnections();
+                } else {
+                    showNotification('PCAP Extraction Failed', data.error || 'Failed to extract PCAPs', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Bulk PCAP extraction error:', error);
+                showNotification('PCAP Extraction Failed', 'Failed to extract PCAPs', 'error');
+            });
+    }
+}
+
+function openSelectedPcaps() {
+    if (selectedConnections.size === 0) {
+        showNotification('No Selection', 'Please select connections to open PCAPs for', 'warning');
+        return;
+    }
+    
+    // Filter to only connections that have extracted PCAPs
+    const connectionsWithPcaps = Array.from(selectedConnections).filter(uid => {
+        const connection = currentConnections.find(conn => conn.uid === uid);
+        return connection && connection.has_extracted_pcap;
+    });
+    
+    if (connectionsWithPcaps.length === 0) {
+        showNotification('No PCAPs Available', 
+            'None of the selected connections have extracted PCAPs. Extract them first.', 'warning');
+        return;
+    }
+    
+    const count = connectionsWithPcaps.length;
+    showConfirmationModal(
+        `Open ${count} PCAP file${count > 1 ? 's' : ''}? This will launch external applications.`,
+        function() {
+            let completed = 0;
+            let successful = 0;
+            let failed = 0;
+            
+            connectionsWithPcaps.forEach(uid => {
+                fetch(`/api/labeling/open-pcap/${uid}`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    completed++;
+                    if (data.success) {
+                        successful++;
+                    } else {
+                        failed++;
+                        console.error(`Failed to open PCAP for ${uid}:`, data.error);
+                    }
+                    
+                    // Show final results when all are done
+                    if (completed === count) {
+                        if (successful === count) {
+                            showNotification('PCAPs Opened', 
+                                `Successfully opened ${successful} PCAP file${successful > 1 ? 's' : ''}`, 'success');
+                        } else if (successful > 0) {
+                            showNotification('PCAPs Partially Opened', 
+                                `Opened ${successful} PCAPs, ${failed} failed`, 'warning');
+                        } else {
+                            showNotification('PCAPs Failed to Open', 
+                                `Failed to open any PCAPs (${failed} failed)`, 'error');
+                        }
+                    }
+                })
+                .catch(error => {
+                    completed++;
+                    failed++;
+                    console.error(`Error opening PCAP for ${uid}:`, error);
+                    
+                    if (completed === count) {
+                        showNotification('PCAPs Failed to Open', 
+                            `Failed to open PCAPs (${failed} errors)`, 'error');
+                    }
+                });
+            });
+        },
+        'Open PCAPs',
+        'fas fa-external-link-alt'
+    );
+}
+
+function quickLabel(uid) {
+    // Quick label functionality - could open a simplified labeling interface
+    selectedConnections.clear();
+    selectedConnections.add(uid);
+    updateSelectionUI();
+    
+    // Scroll to bulk labeling panel
+    document.getElementById('bulk-labeling-panel').scrollIntoView({ behavior: 'smooth' });
+}
+
+function editConnectionLabel() {
+    // Edit label functionality from the details modal
+    // This would open the bulk labeling interface for the current connection
+    const modal = bootstrap.Modal.getInstance(document.getElementById('connectionDetailsModal'));
+    modal.hide();
+    
+    // Implementation would depend on which connection is currently being viewed
+}
+
+// Notification system functions
+function showNotification(title, message, type = 'info', duration = 5000) {
+    const container = document.getElementById('notification-container');
+    const notificationId = 'notification-' + Date.now();
+    
+    const notification = document.createElement('div');
+    notification.id = notificationId;
+    notification.className = `notification ${type}`;
+    
+    notification.innerHTML = `
+        <div class="notification-header">
+            <div class="notification-title">
+                <i class="fas fa-${getNotificationIcon(type)} me-2"></i>${title}
+            </div>
+            <button class="notification-close" onclick="closeNotification('${notificationId}')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notification-body">${message}</div>
+    `;
+    
+    container.appendChild(notification);
+    
+    // Trigger animation
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    // Auto-remove after duration
+    if (duration > 0) {
+        setTimeout(() => closeNotification(notificationId), duration);
+    }
+    
+    return notificationId;
+}
+
+function getNotificationIcon(type) {
+    switch(type) {
+        case 'success': return 'check-circle';
+        case 'error': return 'exclamation-circle';
+        case 'warning': return 'exclamation-triangle';
+        default: return 'info-circle';
+    }
+}
+
+function closeNotification(notificationId) {
+    const notification = document.getElementById(notificationId);
+    if (notification) {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }
+}
+</script>
+{% endblock %}

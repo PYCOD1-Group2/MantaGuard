@@ -527,18 +527,18 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'scanning' %}active{% endif %}" href="{{ url_for('scanning') }}">
-                            <i class="fas fa-radar-chart me-1"></i>Scanning
+                        <a class="nav-link {% if request.endpoint == 'monitoring' %}active{% endif %}" href="{{ url_for('monitoring') }}">
+                            <i class="fas fa-radar-chart me-1"></i>Network Monitoring
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'reports' %}active{% endif %}" href="{{ url_for('reports') }}">
-                            <i class="fas fa-chart-bar me-1"></i>Reports
+                        <a class="nav-link {% if request.endpoint == 'analysis' %}active{% endif %}" href="{{ url_for('analysis') }}">
+                            <i class="fas fa-chart-bar me-1"></i>Analysis & Reports
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'fix_patches' %}active{% endif %}" href="{{ url_for('fix_patches') }}">
-                            <i class="fas fa-tools me-1"></i>Fixes and Patches
+                        <a class="nav-link {% if request.endpoint == 'training' %}active{% endif %}" href="{{ url_for('training') }}">
+                            <i class="fas fa-brain me-1"></i>ML Training Center
                         </a>
                     </li>
                 </ul>
