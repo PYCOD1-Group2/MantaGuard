@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Introduce ML Training Center UI&#10;&#10;Added a new **ML Training Center** interface to enhance data filtering, anomaly labeling, and model training workflows.&#10;&#10;### Highlights:&#10;- Interactive connection table with advanced filtering, sorting, and bulk actions.&#10;- **Bulk labeling panel** for streamlined anomaly categorization.&#10;- **Statistics cards** to display overview metrics (e.g., total anomalies, labeled items).&#10;- **Training readiness indicators** for anomaly detection and attack classification models.&#10;- Improved UI styling for seamless usability, including notification systems, modals, and pagination.&#10;&#10;This addition establishes a robust foundation for managing connections, anomalies, and training data within the platform. Future updates will integrate live data handling and expanded training functionalities.">
+    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -39,12 +40,12 @@
   }
 }</component>
   <component name="GithubDefaultAccount">
-    <option name="defaultAccountId" value="a8b22f56-0ab1-40d6-b6b1-90a16f9cdbdc" />
+    <option name="defaultAccountId" value="dd6bea01-77ce-47ec-9ac1-e4fcf05cc5ef" />
   </component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/PYCOD1-Group2/MantaGuard.git&quot;,
-    &quot;accountId&quot;: &quot;a8b22f56-0ab1-40d6-b6b1-90a16f9cdbdc&quot;
+    &quot;accountId&quot;: &quot;dd6bea01-77ce-47ec-9ac1-e4fcf05cc5ef&quot;
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
@@ -58,25 +59,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Flask server.Flask (app.py).executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Shell Script.start.sh.executor": "Run",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/home/skam/github/MantaGuard/ai-model/pcaps",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Flask server.Flask (app.py).executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Shell Script.start.sh.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/skam/Dropbox/Private/Git&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/ai-model/pcaps" />
@@ -88,7 +89,7 @@
       <recent name="$PROJECT_DIR$/ai-model/test" />
     </key>
   </component>
-  <component name="RunManager" selected="Shell Script.start.sh">
+  <component name="RunManager" selected="Flask server.MantaGuard">
     <configuration name="Flask (app.py)" type="Python.FlaskServer" temporary="true" nameIsGenerated="true">
       <module name="MantaGuard" />
       <option name="target" value="$PROJECT_DIR$/app.py" />
@@ -181,7 +182,9 @@
       <workItem from="1749467306762" duration="1635000" />
       <workItem from="1749541668997" duration="14493000" />
       <workItem from="1749636891694" duration="55000" />
-      <workItem from="1749637280002" duration="1902000" />
+      <workItem from="1749637280002" duration="2016000" />
+      <workItem from="1749639594804" duration="42000" />
+      <workItem from="1749640074323" duration="357000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project structure and configuration files for the AI">
       <option name="closed" value="true" />
@@ -415,7 +418,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749639090170</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Introduce ML Training Center UI&#10;&#10;Added a new **ML Training Center** interface to enhance data filtering, anomaly labeling, and model training workflows.&#10;&#10;### Highlights:&#10;- Interactive connection table with advanced filtering, sorting, and bulk actions.&#10;- **Bulk labeling panel** for streamlined anomaly categorization.&#10;- **Statistics cards** to display overview metrics (e.g., total anomalies, labeled items).&#10;- **Training readiness indicators** for anomaly detection and attack classification models.&#10;- Improved UI styling for seamless usability, including notification systems, modals, and pagination.&#10;&#10;This addition establishes a robust foundation for managing connections, anomalies, and training data within the platform. Future updates will integrate live data handling and expanded training functionalities.">
+      <option name="closed" value="true" />
+      <created>1749639481753</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1749639481753</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

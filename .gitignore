@@ -80,6 +80,7 @@ data/labeled_anomalies.csv
 .env.production
 
 # Test coverage and reports
+tests/
 .coverage
 htmlcov/
 .pytest_cache/
