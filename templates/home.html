@@ -355,6 +355,26 @@
         }
     }
 
+    /* Placeholder image styling for tools without images */
+    .placeholder-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--cyber-bg-card), var(--cyber-bg-hover));
+        border: 2px solid var(--cyber-border-accent);
+        border-radius: 12px;
+        height: 100px;
+        width: 100%;
+        color: var(--cyber-primary);
+        transition: all 0.3s ease;
+    }
+
+    .placeholder-image:hover {
+        border-color: var(--cyber-primary);
+        background: linear-gradient(135deg, var(--cyber-bg-hover), var(--cyber-bg-card));
+        transform: scale(1.02);
+    }
+
 
 </style>
 {% endblock %}
@@ -630,6 +650,31 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="tool-tech-badge">AI/ML Engine</div>
                         <p class="tool-description">
                             One-Class Support Vector Machine (OCSVM) powers MantaGuard's anomaly detection capabilities, using unsupervised learning to identify unusual network patterns without requiring pre-labeled training data. This approach enables detection of zero-day attacks and novel threats by learning normal network behavior and flagging significant deviations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Multi-class Classifier Tool -->
+        <div class="tool-card">
+            <div class="tool-header">
+                <h3 class="tool-title">
+                    <i class="fas fa-brain"></i>
+                    Multi-class Classifier
+                </h3>
+            </div>
+            <div class="tool-content">
+                <div class="tool-grid">
+                    <div class="tool-image">
+                        <div class="placeholder-image">
+                            <i class="fas fa-sitemap fa-3x"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="tool-tech-badge">AI/ML Engine</div>
+                        <p class="tool-description">
+                            Random Forest and Gradient Boosting classifiers enable MantaGuard to categorize detected network anomalies into specific attack types. This supervised learning approach provides detailed threat classification, distinguishing between different malware families, intrusion techniques, and attack vectors for enhanced incident response and threat intelligence.
                         </p>
                     </div>
                 </div>

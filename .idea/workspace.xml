@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Update `.gitignore` and `.idea` settings&#10;&#10;- Ignored `tests/` directory in `.gitignore`.&#10;- Updated `.idea/workspace.xml` with changes to GitHub account ID, recent files, task settings, and active configuration.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,7 +88,7 @@
       <recent name="$PROJECT_DIR$/ai-model/test" />
     </key>
   </component>
-  <component name="RunManager" selected="Flask server.MantaGuard">
+  <component name="RunManager" selected="Shell Script.start.sh">
     <configuration name="Flask (app.py)" type="Python.FlaskServer" temporary="true" nameIsGenerated="true">
       <module name="MantaGuard" />
       <option name="target" value="$PROJECT_DIR$/app.py" />

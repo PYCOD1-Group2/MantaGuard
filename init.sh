@@ -19,15 +19,207 @@ fi
 
 echo "✅ Linux system detected: $(lsb_release -d 2>/dev/null | cut -f2 || echo "Unknown distribution")"
 
+# Function to install uv
+install_uv() {
+    echo "📦 Starting uv installation..."
+    
+    # Check if we can write to ~/.cargo/bin or ~/.local/bin
+    if [[ -w "$HOME/.cargo/bin" ]] || [[ -w "$HOME/.local/bin" ]] || mkdir -p "$HOME/.local/bin" 2>/dev/null; then
+        echo "   Installing uv using the official installer..."
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        
+        # Source the environment to make uv available immediately
+        if [[ -f "$HOME/.cargo/env" ]]; then
+            source "$HOME/.cargo/env"
+        fi
+        
+        # Add to PATH if needed
+        if [[ -f "$HOME/.cargo/bin/uv" ]] && [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]]; then
+            export PATH="$HOME/.cargo/bin:$PATH"
+        elif [[ -f "$HOME/.local/bin/uv" ]] && [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+            export PATH="$HOME/.local/bin:$PATH"
+        fi
+        
+        # Verify installation
+        if command -v uv &> /dev/null; then
+            echo "✅ uv installation successful: $(uv --version)"
+            return 0
+        else
+            echo "❌ uv installation failed. Please install manually."
+            return 1
+        fi
+    else
+        echo "❌ Cannot install uv automatically (no write permissions)"
+        echo "   Please install uv manually: https://docs.astral.sh/uv/getting-started/installation/"
+        return 1
+    fi
+}
+
 # Check if uv is installed
 if ! command -v uv &> /dev/null; then
-    echo "❌ Error: uv is not installed"
-    echo "Please install uv first: https://docs.astral.sh/uv/getting-started/installation/"
-    echo "Quick install: curl -LsSf https://astral.sh/uv/install.sh | sh"
-    exit 1
+    echo "❌ uv is not installed"
+    echo "   uv is required for Python dependency management in MantaGuard"
+    echo ""
+    
+    # Check if user wants automatic installation
+    while true; do
+        read -p "Would you like MantaGuard to install uv automatically? (y/n): " yn
+        case $yn in
+            [Yy]* ) 
+                echo "🚀 Installing uv automatically..."
+                if install_uv; then
+                    echo "✅ uv installation completed successfully!"
+                    break
+                else
+                    echo "❌ Automatic installation failed."
+                    echo "   Please install uv manually: https://docs.astral.sh/uv/getting-started/installation/"
+                    echo "   Quick install: curl -LsSf https://astral.sh/uv/install.sh | sh"
+                    exit 1
+                fi
+                ;;
+            [Nn]* ) 
+                echo "📖 Manual installation required:"
+                echo "   - https://docs.astral.sh/uv/getting-started/installation/"
+                echo "   - Quick install: curl -LsSf https://astral.sh/uv/install.sh | sh"
+                echo ""
+                echo "After installing uv, run this script again."
+                exit 1
+                ;;
+            * ) 
+                echo "Please answer yes (y) or no (n)."
+                ;;
+        esac
+    done
 fi
 
 echo "✅ Found uv: $(uv --version)"
+
+# Function to check and install system dependencies
+check_system_dependencies() {
+    echo "🔍 Checking system dependencies..."
+    local missing_deps=()
+    
+    # Check for essential tools
+    if ! command -v curl &> /dev/null; then
+        missing_deps+=("curl")
+    fi
+    
+    if ! command -v git &> /dev/null; then
+        missing_deps+=("git")
+    fi
+    
+    if ! command -v python3 &> /dev/null; then
+        missing_deps+=("python3")
+    fi
+    
+    # Check for build essentials (needed for some Python packages)
+    if ! command -v gcc &> /dev/null && ! command -v clang &> /dev/null; then
+        if [[ -f /etc/arch-release ]]; then
+            missing_deps+=("base-devel")
+        else
+            missing_deps+=("build-essential")
+        fi
+    fi
+    
+    # Check for Python development headers
+    if ! python3 -c "import distutils.util" 2>/dev/null && ! python3 -c "import sysconfig" 2>/dev/null; then
+        if [[ -f /etc/arch-release ]]; then
+            # On Arch, python headers are included in python package
+            missing_deps+=("python-dev-tools")
+        else
+            missing_deps+=("python3-dev")
+        fi
+    fi
+    
+    if [[ ${#missing_deps[@]} -eq 0 ]]; then
+        echo "✅ All system dependencies are available"
+        return 0
+    fi
+    
+    echo "❌ Missing system dependencies: ${missing_deps[*]}"
+    echo "   These dependencies are required for MantaGuard to function properly"
+    echo ""
+    
+    # Ask user if they want to install missing dependencies
+    while true; do
+        read -p "Would you like to install missing system dependencies? (y/n): " yn
+        case $yn in
+            [Yy]* ) 
+                echo "🚀 Installing system dependencies..."
+                if install_system_dependencies "${missing_deps[@]}"; then
+                    echo "✅ System dependencies installed successfully!"
+                    return 0
+                else
+                    echo "❌ Failed to install some dependencies. Please install manually:"
+                    echo "   ${missing_deps[*]}"
+                    return 1
+                fi
+                ;;
+            [Nn]* ) 
+                echo "⚠️  Warning: Some features may not work without these dependencies:"
+                echo "   ${missing_deps[*]}"
+                echo "   You can install them manually later if needed."
+                return 0
+                ;;
+            * ) 
+                echo "Please answer yes (y) or no (n)."
+                ;;
+        esac
+    done
+}
+
+# Function to install system dependencies
+install_system_dependencies() {
+    local deps=("$@")
+    
+    # Detect distribution for package installation
+    if command -v lsb_release &> /dev/null; then
+        DISTRO=$(lsb_release -si)
+    elif [[ -f /etc/arch-release ]]; then
+        DISTRO="Arch"
+    elif [[ -f /etc/debian_version ]]; then
+        DISTRO="Debian"
+    else
+        DISTRO="Unknown"
+    fi
+    
+    case $DISTRO in
+        "Ubuntu"|"Debian")
+            echo "   Updating package list..."
+            sudo apt update
+            for dep in "${deps[@]}"; do
+                echo "   Installing $dep..."
+                sudo apt install -y "$dep" || echo "   Warning: Failed to install $dep"
+            done
+            ;;
+            
+        "Arch"|"Manjaro"|"EndeavourOS"|"ArcoLinux")
+            echo "   Updating package database..."
+            sudo pacman -Sy
+            for dep in "${deps[@]}"; do
+                echo "   Installing $dep..."
+                # Map some package names for Arch
+                case $dep in
+                    "build-essential") dep="base-devel" ;;
+                    "python3-dev") dep="python" ;;  # Headers included in python package
+                    "python-dev-tools") dep="python" ;;
+                esac
+                sudo pacman -S --noconfirm "$dep" || echo "   Warning: Failed to install $dep"
+            done
+            ;;
+            
+        *)
+            echo "   ❌ Unsupported distribution for automatic dependency installation: $DISTRO"
+            echo "   Please install these packages manually: ${deps[*]}"
+            return 1
+            ;;
+    esac
+    
+    return 0
+}
+
+# Check system dependencies
+check_system_dependencies
 
 # Function to check if Zeek is installed
 check_zeek() {
@@ -103,8 +295,42 @@ install_zeek() {
             sudo apt install -y zeek
             ;;
             
+        "Arch"|"Manjaro"|"EndeavourOS"|"ArcoLinux")
+            echo "   Installing Zeek for Arch Linux..."
+            
+            # Check if yay is available (preferred AUR helper)
+            if command -v yay &> /dev/null; then
+                echo "   Using yay to install Zeek from AUR..."
+                yay -S --noconfirm zeek
+            elif command -v paru &> /dev/null; then
+                echo "   Using paru to install Zeek from AUR..."
+                paru -S --noconfirm zeek
+            else
+                echo "   No AUR helper found. Installing using pacman from official repos..."
+                sudo pacman -Sy --noconfirm zeek 2>/dev/null || {
+                    echo "   Zeek not available in official repos. Installing yay first..."
+                    # Install base-devel and git if not present
+                    sudo pacman -S --needed --noconfirm base-devel git
+                    
+                    # Clone and install yay
+                    cd /tmp
+                    git clone https://aur.archlinux.org/yay.git
+                    cd yay
+                    makepkg -si --noconfirm
+                    cd - > /dev/null
+                    
+                    echo "   Installing Zeek using yay..."
+                    yay -S --noconfirm zeek
+                }
+            fi
+            ;;
+            
         *)
             echo "   ❌ Unsupported distribution: $DISTRO"
+            echo "   Supported distributions:"
+            echo "   - Ubuntu 20.04+"
+            echo "   - Debian 12+"
+            echo "   - Arch Linux (and derivatives like Manjaro, EndeavourOS)"
             echo "   Please install Zeek manually. See README.md for instructions."
             return 1
             ;;
