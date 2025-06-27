@@ -10,8 +10,15 @@ import os
 import sys
 import time
 import subprocess
-import pyshark
 from datetime import datetime
+
+# Try to import pyshark, make it optional
+try:
+    import pyshark
+    PYSHARK_AVAILABLE = True
+except ImportError:
+    PYSHARK_AVAILABLE = False
+    print("Warning: pyshark not available, packet capture features will be limited")
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -71,6 +78,8 @@ class PacketCapture:
             if capture_method == 'tshark':
                 result_path = self._capture_with_tshark(interface, duration, output_path)
             elif capture_method == 'pyshark':
+                if not PYSHARK_AVAILABLE:
+                    raise ValueError("pyshark is not available, cannot use pyshark capture method")
                 result_path = self._capture_with_pyshark(interface, duration, output_path)
             else:
                 raise ValueError(f"Unknown capture method: {capture_method}")
@@ -93,6 +102,9 @@ class PacketCapture:
                     if fallback_method == 'tshark':
                         result_path = self._capture_with_tshark(interface, duration, output_path)
                     elif fallback_method == 'pyshark':
+                        if not PYSHARK_AVAILABLE:
+                            logger.warning("pyshark is not available, skipping pyshark fallback method")
+                            continue
                         result_path = self._capture_with_pyshark(interface, duration, output_path)
                     
                     # Create metadata for the captured PCAP
@@ -169,6 +181,9 @@ class PacketCapture:
         Raises:
             Exception: If pyshark capture fails
         """
+        if not PYSHARK_AVAILABLE:
+            raise Exception("pyshark is not available for packet capture")
+            
         logger.debug(f"Using pyshark for packet capture")
         
         try:

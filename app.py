@@ -1651,13 +1651,23 @@ training_tasks = {}
 def training_model_info():
     """Get comprehensive model information for training interface."""
     try:
-        from mantaguard.core.network.analyzer import NetworkAnalyzer
-        from mantaguard.data.models.metadata import ModelMetadata
+        # Try to import ML modules - if they fail, provide fallback data
+        try:
+            from mantaguard.core.network.analyzer import NetworkAnalyzer
+            from mantaguard.data.models.metadata import ModelMetadata
 
-        # Get current model version
-        preferred_version = session.get('preferred_model_version')
-        analyzer = NetworkAnalyzer(model_version=preferred_version)
-        model_info = analyzer.get_model_info()
+            # Get current model version
+            preferred_version = session.get('preferred_model_version')
+            analyzer = NetworkAnalyzer(model_version=preferred_version)
+            model_info = analyzer.get_model_info()
+        except ImportError as ie:
+            # ML modules not available, provide basic info
+            print(f"ML modules not available: {ie}")
+            model_info = {
+                'version': 'base',
+                'creation_date': 'Unknown',
+                'training_samples': 'Unknown'
+            }
 
         # Load labeled anomalies count
         labeled_count = 0
@@ -1684,7 +1694,7 @@ def training_model_info():
             false_positive_rate = performance_metrics['false_positive_rate']
             accuracy = performance_metrics['accuracy']
         except Exception as e:
-            logger.warning(f"Failed to calculate real metrics, using defaults: {e}")
+            print(f"Failed to calculate real metrics, using defaults: {e}")
             # Fallback to conservative estimates
             detection_rate = 75.0
             false_positive_rate = 5.0
@@ -2581,6 +2591,8 @@ def import_anomalies_from_analysis(csv_path, analysis_dir):
                 print(f"Warning: Could not load Zeek data: {e}")
         
         imported_count = 0
+        duplicates_found = 0
+        duplicates_preserved = 0
         
         # Process each connection in the analysis results
         for _, row in df.iterrows():
@@ -2717,7 +2729,37 @@ def import_anomalies_from_analysis(csv_path, analysis_dir):
                     notes=None
                 )
                 
-                # Add to repository
+                # Check for existing connection to avoid duplicates
+                existing_conn = repository.get_connection_by_uid(uid)
+                
+                if existing_conn:
+                    duplicates_found += 1
+                    
+                    # If connection exists and is already labeled, preserve the labels
+                    if existing_conn.label_category is not None:
+                        duplicates_preserved += 1
+                        # Preserve existing labels and enhance with new data
+                        training_conn.label_category = existing_conn.label_category
+                        training_conn.label_subcategory = existing_conn.label_subcategory
+                        training_conn.confidence_level = existing_conn.confidence_level
+                        training_conn.labeled_by = existing_conn.labeled_by
+                        training_conn.labeled_at = existing_conn.labeled_at
+                        training_conn.review_status = existing_conn.review_status
+                        training_conn.notes = existing_conn.notes
+                        training_conn.has_extracted_pcap = existing_conn.has_extracted_pcap
+                        print(f"Preserving existing labels for UID {uid}: {existing_conn.label_category}")
+                    
+                    # Check if this is a true duplicate (same metadata)
+                    if (existing_conn.source_ip == source_ip and 
+                        existing_conn.dest_ip == dest_ip and
+                        existing_conn.source_port == source_port and
+                        existing_conn.dest_port == dest_port and
+                        existing_conn.proto == proto):
+                        print(f"Duplicate connection detected for UID {uid}, updating with new analysis data")
+                    else:
+                        print(f"UID collision detected for {uid}, updating connection with new metadata")
+                
+                # Add to repository (will replace if exists due to INSERT OR REPLACE)
                 repository.add_connection(training_conn)
                 imported_count += 1
                 
@@ -2726,11 +2768,21 @@ def import_anomalies_from_analysis(csv_path, analysis_dir):
                 continue
         
         print(f"Auto-imported {imported_count} connections from analysis results")
-        return imported_count
+        print(f"Found {duplicates_found} duplicates, preserved {duplicates_preserved} labeled connections")
+        
+        return {
+            'imported_count': imported_count,
+            'duplicates_found': duplicates_found,
+            'duplicates_preserved': duplicates_preserved
+        }
         
     except Exception as e:
         print(f"Error during auto-import: {e}")
-        return 0
+        return {
+            'imported_count': 0,
+            'duplicates_found': 0,
+            'duplicates_preserved': 0
+        }
 
 @app.route('/api/connections/reimport-latest', methods=['POST'])
 def reimport_latest_analysis():
@@ -2891,13 +2943,33 @@ def import_connections_from_scan():
             }), 404
         
         # Use the import function with anomaly filtering
-        imported_count = import_anomalies_from_analysis(csv_path, analysis_path)
+        import_result = import_anomalies_from_analysis(csv_path, analysis_path)
+        
+        # Handle both old return format (just count) and new format (dict with stats)
+        if isinstance(import_result, dict):
+            imported_count = import_result['imported_count']
+            duplicates_found = import_result.get('duplicates_found', 0)
+            duplicates_preserved = import_result.get('duplicates_preserved', 0)
+            
+            message = f'Successfully imported {imported_count} anomalies from scan {scan_id}'
+            if duplicates_found > 0:
+                message += f'. Found {duplicates_found} duplicates'
+                if duplicates_preserved > 0:
+                    message += f' ({duplicates_preserved} with preserved labels)'
+        else:
+            # Backward compatibility with old return format
+            imported_count = import_result
+            duplicates_found = 0
+            duplicates_preserved = 0
+            message = f'Successfully imported {imported_count} anomalies from scan {scan_id}'
         
         return jsonify({
             'success': True,
             'imported_count': imported_count,
+            'duplicates_found': duplicates_found,
+            'duplicates_preserved': duplicates_preserved,
             'scan_id': scan_id,
-            'message': f'Successfully imported {imported_count} anomalies from scan {scan_id}'
+            'message': message
         })
     
     except Exception as e:
@@ -3229,6 +3301,79 @@ def delete_single_connection(uid):
     
     except Exception as e:
         logger.error(f"Error deleting connection {uid}: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/connections/validate-pcaps', methods=['POST'])
+def validate_pcap_files():
+    """Validate PCAP file existence and sync database status."""
+    try:
+        from mantaguard.data.storage.training_repository import TrainingRepository
+        from mantaguard.utils.logger import get_logger
+        import os
+        
+        logger = get_logger(__name__)
+        
+        data = request.get_json()
+        uids = data.get('uids', [])
+        
+        if not uids:
+            return jsonify({
+                'success': False,
+                'error': 'No connection UIDs provided'
+            }), 400
+        
+        repo = TrainingRepository()
+        updated_connections = []
+        sync_count = 0
+        
+        for uid in uids:
+            try:
+                # Get current connection data
+                connection = repo.get_connection_by_uid(uid)
+                if not connection:
+                    continue
+                
+                # Convert TrainingConnection to dict for easier access
+                connection_dict = {
+                    'has_extracted_pcap': connection.has_extracted_pcap
+                }
+                
+                # Check if PCAP file actually exists
+                pcap_path = os.path.join('data', 'labeling', 'extracted_pcaps', f'{uid}.pcap')
+                file_exists = os.path.exists(pcap_path)
+                
+                # Sync database status with actual file existence
+                if connection_dict.get('has_extracted_pcap', False) != file_exists:
+                    repo.update_connection_pcap_status(uid, file_exists)
+                    sync_count += 1
+                    logger.info(f"Synced PCAP status for {uid}: {file_exists}")
+                
+                # Return updated status
+                updated_connections.append({
+                    'uid': uid,
+                    'has_extracted_pcap': file_exists
+                })
+                
+            except Exception as e:
+                logger.error(f"Error validating PCAP for {uid}: {e}")
+                # If error occurs, assume no PCAP exists
+                updated_connections.append({
+                    'uid': uid,
+                    'has_extracted_pcap': False
+                })
+        
+        return jsonify({
+            'success': True,
+            'message': f'Validated {len(updated_connections)} connections, synced {sync_count} statuses',
+            'connections': updated_connections,
+            'sync_count': sync_count
+        })
+    
+    except Exception as e:
+        logger.error(f"Error validating PCAP files: {e}")
         return jsonify({
             'success': False,
             'error': str(e)

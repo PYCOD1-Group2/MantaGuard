@@ -143,22 +143,104 @@
     
     /* Bulk labeling panel */
     .bulk-labeling-panel {
-        background: rgba(0, 191, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(0, 191, 255, 0.3);
         border-radius: 8px;
-        padding: 15px;
+        padding: 20px;
         margin-bottom: 20px;
-        display: none;
-    }
-    
-    .bulk-labeling-panel.show {
         display: block;
-        animation: slideDown 0.3s ease;
+        opacity: 0.6;
     }
     
-    @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
+    .bulk-labeling-panel.enabled {
+        opacity: 1;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0.6; }
+        to { opacity: 1; }
+    }
+    
+    /* Connection details modal styling */
+    .connection-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .connection-detail-item {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(0, 191, 255, 0.2);
+        border-radius: 6px;
+        padding: 12px;
+        transition: all 0.2s ease;
+    }
+    
+    .connection-detail-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(0, 191, 255, 0.4);
+    }
+    
+    .connection-detail-item .label {
+        font-size: 0.85rem;
+        color: #00bfff;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .connection-detail-item .label::before {
+        content: "•";
+        color: #00bfff;
+        margin-right: 6px;
+        font-size: 1.2em;
+    }
+    
+    .connection-detail-item .value {
+        font-size: 0.95rem;
+        color: #ffffff;
+        font-family: 'Courier New', monospace;
+        word-break: break-all;
+        line-height: 1.4;
+    }
+    
+    .connection-detail-item.full-width {
+        grid-column: 1 / -1;
+    }
+    
+    .connection-details-notes {
+        background: rgba(255, 193, 7, 0.1);
+        border: 1px solid rgba(255, 193, 7, 0.3);
+        border-radius: 6px;
+        padding: 15px;
+        margin-top: 15px;
+    }
+    
+    .connection-details-notes h6 {
+        color: #ffc107;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .connection-details-labeling {
+        background: rgba(40, 167, 69, 0.1);
+        border: 1px solid rgba(40, 167, 69, 0.3);
+        border-radius: 6px;
+        padding: 12px;
+        margin-top: 15px;
+        text-align: center;
+    }
+    
+    .connection-details-labeling small {
+        color: #28a745;
+        font-weight: 500;
     }
     
     /* Statistics cards */
@@ -438,14 +520,6 @@
                         <h5 class="mb-3"><i class="fas fa-filter me-2"></i>Filters</h5>
                         
                         <div class="filter-row">
-                            <div class="filter-group">
-                                <label>Anomaly Status</label>
-                                <select id="filter-anomaly" class="form-select">
-                                    <option value="">All Connections</option>
-                                    <option value="true">Anomalies Only</option>
-                                    <option value="false">Normal Only</option>
-                                </select>
-                            </div>
                             
                             <div class="filter-group">
                                 <label>Label Category</label>
@@ -497,11 +571,74 @@
                         </div>
                     </div>
                     
+                    <!-- Bulk Labeling Panel -->
+                    <div class="bulk-labeling-panel" id="bulk-labeling-panel">
+                        <h5 class="mb-3">
+                            <i class="fas fa-tags me-2"></i>Bulk Label <span id="bulk-selected-count">0</span> Connections
+                        </h5>
+                        
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Category</label>
+                                <select id="bulk-category" class="form-select" disabled>
+                                    <option value="">Select category...</option>
+                                    <option value="reconnaissance">Reconnaissance</option>
+                                    <option value="exploitation">Exploitation</option>
+                                    <option value="persistence">Persistence</option>
+                                    <option value="denial-of-service">Denial of Service</option>
+                                    <option value="malware">Malware</option>
+                                    <option value="unknown">Unknown</option>
+                                    <option value="normal">Normal</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label class="form-label">Subcategory</label>
+                                <select id="bulk-subcategory" class="form-select" disabled>
+                                    <option value="">Select subcategory...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-2">
+                                <label class="form-label">Confidence</label>
+                                <select id="bulk-confidence" class="form-select" disabled>
+                                    <option value="high">High</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-2">
+                                <label class="form-label">Labeled By</label>
+                                <input type="text" id="bulk-labeled-by" class="form-control" placeholder="Your name" disabled>
+                            </div>
+                            
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <div>
+                                    <button class="btn btn-success me-2" onclick="applyBulkLabels()" disabled>
+                                        <i class="fas fa-check me-1"></i>Apply Labels
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="clearSelection()" disabled>
+                                        <i class="fas fa-times me-1"></i>Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label class="form-label">Notes (Optional)</label>
+                                <textarea id="bulk-notes" class="form-control" rows="2" placeholder="Add notes about this labeling decision..." disabled></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Action Bar -->
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
                             <button class="btn btn-info me-2" onclick="showScanSelectionModal()">
-                                <i class="fas fa-download me-1"></i>Import Anomalies from Scan
+                                <i class="fas fa-download me-1"></i>Import Anomalies from Scans
                             </button>
                             <button class="btn btn-outline-primary me-2" onclick="refreshConnections()">
                                 <i class="fas fa-sync-alt me-1"></i>Refresh
@@ -739,70 +876,6 @@
     </div>
 </div>
 
-<!-- Bulk Labeling Panel -->
-<div class="container-fluid mt-4">
-    <div class="bulk-labeling-panel" id="bulk-labeling-panel">
-        <h5 class="mb-3">
-            <i class="fas fa-tags me-2"></i>Bulk Label <span id="bulk-selected-count">0</span> Connections
-        </h5>
-        
-        <div class="row">
-            <div class="col-md-3">
-                <label class="form-label">Category</label>
-                <select id="bulk-category" class="form-select">
-                    <option value="">Select category...</option>
-                    <option value="reconnaissance">Reconnaissance</option>
-                    <option value="exploitation">Exploitation</option>
-                    <option value="persistence">Persistence</option>
-                    <option value="denial-of-service">Denial of Service</option>
-                    <option value="malware">Malware</option>
-                    <option value="unknown">Unknown</option>
-                    <option value="normal">Normal</option>
-                </select>
-            </div>
-            
-            <div class="col-md-3">
-                <label class="form-label">Subcategory</label>
-                <select id="bulk-subcategory" class="form-select">
-                    <option value="">Select subcategory...</option>
-                </select>
-            </div>
-            
-            <div class="col-md-2">
-                <label class="form-label">Confidence</label>
-                <select id="bulk-confidence" class="form-select">
-                    <option value="high">High</option>
-                    <option value="medium" selected>Medium</option>
-                    <option value="low">Low</option>
-                </select>
-            </div>
-            
-            <div class="col-md-2">
-                <label class="form-label">Labeled By</label>
-                <input type="text" id="bulk-labeled-by" class="form-control" placeholder="Your name">
-            </div>
-            
-            <div class="col-md-2">
-                <label class="form-label">&nbsp;</label>
-                <div>
-                    <button class="btn btn-success me-2" onclick="applyBulkLabels()">
-                        <i class="fas fa-check me-1"></i>Apply Labels
-                    </button>
-                    <button class="btn btn-secondary" onclick="clearSelection()">
-                        <i class="fas fa-times me-1"></i>Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row mt-3">
-            <div class="col-12">
-                <label class="form-label">Notes (Optional)</label>
-                <textarea id="bulk-notes" class="form-control" rows="2" placeholder="Add notes about this labeling decision..."></textarea>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Include modals and scripts from original files -->
 <!-- Notification Container -->
@@ -1031,20 +1104,26 @@ function loadConnections() {
         `;
     }
     
-    fetch(`/api/connections?${params}`)
+    return fetch(`/api/connections?${params}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                currentConnections = data.connections;
-                displayConnections(data.connections);
-                updatePaginationInfo(data.count);
+                // Validate PCAP files and sync database status with actual file existence
+                return validatePcapFiles(data.connections).then(validatedConnections => {
+                    currentConnections = validatedConnections;
+                    displayConnections(validatedConnections);
+                    updatePaginationInfo(data.count);
+                    return data;
+                });
             } else {
                 showNotification('Error', 'Failed to load connections: ' + data.error, 'error');
+                throw new Error(data.error);
             }
         })
         .catch(error => {
             console.error('Error loading connections:', error);
             showNotification('Error', 'Failed to load connections', 'error');
+            throw error;
         });
 }
 
@@ -1164,8 +1243,6 @@ function formatBytes(bytes) {
 function applyFilters() {
     currentFilters = {};
     
-    const anomalyFilter = document.getElementById('filter-anomaly').value;
-    if (anomalyFilter) currentFilters.is_anomaly = anomalyFilter;
     
     const categoryFilter = document.getElementById('filter-category').value;
     if (categoryFilter) currentFilters.label_category = categoryFilter;
@@ -1185,7 +1262,6 @@ function clearFilters() {
     currentFilters = {};
     currentPage = 0;
     
-    document.getElementById('filter-anomaly').value = '';
     document.getElementById('filter-category').value = '';
     document.getElementById('filter-review').value = '';
     document.getElementById('filter-source').value = '';
@@ -1196,7 +1272,9 @@ function clearFilters() {
 
 function refreshConnections() {
     clearSelection();
-    loadConnections();
+    loadConnections().catch(error => {
+        console.error('Error refreshing connections:', error);
+    });
     loadRepositoryStatistics();
     showNotification('Refreshed', 'Connection data has been refreshed', 'success');
 }
@@ -1488,12 +1566,33 @@ function updateSelectionUI() {
     const bulkPanel = document.getElementById('bulk-labeling-panel');
     const selectionActions = document.getElementById('selection-actions');
     
+    // Enable/disable bulk labeling controls based on selection
+    const bulkControls = [
+        'bulk-category', 'bulk-subcategory', 'bulk-confidence', 
+        'bulk-labeled-by', 'bulk-notes'
+    ];
+    const bulkButtons = bulkPanel ? bulkPanel.querySelectorAll('button') : [];
+    
     if (count > 0) {
-        if (bulkPanel) bulkPanel.classList.add('show');
+        if (bulkPanel) bulkPanel.classList.add('enabled');
         if (selectionActions) selectionActions.style.display = 'inline';
+        
+        // Enable bulk labeling controls
+        bulkControls.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.disabled = false;
+        });
+        bulkButtons.forEach(button => button.disabled = false);
     } else {
-        if (bulkPanel) bulkPanel.classList.remove('show');
+        if (bulkPanel) bulkPanel.classList.remove('enabled');
         if (selectionActions) selectionActions.style.display = 'none';
+        
+        // Disable bulk labeling controls
+        bulkControls.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.disabled = true;
+        });
+        bulkButtons.forEach(button => button.disabled = true);
     }
     
     // Update table row styling
@@ -1518,7 +1617,132 @@ function clearSelection() {
 }
 
 function showScanSelectionModal() {
-    showNotification('Feature Available', 'Scan selection modal functionality is available', 'info');
+    const modal = new bootstrap.Modal(document.getElementById('scanSelectionModal'));
+    modal.show();
+    loadAvailableScans();
+}
+
+function loadAvailableScans() {
+    const loadingIndicator = document.getElementById('scansLoadingIndicator');
+    const scansContainer = document.getElementById('scansContainer');
+    const errorMessage = document.getElementById('scansErrorMessage');
+    
+    // Show loading, hide others
+    loadingIndicator.style.display = 'block';
+    scansContainer.style.display = 'none';
+    errorMessage.style.display = 'none';
+    
+    fetch('/api/scans/available')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayAvailableScans(data.scans);
+                loadingIndicator.style.display = 'none';
+                scansContainer.style.display = 'block';
+            } else {
+                showScanError('Failed to load scans: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading scans:', error);
+            showScanError('Failed to load available scans');
+        });
+}
+
+function displayAvailableScans(scans) {
+    const tbody = document.getElementById('scansTableBody');
+    
+    if (scans.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    No scans available for import
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = scans.map(scan => {
+        const statusBadge = scan.is_imported 
+            ? '<span class="badge bg-success">Imported</span>'
+            : '<span class="badge bg-secondary">Available</span>';
+        
+        const actionButton = scan.anomaly_count > 0
+            ? `<button class="btn btn-sm btn-primary" onclick="importFromScan('${scan.scan_id}')" ${scan.is_imported ? 'disabled' : ''}>
+                 <i class="fas fa-download me-1"></i>Import ${scan.anomaly_count} Anomalies
+               </button>`
+            : '<span class="text-muted">No anomalies</span>';
+        
+        return `
+            <tr>
+                <td><small>${scan.timestamp_display}</small></td>
+                <td>${scan.total_connections}</td>
+                <td><strong class="${scan.anomaly_count > 0 ? 'text-warning' : 'text-muted'}">${scan.anomaly_count}</strong></td>
+                <td>${statusBadge}</td>
+                <td>${actionButton}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function importFromScan(scanId) {
+    const importBtn = document.querySelector(`button[onclick="importFromScan('${scanId}')"]`);
+    const originalText = importBtn.innerHTML;
+    
+    importBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Importing...';
+    importBtn.disabled = true;
+    
+    fetch('/api/connections/import-from-scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scan_id: scanId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            let message = `Successfully imported ${data.imported_count} anomalies from scan ${scanId}`;
+            if (data.duplicates_found > 0) {
+                message += `. Found ${data.duplicates_found} duplicates`;
+                if (data.duplicates_preserved > 0) {
+                    message += ` (${data.duplicates_preserved} with preserved labels)`;
+                }
+            }
+            showNotification('Import Complete', message, 'success');
+            
+            // Close modal and refresh data
+            const modal = bootstrap.Modal.getInstance(document.getElementById('scanSelectionModal'));
+            modal.hide();
+            
+            refreshConnections();
+        } else {
+            showNotification('Import Failed', 'Failed to import anomalies: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Import error:', error);
+        showNotification('Import Failed', 'Failed to import anomalies', 'error');
+    })
+    .finally(() => {
+        importBtn.innerHTML = originalText;
+        importBtn.disabled = false;
+    });
+}
+
+function refreshAvailableScans() {
+    loadAvailableScans();
+}
+
+function showScanError(message) {
+    const loadingIndicator = document.getElementById('scansLoadingIndicator');
+    const scansContainer = document.getElementById('scansContainer');
+    const errorMessage = document.getElementById('scansErrorMessage');
+    const errorText = document.getElementById('scansErrorText');
+    
+    loadingIndicator.style.display = 'none';
+    scansContainer.style.display = 'none';
+    errorMessage.style.display = 'block';
+    errorText.textContent = message;
 }
 
 function extractSelectedPcaps() {
@@ -1565,8 +1789,23 @@ function extractSelectedPcaps() {
                 // Log detailed results for debugging
                 console.log('PCAP extraction results:', data.results);
                 
-                // Reload table to show updated PCAP status
-                loadConnections();
+                // Update table rows efficiently instead of full reload
+                if (data.results && Array.isArray(data.results)) {
+                    data.results.forEach(result => {
+                        if (result.success) {
+                            // Update the connection object in memory
+                            const connection = currentConnections.find(conn => conn.uid === result.uid);
+                            if (connection) {
+                                connection.has_extracted_pcap = true;
+                            }
+                            // Update the table row immediately
+                            updatePcapStatusInTable(result.uid, true);
+                        }
+                    });
+                } else {
+                    // Fallback to full reload if detailed results not available
+                    loadConnections();
+                }
             } else {
                 showNotification('PCAP Extraction Failed', data.error || 'Failed to extract PCAPs', 'error');
             }
@@ -1584,69 +1823,156 @@ function openSelectedPcaps() {
         return;
     }
     
-    // Filter to only connections that have extracted PCAPs
-    const connectionsWithPcaps = Array.from(selectedConnections).filter(uid => {
+    // Categorize connections by PCAP availability
+    const connectionsWithPcaps = [];
+    const connectionsWithoutPcaps = [];
+    
+    Array.from(selectedConnections).forEach(uid => {
         const connection = currentConnections.find(conn => conn.uid === uid);
-        return connection && connection.has_extracted_pcap;
+        if (connection) {
+            if (connection.has_extracted_pcap) {
+                connectionsWithPcaps.push(uid);
+            } else {
+                connectionsWithoutPcaps.push(uid);
+            }
+        }
     });
     
-    if (connectionsWithPcaps.length === 0) {
-        showNotification('No PCAPs Available', 
-            'None of the selected connections have extracted PCAPs. Extract them first.', 'warning');
+    // If all connections have PCAPs, just open them
+    if (connectionsWithoutPcaps.length === 0) {
+        const count = connectionsWithPcaps.length;
+        showConfirmationModal(
+            `Open ${count} PCAP file${count > 1 ? 's' : ''}? This will launch external applications.`,
+            function() {
+                openPcapFiles(connectionsWithPcaps);
+            },
+            'Open PCAPs',
+            'fas fa-external-link-alt'
+        );
         return;
     }
     
-    const count = connectionsWithPcaps.length;
-    showConfirmationModal(
-        `Open ${count} PCAP file${count > 1 ? 's' : ''}? This will launch external applications.`,
-        function() {
-            let completed = 0;
-            let successful = 0;
-            let failed = 0;
+    // If some connections don't have PCAPs, ask if they should be extracted first
+    if (connectionsWithPcaps.length === 0) {
+        // No PCAPs available - offer to extract
+        const count = connectionsWithoutPcaps.length;
+        showConfirmationModal(
+            `None of the selected connections have extracted PCAPs. Extract and open ${count} PCAP file${count > 1 ? 's' : ''}?`,
+            function() {
+                extractAndOpenPcaps(connectionsWithoutPcaps);
+            },
+            'Extract & Open PCAPs',
+            'fas fa-download'
+        );
+    } else {
+        // Mixed situation - some have PCAPs, some don't
+        const withCount = connectionsWithPcaps.length;
+        const withoutCount = connectionsWithoutPcaps.length;
+        showConfirmationModal(
+            `${withCount} connection${withCount > 1 ? 's have' : ' has'} PCAPs ready, ${withoutCount} connection${withoutCount > 1 ? 's need' : ' needs'} extraction. Extract missing PCAPs and open all ${withCount + withoutCount} files?`,
+            function() {
+                // Extract missing PCAPs first, then open all
+                extractAndOpenPcaps(connectionsWithoutPcaps, connectionsWithPcaps);
+            },
+            'Extract & Open All PCAPs',
+            'fas fa-download'
+        );
+    }
+}
+
+function openPcapFiles(uids) {
+    let completed = 0;
+    let successful = 0;
+    let failed = 0;
+    const count = uids.length;
+    
+    uids.forEach(uid => {
+        fetch(`/api/labeling/open-pcap/${uid}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            completed++;
+            if (data.success) {
+                successful++;
+            } else {
+                failed++;
+                console.error(`Failed to open PCAP for ${uid}:`, data.error);
+            }
             
-            connectionsWithPcaps.forEach(uid => {
-                fetch(`/api/labeling/open-pcap/${uid}`, {
-                    method: 'POST'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    completed++;
-                    if (data.success) {
-                        successful++;
-                    } else {
-                        failed++;
-                        console.error(`Failed to open PCAP for ${uid}:`, data.error);
-                    }
-                    
-                    // Show final results when all are done
-                    if (completed === count) {
-                        if (successful === count) {
-                            showNotification('PCAPs Opened', 
-                                `Successfully opened ${successful} PCAP file${successful > 1 ? 's' : ''}`, 'success');
-                        } else if (successful > 0) {
-                            showNotification('PCAPs Partially Opened', 
-                                `Opened ${successful} PCAPs, ${failed} failed`, 'warning');
-                        } else {
-                            showNotification('PCAPs Failed to Open', 
-                                `Failed to open any PCAPs (${failed} failed)`, 'error');
-                        }
-                    }
-                })
-                .catch(error => {
-                    completed++;
-                    failed++;
-                    console.error(`Error opening PCAP for ${uid}:`, error);
-                    
-                    if (completed === count) {
-                        showNotification('PCAPs Failed to Open', 
-                            `Failed to open PCAPs (${failed} errors)`, 'error');
-                    }
-                });
-            });
+            // Show final results when all are done
+            if (completed === count) {
+                if (successful === count) {
+                    showNotification('PCAPs Opened', 
+                        `Successfully opened ${successful} PCAP file${successful > 1 ? 's' : ''}`, 'success');
+                } else if (successful > 0) {
+                    showNotification('PCAPs Partially Opened', 
+                        `Opened ${successful} PCAPs, ${failed} failed`, 'warning');
+                } else {
+                    showNotification('PCAPs Failed to Open', 
+                        `Failed to open any PCAPs (${failed} failed)`, 'error');
+                }
+            }
+        })
+        .catch(error => {
+            completed++;
+            failed++;
+            console.error(`Error opening PCAP for ${uid}:`, error);
+            
+            if (completed === count) {
+                showNotification('PCAPs Failed to Open', 
+                    `Failed to open PCAPs (${failed} errors)`, 'error');
+            }
+        });
+    });
+}
+
+function extractAndOpenPcaps(uidsToExtract, uidsToOpenDirectly = []) {
+    if (uidsToExtract.length === 0) {
+        // Just open the existing ones
+        if (uidsToOpenDirectly.length > 0) {
+            openPcapFiles(uidsToOpenDirectly);
+        }
+        return;
+    }
+    
+    showNotification('PCAP Extraction', `Extracting ${uidsToExtract.length} PCAPs...`, 'info');
+    
+    // Use bulk extraction API
+    fetch('/api/labeling/extract-pcaps-bulk', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         },
-        'Open PCAPs',
-        'fas fa-external-link-alt'
-    );
+        body: JSON.stringify({ uids: uidsToExtract })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const extractedCount = data.results.filter(r => r.success).length;
+            showNotification('Extraction Complete', 
+                `Successfully extracted ${extractedCount} PCAPs`, 'success');
+            
+            // Refresh connection data to update has_extracted_pcap status
+            loadConnections().then(() => {
+                loadRepositoryStatistics();
+                
+                // Now open all PCAPs (extracted + existing)
+                const allUids = [...uidsToExtract, ...uidsToOpenDirectly];
+                openPcapFiles(allUids);
+            }).catch(() => {
+                // If refresh fails, still try to open PCAPs
+                const allUids = [...uidsToExtract, ...uidsToOpenDirectly];
+                openPcapFiles(allUids);
+            });
+        } else {
+            showNotification('Extraction Failed', 'Failed to extract PCAPs: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Extraction error:', error);
+        showNotification('Extraction Failed', 'Failed to extract PCAPs', 'error');
+    });
 }
 
 function deleteSelectedConnections() {
@@ -1656,9 +1982,38 @@ function deleteSelectedConnections() {
     }
     
     const count = selectedConnections.size;
-    if (confirm(`Are you sure you want to delete ${count} selected connection${count > 1 ? 's' : ''}?`)) {
+    if (confirm(`Are you sure you want to delete ${count} selected connection${count > 1 ? 's' : ''}? This action cannot be undone.`)) {
         showNotification('Delete Connections', `Deleting ${count} connections...`, 'info');
-        // Here you would call the delete API
+        
+        const uids = Array.from(selectedConnections);
+        
+        fetch('/api/connections/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ uids: uids })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Delete Complete', 
+                    `Successfully deleted ${data.deleted_count} connection${data.deleted_count > 1 ? 's' : ''}`, 
+                    'success'
+                );
+                
+                // Clear selection and refresh data
+                selectedConnections.clear();
+                updateSelectionUI();
+                refreshConnections();
+            } else {
+                showNotification('Delete Failed', 'Failed to delete connections: ' + data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Delete error:', error);
+            showNotification('Delete Failed', 'Failed to delete connections', 'error');
+        });
     }
 }
 
@@ -1761,7 +2116,311 @@ function showConnectionDetails(uid) {
         return;
     }
     
-    showNotification('Connection Details', `Viewing details for connection ${uid}`, 'info');
+    const detailsContent = document.getElementById('connection-details-content');
+    detailsContent.innerHTML = `
+        <div class="connection-details">
+            <div class="connection-detail-item full-width">
+                <div class="label">Connection UID</div>
+                <div class="value">${connection.uid}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Timestamp</div>
+                <div class="value">${new Date(connection.timestamp).toLocaleString()}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Duration</div>
+                <div class="value">${connection.duration ? connection.duration.toFixed(2) + 's' : 'N/A'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Source Address</div>
+                <div class="value">${connection.source_ip}:${connection.source_port || '?'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Destination Address</div>
+                <div class="value">${connection.dest_ip}:${connection.dest_port || '?'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Protocol</div>
+                <div class="value">${connection.proto}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Service</div>
+                <div class="value">${connection.service || 'Unknown'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Data Transferred</div>
+                <div class="value">${formatBytes((connection.orig_bytes || 0) + (connection.resp_bytes || 0))}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Anomaly Score</div>
+                <div class="value">${connection.anomaly_score ? connection.anomaly_score.toFixed(6) : 'N/A'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Classification</div>
+                <div class="value">${connection.is_anomaly ? '🚨 Anomalous' : '✅ Normal'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Current Label</div>
+                <div class="value">${connection.label_category ? `${connection.label_category}.${connection.label_subcategory}` : '⚪ Unlabeled'}</div>
+            </div>
+            <div class="connection-detail-item">
+                <div class="label">Review Status</div>
+                <div class="value">${connection.review_status || '⏳ Pending'}</div>
+            </div>
+        </div>
+        
+        ${connection.notes ? `
+        <div class="connection-details-notes">
+            <h6><i class="fas fa-sticky-note me-2"></i>Notes</h6>
+            <p class="mb-0">${connection.notes}</p>
+        </div>
+        ` : ''}
+        
+        ${connection.labeled_by ? `
+        <div class="connection-details-labeling">
+            <small>
+                <i class="fas fa-user me-1"></i>Labeled by <strong>${connection.labeled_by}</strong> 
+                on ${new Date(connection.labeled_at).toLocaleString()}
+            </small>
+        </div>
+        ` : ''}
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('connectionDetailsModal'));
+    modal.show();
+    
+    // Store current connection UID for PCAP operations
+    window.currentConnectionUID = uid;
+    
+    // Update PCAP button visibility based on extraction status
+    updatePcapButtonsVisibility(connection);
+}
+
+function updatePcapStatusInTable(uid, hasPcap) {
+    const row = document.querySelector(`tr[data-uid="${uid}"]`);
+    if (!row) return;
+    
+    // Find the PCAP status cell (Column 6, index 6)
+    const pcapCell = row.cells[6];
+    if (pcapCell) {
+        pcapCell.innerHTML = hasPcap ? 
+            '<i class="fas fa-file-archive text-success" title="PCAP extracted"></i>' : 
+            '<i class="fas fa-minus text-muted" title="No PCAP"></i>';
+    }
+    
+    // Find the actions cell (Column 9, index 9) and add Open PCAP button if needed
+    const actionsCell = row.cells[9];
+    if (actionsCell && hasPcap) {
+        // Check if Open PCAP button already exists
+        const existingOpenBtn = actionsCell.querySelector('[onclick*="openPcapDirect"]');
+        if (!existingOpenBtn) {
+            // Add the Open PCAP button after the View Details button
+            const openPcapBtn = document.createElement('button');
+            openPcapBtn.className = 'btn btn-sm btn-outline-success';
+            openPcapBtn.onclick = () => openPcapDirect(uid);
+            openPcapBtn.title = 'Open PCAP';
+            openPcapBtn.innerHTML = '<i class="fas fa-external-link-alt"></i>';
+            
+            actionsCell.appendChild(openPcapBtn);
+        }
+    }
+}
+
+function updatePcapButtonsVisibility(connection) {
+    const extractBtn = document.getElementById('extractPcapBtn');
+    const openBtn = document.getElementById('openPcapBtn');
+    
+    if (connection.has_extracted_pcap) {
+        extractBtn.style.display = 'none';
+        openBtn.style.display = 'inline-block';
+    } else {
+        extractBtn.style.display = 'inline-block';
+        openBtn.style.display = 'none';
+    }
+}
+
+function extractPcapForConnection() {
+    const uid = window.currentConnectionUID;
+    if (!uid) {
+        showNotification('Error', 'No connection selected', 'error');
+        return;
+    }
+    
+    const extractBtn = document.getElementById('extractPcapBtn');
+    const originalText = extractBtn.innerHTML;
+    extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Extracting...';
+    extractBtn.disabled = true;
+    
+    fetch(`/api/labeling/extract-pcap/${uid}`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const title = data.already_exists ? 'PCAP Already Available' : 'PCAP Extracted';
+            showNotification(title, data.message || 'PCAP file ready for inspection', 'success');
+            
+            // Update button visibility
+            extractBtn.style.display = 'none';
+            document.getElementById('openPcapBtn').style.display = 'inline-block';
+            
+            // Update the connection object
+            const connection = currentConnections.find(conn => conn.uid === uid);
+            if (connection) {
+                connection.has_extracted_pcap = true;
+            }
+            
+            // Update the table row immediately without full reload
+            updatePcapStatusInTable(uid, true);
+        } else {
+            showNotification('Extraction Failed', data.error || 'Failed to extract PCAP', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('PCAP extraction error:', error);
+        showNotification('Extraction Failed', 'Failed to extract PCAP', 'error');
+    })
+    .finally(() => {
+        extractBtn.innerHTML = originalText;
+        extractBtn.disabled = false;
+    });
+}
+
+function openPcapForConnection() {
+    const uid = window.currentConnectionUID;
+    if (!uid) {
+        showNotification('Error', 'No connection selected', 'error');
+        return;
+    }
+    
+    fetch(`/api/labeling/open-pcap/${uid}`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const message = data.note ? `${data.message}\n${data.note}` : data.message;
+            showNotification('PCAP File', message || 'PCAP file opened successfully', 'success');
+        } else {
+            showNotification('Open Failed', data.error || 'Failed to open PCAP', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('PCAP open error:', error);
+        showNotification('Open Failed', 'Failed to open PCAP', 'error');
+    });
+}
+
+function deleteCurrentConnection() {
+    const uid = window.currentConnectionUID;
+    if (!uid) {
+        showNotification('Error', 'No connection selected', 'error');
+        return;
+    }
+    
+    showConfirmationModal(
+        `Are you sure you want to delete connection ${uid}?`,
+        function() {
+            fetch(`/api/connections/delete/${uid}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Connection Deleted', data.message, 'success');
+                    
+                    // Close the modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('connectionDetailsModal'));
+                    modal.hide();
+                    
+                    // Reload the connections table
+                    loadConnections();
+                } else {
+                    showNotification('Delete Failed', data.error || 'Failed to delete connection', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Delete error:', error);
+                showNotification('Delete Failed', 'Failed to delete connection', 'error');
+            });
+        }
+    );
+}
+
+function editConnectionLabel() {
+    const uid = window.currentConnectionUID;
+    if (!uid) {
+        showNotification('Error', 'No connection selected', 'error');
+        return;
+    }
+    
+    // Close the details modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('connectionDetailsModal'));
+    modal.hide();
+    
+    // Select the connection in the table and enable bulk labeling
+    selectedConnections.clear();
+    selectedConnections.add(uid);
+    
+    // Update the checkbox in the table
+    const checkbox = document.querySelector(`input[value="${uid}"]`);
+    if (checkbox) {
+        checkbox.checked = true;
+    }
+    
+    // Update the UI to show bulk labeling panel
+    updateSelectionUI();
+    
+    // Scroll to bulk labeling panel
+    document.getElementById('bulk-labeling-panel').scrollIntoView({ behavior: 'smooth' });
+    
+    showNotification('Edit Mode', 'Connection selected for labeling. Use the bulk labeling panel below.', 'info');
+}
+
+function validatePcapFiles(connections) {
+    const uids = connections.map(conn => conn.uid);
+    
+    if (uids.length === 0) return Promise.resolve([]);
+    
+    return fetch('/api/connections/validate-pcaps', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ uids: uids })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            let updatedCount = 0;
+            
+            // Update the connections array with validated PCAP status
+            data.connections.forEach(validatedConn => {
+                const conn = connections.find(c => c.uid === validatedConn.uid);
+                if (conn) {
+                    const oldStatus = conn.has_extracted_pcap;
+                    conn.has_extracted_pcap = validatedConn.has_extracted_pcap;
+                    
+                    if (oldStatus !== validatedConn.has_extracted_pcap) {
+                        updatedCount++;
+                    }
+                }
+            });
+            
+            if (data.sync_count > 0) {
+                console.log(`PCAP validation: synchronized ${data.sync_count} connection(s) with actual file existence`);
+            }
+            
+            return connections;
+        } else {
+            console.error('PCAP validation failed:', data.error);
+            return connections; // Return original connections if validation fails
+        }
+    })
+    .catch(error => {
+        console.error('Error validating PCAP files:', error);
+        return connections; // Return original connections if validation fails
+    });
 }
 
 function openPcapDirect(uid) {

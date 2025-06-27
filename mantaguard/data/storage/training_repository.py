@@ -306,6 +306,69 @@ class TrainingRepository:
             
             return cursor.lastrowid
     
+    def get_connection_by_uid(self, uid: str) -> Optional[TrainingConnection]:
+        """
+        Retrieve a specific training connection by its UID.
+        
+        Args:
+            uid: Connection UID to look up
+            
+        Returns:
+            TrainingConnection object if found, None otherwise
+        """
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            
+            cursor.execute(
+                'SELECT * FROM training_connections WHERE uid = ?',
+                (uid,)
+            )
+            
+            row = cursor.fetchone()
+            if row:
+                # Parse datetime fields
+                timestamp = datetime.fromisoformat(row['timestamp']) if row['timestamp'] else None
+                labeled_at = datetime.fromisoformat(row['labeled_at']) if row['labeled_at'] else None
+                
+                # Deserialize feature vector
+                feature_vector = None
+                if row['feature_vector']:
+                    try:
+                        feature_vector = np.array(json.loads(row['feature_vector']))
+                    except Exception as e:
+                        logger.warning(f"Failed to deserialize feature vector for UID {row['uid']}: {e}")
+                
+                return TrainingConnection(
+                    uid=row['uid'],
+                    timestamp=timestamp,
+                    source_ip=row['source_ip'],
+                    dest_ip=row['dest_ip'],
+                    source_port=row['source_port'],
+                    dest_port=row['dest_port'],
+                    proto=row['proto'],
+                    service=row['service'],
+                    duration=row['duration'],
+                    orig_bytes=row['orig_bytes'],
+                    resp_bytes=row['resp_bytes'],
+                    orig_pkts=row['orig_pkts'],
+                    resp_pkts=row['resp_pkts'],
+                    history=row['history'],
+                    feature_vector=feature_vector,
+                    anomaly_score=row['anomaly_score'],
+                    is_anomaly=bool(row['is_anomaly']),
+                    label_category=row['label_category'],
+                    label_subcategory=row['label_subcategory'],
+                    confidence_level=ConfidenceLevel(row['confidence_level']) if row['confidence_level'] else None,
+                    labeled_by=row['labeled_by'],
+                    labeled_at=labeled_at,
+                    training_source=row['training_source'],
+                    review_status=ReviewStatus(row['review_status']) if row['review_status'] else ReviewStatus.PENDING,
+                    notes=row['notes'],
+                    has_extracted_pcap=bool(row['has_extracted_pcap']) if 'has_extracted_pcap' in row.keys() else False
+                )
+            return None
+    
     def get_connections(
         self, 
         limit: int = 100,
@@ -516,6 +579,39 @@ class TrainingRepository:
             True if connection was deleted, False if not found
         """
         return self.delete_connections([uid]) > 0
+    
+    def update_connection_pcap_status(self, uid: str, has_pcap: bool) -> bool:
+        """
+        Update the PCAP extraction status for a connection.
+        
+        Args:
+            uid: Connection UID to update
+            has_pcap: Whether the connection has an extracted PCAP file
+            
+        Returns:
+            True if connection was updated, False if not found
+        """
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                
+                cursor.execute('''
+                    UPDATE training_connections 
+                    SET has_extracted_pcap = ?
+                    WHERE uid = ?
+                ''', (has_pcap, uid))
+                
+                updated = cursor.rowcount > 0
+                if updated:
+                    logger.info(f"Updated PCAP status for connection {uid}: {has_pcap}")
+                else:
+                    logger.warning(f"Connection {uid} not found for PCAP status update")
+                
+                return updated
+                
+        except sqlite3.Error as e:
+            logger.error(f"Error updating PCAP status for connection {uid}: {e}")
+            return False
     
     def get_label_statistics(self) -> Dict[str, Any]:
         """
