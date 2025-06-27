@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Implement advanced model management, UI enhancements, and code restructuring&#10;&#10;- Removed outdated `labeled_anomalies.csv` and `labeled_anomalies_backup.csv` legacy files.&#10;- Enhanced model switching functionality by integrating a new endpoint (`/api/training/switch-model`) with session consistency updates.&#10;- Added comprehensive path utility methods for Multi-Class Classifier (MCC) and OCSVM models in `config.py`.&#10;- Improved **Training Center** UI with model version selector, multi-step retraining wizard, and anomaly processing options.&#10;- Introduced console logging for debugging and improved API response handling for UI interactions.&#10;- Streamlined retraining workflows with validation, dataset selection, and anomaly-based processing in multi-step wizards.">
+    <list default="true" id="4ccb8251-4629-4598-b691-30bc2113c371" name="Changes" comment="Add connection labeling enhancements and active scan UI updates&#10;&#10;- Introduced connection labeling modal for editing labels and confidence levels with real-time updates.&#10;- Enhanced active scan state management in the recent scans list and modal interactions.&#10;- Added user confidence tracking for anomaly classifications with visual indicators.&#10;- Updated backend APIs to support confidence-based labeling and metadata updates.&#10;- Refined UI components and styles for better usability in scan and connection management workflows.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/reports.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/reports.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/scanning.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/scanning.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mantaguard/data/unknown_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/mantaguard/data/unknown_categories.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -189,7 +187,7 @@
       <workItem from="1749640074323" duration="2046000" />
       <workItem from="1750316673055" duration="139000" />
       <workItem from="1750316827027" duration="11000" />
-      <workItem from="1751023683490" duration="26916000" />
+      <workItem from="1751023683490" duration="28956000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project structure and configuration files for the AI">
       <option name="closed" value="true" />
@@ -463,7 +461,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751053262532</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="Add connection labeling enhancements and active scan UI updates&#10;&#10;- Introduced connection labeling modal for editing labels and confidence levels with real-time updates.&#10;- Enhanced active scan state management in the recent scans list and modal interactions.&#10;- Added user confidence tracking for anomaly classifications with visual indicators.&#10;- Updated backend APIs to support confidence-based labeling and metadata updates.&#10;- Refined UI components and styles for better usability in scan and connection management workflows.">
+      <option name="closed" value="true" />
+      <created>1751057413087</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1751057413087</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -529,7 +535,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add initial AI model analysis and data processing scripts&#10;&#10;This commit adds foundational scripts for analyzing PCAP files, loading and preprocessing NSL-KDD datasets, and managing the MantaGuard AI model pipeline. Updates include `analyze_capture.py`, `check_dataset.py`, and `data_loader.py`, along with sample outputs and initial `.gitignore` configurations for clarity and efficiency." />
     <MESSAGE value="Remove unused Zeek log files and improve model file handling&#10;&#10;Deleted redundant Zeek output logs to declutter the repository. Enhanced model file detection logic in timed_capture.py with fallback warnings and included detailed error messages for missing model files." />
     <MESSAGE value="Remove large combined scan CSV file from repository&#10;&#10;The file `combined_scan_20250423_134837.csv` was removed due to its large size and potential redundancy. Keeping it in the repository could negatively impact performance and storage." />
     <MESSAGE value="Enhance MantaGuard UI and session state management&#10;&#10;- Improved sidebar navigation to preserve user selections during reruns.&#10;- Added functionality to display scan completion messages and manage refresh behavior.&#10;- Updated retrain_ocsvm.py to allow optional labeled anomalies for model retraining.&#10;- Adjusted model directory paths in timed_capture.py for consistency.&#10;- Modified unknown_categories.json to include new entries and improve categorization." />
@@ -554,7 +559,8 @@
     <MESSAGE value="Remove refactoring notes, improve ML Training Center UI, and enhance installation script&#10;&#10;- Deleted outdated `REFACTOR_NOTES.md` file as refactoring details are redundant in the repository.&#10;- Enhanced **ML Training Center** UI with a work-in-progress warning and additional guidance on available and under-development features.&#10;- Introduced new styles for placeholder images and added a **Multi-class Classifier** tool detail to the home page.&#10;- Updated `init.sh` with improved dependency management, automatic installation functions for `uv`, and system dependency checks for smoother setup experience.&#10;- Refined Zeek installation process to support more distributions, including Arch-based systems with AUR helpers." />
     <MESSAGE value="Add connection data handlers and improve interface functionality&#10;&#10;- Introduced `get_connection_by_uid` and `update_connection_pcap_status` methods to enhance database interaction with connection details.&#10;- Improved bulk labeling functionality in the **ML Training Center** UI with dynamic control enabling and additional styling refinements.&#10;- Enhanced connection filtering logic and shifted error handling for smoother user experience.&#10;- Integrated scan importing functionalities with validation and real-time notifications for available anomalies. &#10;- Unified PCAP extraction and file-opening workflows for better user guidance and process efficiency." />
     <MESSAGE value="Implement advanced model management, UI enhancements, and code restructuring&#10;&#10;- Removed outdated `labeled_anomalies.csv` and `labeled_anomalies_backup.csv` legacy files.&#10;- Enhanced model switching functionality by integrating a new endpoint (`/api/training/switch-model`) with session consistency updates.&#10;- Added comprehensive path utility methods for Multi-Class Classifier (MCC) and OCSVM models in `config.py`.&#10;- Improved **Training Center** UI with model version selector, multi-step retraining wizard, and anomaly processing options.&#10;- Introduced console logging for debugging and improved API response handling for UI interactions.&#10;- Streamlined retraining workflows with validation, dataset selection, and anomaly-based processing in multi-step wizards." />
-    <option name="LAST_COMMIT_MESSAGE" value="Implement advanced model management, UI enhancements, and code restructuring&#10;&#10;- Removed outdated `labeled_anomalies.csv` and `labeled_anomalies_backup.csv` legacy files.&#10;- Enhanced model switching functionality by integrating a new endpoint (`/api/training/switch-model`) with session consistency updates.&#10;- Added comprehensive path utility methods for Multi-Class Classifier (MCC) and OCSVM models in `config.py`.&#10;- Improved **Training Center** UI with model version selector, multi-step retraining wizard, and anomaly processing options.&#10;- Introduced console logging for debugging and improved API response handling for UI interactions.&#10;- Streamlined retraining workflows with validation, dataset selection, and anomaly-based processing in multi-step wizards." />
+    <MESSAGE value="Add connection labeling enhancements and active scan UI updates&#10;&#10;- Introduced connection labeling modal for editing labels and confidence levels with real-time updates.&#10;- Enhanced active scan state management in the recent scans list and modal interactions.&#10;- Added user confidence tracking for anomaly classifications with visual indicators.&#10;- Updated backend APIs to support confidence-based labeling and metadata updates.&#10;- Refined UI components and styles for better usability in scan and connection management workflows." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add connection labeling enhancements and active scan UI updates&#10;&#10;- Introduced connection labeling modal for editing labels and confidence levels with real-time updates.&#10;- Enhanced active scan state management in the recent scans list and modal interactions.&#10;- Added user confidence tracking for anomaly classifications with visual indicators.&#10;- Updated backend APIs to support confidence-based labeling and metadata updates.&#10;- Refined UI components and styles for better usability in scan and connection management workflows." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/MantaGuard$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1749637428639" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />

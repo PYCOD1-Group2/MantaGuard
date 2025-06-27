@@ -61,15 +61,20 @@ MantaGuard is a network security platform that combines **real-time packet captu
 
 ### 🤖 **Anomaly Detection (OCSVM)** ✅
 - **OneClassSVM**: Machine learning model that identifies unusual network behavior patterns
+- **Advanced Model Management**: Switch between different trained OCSVM models
+- **Model Retraining**: Retrain models with manually labeled data
 - **Anomaly Scoring**: Numerical scores indicating how anomalous each connection is
 - **Real-time Analysis**: Live detection of suspicious network activity
 - **Batch Processing**: Analysis of historical PCAP files for forensic investigation
+- **Manual Labeling**: Interactive labeling of connections for improved training
 
 ### 📊 **Reports & Visualization** ✅
-- **Connection Analysis**: Detailed view of network connections and their anomaly scores
-- **Interactive Dashboard**: Web-based interface for monitoring and analysis
-- **Data Export**: Export analysis results for further investigation
-- **Historical Analysis**: Review past network activity and detected anomalies
+- **Enhanced Connection Analysis**: Detailed view of network connections with improved anomaly score visualization
+- **Interactive Dashboard**: Modernized web-based interface with real-time monitoring capabilities
+- **Advanced Data Export**: Export analysis results in multiple formats for further investigation
+- **Historical Analysis**: Review past network activity with enhanced filtering and search
+- **Anomaly Trend Analysis**: Visualize anomaly patterns over time with interactive charts
+- **Connection Labeling Interface**: Direct labeling capabilities from the reports view
 
 ### 🔧 **Core Infrastructure** ✅
 - **Web Interface**: Modern, responsive dashboard built with Flask and Bootstrap
@@ -261,11 +266,12 @@ If it doesn't open automatically, navigate there manually.
 2. View detected threats and anomalies
 3. Click on any anomaly for detailed analysis
 
-### 4. **Label Training Data** (Optional)
-1. Go to **Connection Browser** tab
-2. Filter connections by anomaly status
-3. Select connections and apply labels
-4. Train improved models
+### 4. **Label Training Data & Retrain Models**
+1. Go to **ML Training Center** tab
+2. Use **Connection Browser** to filter connections by anomaly status
+3. Select connections and apply manual labels (normal/anomalous)
+4. **Retrain OCSVM models** with newly labeled data
+5. **Switch between model versions** to compare performance
 
 ---
 
@@ -313,6 +319,20 @@ MantaGuard uses OneClassSVM for anomaly detection:
 3. **Scoring**: Each connection receives an anomaly score
 4. **Classification**: Connections are flagged as normal or anomalous
 
+### Advanced Model Management
+
+**Model Switching Capabilities:**
+- **Multiple OCSVM Models**: Switch between different trained models
+- **Model Versions**: Access different versions of trained models
+- **Real-time Switching**: Change active models without system restart
+- **Model Comparison**: Compare performance across different model versions
+
+**Model Retraining:**
+- **Manual Data Labeling**: Label connections directly from the interface
+- **Incremental Training**: Retrain models with new labeled data
+- **Training Data Management**: Organize and manage training datasets
+- **Performance Validation**: Track model accuracy improvements
+
 ### Understanding Anomaly Scores
 
 **Score Interpretation:**
@@ -330,29 +350,39 @@ MantaGuard uses OneClassSVM for anomaly detection:
 
 ## 📊 Reports & Visualization
 
-### Security Dashboard
+### Enhanced Security Dashboard
 
-Access comprehensive analysis results through the Reports section:
+Access comprehensive analysis results through the improved Reports section:
 
 **Overview Information:**
-- Total connections analyzed
-- Number of anomalies detected
-- Analysis timestamp and duration
+- Total connections analyzed with real-time updates
+- Number of anomalies detected with severity breakdown
+- Analysis timestamp and duration tracking
 - Source information (live capture or PCAP file)
+- Model information and version details
 
-**Connection Details:**
+**Advanced Connection Details:**
 - Source and destination IP addresses and ports
-- Protocol information
-- Connection duration and data transfer
-- Anomaly score for each connection
+- Protocol information with enhanced categorization
+- Connection duration and data transfer metrics
+- Anomaly score with confidence indicators
+- **Manual labeling capabilities** for training data generation
+- Connection trend analysis and historical comparison
 
-### Data Export
+**Interactive Features:**
+- **Real-time anomaly filtering** and search capabilities
+- **Direct connection labeling** from the reports interface
+- **Anomaly score visualization** with interactive charts
+- **Time-based analysis** with customizable date ranges
+
+### Enhanced Data Export
 
 **Export Options:**
-- View detailed connection information
-- Export analysis results for external tools
-- Save reports for compliance or documentation
-- Generate forensic analysis summaries
+- View detailed connection information with enhanced formatting
+- Export analysis results in multiple formats (CSV, JSON)
+- Save reports for compliance or documentation with timestamps
+- Generate comprehensive forensic analysis summaries
+- **Export labeled training data** for model development
 
 ---
 
@@ -392,19 +422,23 @@ Access comprehensive analysis results through the Reports section:
 
 ### ML Training Center (Development)
 
-**Status:** 🔴 Under Development
+**Status:** 🟡 Actively Developed - Core Features Working
 
-The ML Training Center is intended to provide an interface for:
-- Manual labeling of network connections
-- Training data management
-- Model retraining capabilities
+The ML Training Center provides enhanced capabilities for model management and training:
 
-**Current Issues:**
-- Interface may be unstable or non-functional
-- Training workflows are incomplete
-- Data labeling features are experimental
+**✅ Working Features:**
+- **Manual Anomaly Labeling**: Interactive interface for labeling network connections as normal or anomalous
+- **OCSVM Model Retraining**: Retrain OneClassSVM models with newly labeled data
+- **Model Switching**: Switch between different OCSVM model versions
+- **Training Data Management**: View and manage labeled training datasets
+- **Model Performance Tracking**: Monitor model accuracy and performance metrics
 
-**Access:** Available in the web interface but functionality is limited
+**🔧 In Development:**
+- Advanced model comparison tools
+- Batch labeling operations
+- Automated model validation workflows
+
+**Access:** Available in the web interface with functional core features
 
 ### Attack Classification (Development)
 
@@ -424,20 +458,24 @@ The attack classification system is designed to:
 
 ### Advanced Model Management (Development)
 
-**Status:** 🔴 Under Development
+**Status:** 🟡 Actively Developed - OCSVM Management Working
 
-Advanced model features planned include:
+Advanced model management features now include:
+
+**✅ Working Features:**
+- **OCSVM Model Switching**: Switch between different trained OCSVM models
+- **Model Versioning**: Track and manage multiple model versions
+- **Model Performance Metrics**: View training accuracy and validation results
+- **Custom OCSVM Training**: Train new OneClassSVM models with custom parameters
+- **Model Persistence**: Save and load trained models reliably
+
+**🔧 In Development:**
 - Hybrid model combinations (OCSVM + Multi-class)
-- Custom model training
-- Model performance metrics
-- Model versioning and comparison
+- Advanced model comparison dashboards
+- Automated model selection based on performance
+- Cross-validation and testing frameworks
 
-**Current Issues:**
-- Model switching may not work properly
-- Training interfaces are incomplete
-- Performance metrics may be unreliable
-
-**Recommendation:** Use only the default OCSVM model for stable operation
+**Current Limitation:** Multi-class classification models are still under development
 
 ### API Integration (Development)
 
