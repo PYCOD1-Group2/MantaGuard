@@ -773,7 +773,7 @@
                                         <strong>Training:</strong> Uses normal traffic patterns (not manual labels)
                                     </p>
                                     <div class="mt-2">
-                                        <button class="btn btn-sm btn-warning" onclick="startBatchRetraining()">
+                                        <button class="btn btn-sm btn-warning" onclick="openRetrainingWizard()">
                                             <i class="fas fa-sync-alt me-1"></i>Retrain Model
                                         </button>
                                     </div>
@@ -817,7 +817,18 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div id="current-model-info">
-                                        <p><strong>Current Model:</strong> <span id="model-version">Loading...</span></p>
+                                        <div class="model-selector mb-3">
+                                            <label for="model-select" class="form-label"><strong>Active Model:</strong></label>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <select id="model-select" class="form-select" style="max-width: 200px;">
+                                                    <option value="">Loading models...</option>
+                                                </select>
+                                                <button id="switch-model-btn" class="btn btn-outline-primary btn-sm" disabled>
+                                                    Switch
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <p><strong>Current Version:</strong> <span id="model-version">Loading...</span></p>
                                         <p><strong>Training Date:</strong> <span id="model-date">Loading...</span></p>
                                         <p><strong>Training Samples:</strong> <span id="training-samples">Loading...</span></p>
                                         <p><strong>Labeled Anomalies:</strong> <span id="labeled-count-model">Loading...</span></p>
@@ -1034,6 +1045,12 @@ document.addEventListener('DOMContentLoaded', function() {
     refreshModelInfo();
     refreshUnknownCategories();
     
+    // Set up model switch button click handler for training page widget
+    const switchModelBtn = document.getElementById('switch-model-btn');
+    if (switchModelBtn) {
+        switchModelBtn.addEventListener('click', switchModel);
+    }
+    
     // Initialize sort icons
     updateSortIcons();
     
@@ -1087,14 +1104,19 @@ function loadRepositoryStatistics() {
 }
 
 function loadConnections() {
+    console.log('🔍 loadConnections called');
+    
     const params = new URLSearchParams({
         limit: pageSize,
         offset: currentPage * pageSize,
         ...currentFilters
     });
     
+    console.log('📡 Making API call with params:', params.toString());
+    
     const tbody = document.getElementById('connections-tbody');
     if (tbody) {
+        console.log('✅ Found tbody element');
         tbody.innerHTML = `
             <tr>
                 <td colspan="10" class="text-center text-muted">
@@ -1102,35 +1124,53 @@ function loadConnections() {
                 </td>
             </tr>
         `;
+    } else {
+        console.error('❌ tbody element not found!');
     }
     
     return fetch(`/api/connections?${params}`)
-        .then(response => response.json())
+        .then(response => {
+            console.log('📥 API response status:', response.status);
+            return response.json();
+        })
         .then(data => {
+            console.log('📋 API response data:', data);
             if (data.success) {
+                console.log('🔄 Starting PCAP validation for', data.connections.length, 'connections');
                 // Validate PCAP files and sync database status with actual file existence
                 return validatePcapFiles(data.connections).then(validatedConnections => {
+                    console.log('✅ PCAP validation complete, displaying', validatedConnections.length, 'connections');
                     currentConnections = validatedConnections;
                     displayConnections(validatedConnections);
                     updatePaginationInfo(data.count);
                     return data;
                 });
             } else {
+                console.error('❌ API returned error:', data.error);
                 showNotification('Error', 'Failed to load connections: ' + data.error, 'error');
                 throw new Error(data.error);
             }
         })
         .catch(error => {
-            console.error('Error loading connections:', error);
+            console.error('💥 Error loading connections:', error);
             showNotification('Error', 'Failed to load connections', 'error');
             throw error;
         });
 }
 
 function displayConnections(connections) {
+    console.log('🎨 displayConnections called with', connections.length, 'connections');
+    
     const tbody = document.getElementById('connections-tbody');
+    if (!tbody) {
+        console.error('❌ tbody element not found in displayConnections!');
+        return;
+    }
+    
+    console.log('✅ tbody element found in displayConnections');
     
     if (connections.length === 0) {
+        console.log('📭 No connections to display');
         tbody.innerHTML = `
             <tr>
                 <td colspan="10" class="text-center text-muted">
@@ -1140,6 +1180,8 @@ function displayConnections(connections) {
         `;
         return;
     }
+    
+    console.log('📊 Processing', connections.length, 'connections for display');
     
     // Store the connections globally and apply sorting
     currentConnections = [...connections];
@@ -1204,6 +1246,10 @@ function displayConnections(connections) {
             </tr>
         `;
     }).join('');
+    
+    console.log('✅ Table HTML generated, setting tbody content...');
+    console.log('📏 HTML content length:', tbody.innerHTML.length);
+    console.log('🎯 displayConnections completed successfully');
 }
 
 function getLabelBadge(category, subcategory) {
@@ -1281,28 +1327,170 @@ function refreshConnections() {
 
 // Model Training Functions
 function refreshModelInfo() {
-    fetch('/api/training/model-info')
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const versionEl = document.getElementById('model-version');
-                const dateEl = document.getElementById('model-date');
-                const samplesEl = document.getElementById('training-samples');
-                const labeledEl = document.getElementById('labeled-count-model');
-                const detectionEl = document.getElementById('detection-rate');
-                const falsePositiveEl = document.getElementById('false-positive-rate');
-                const accuracyEl = document.getElementById('model-accuracy');
-                
-                if (versionEl) versionEl.textContent = data.version || 'Unknown';
-                if (dateEl) dateEl.textContent = data.training_date || 'Unknown';
-                if (samplesEl) samplesEl.textContent = data.training_samples || '0';
-                if (labeledEl) labeledEl.textContent = data.labeled_count || '0';
-                if (detectionEl) detectionEl.textContent = (data.detection_rate || 0) + '%';
-                if (falsePositiveEl) falsePositiveEl.textContent = (data.false_positive_rate || 0) + '%';
-                if (accuracyEl) accuracyEl.textContent = (data.accuracy || 0) + '%';
-            }
+    // Load both model info and available models
+    Promise.all([
+        fetch('/api/training/model-info').then(r => r.json()),
+        fetch('/api/training/available-models').then(r => r.json())
+    ])
+    .then(([modelInfo, availableModels]) => {
+        // Update model info display
+        if (modelInfo.success) {
+            const versionEl = document.getElementById('model-version');
+            const dateEl = document.getElementById('model-date');
+            const samplesEl = document.getElementById('training-samples');
+            const labeledEl = document.getElementById('labeled-count-model');
+            const detectionEl = document.getElementById('detection-rate');
+            const falsePositiveEl = document.getElementById('false-positive-rate');
+            const accuracyEl = document.getElementById('model-accuracy');
+            
+            if (versionEl) versionEl.textContent = modelInfo.version || 'Unknown';
+            if (dateEl) dateEl.textContent = modelInfo.training_date || 'Unknown';
+            if (samplesEl) samplesEl.textContent = modelInfo.training_samples || '0';
+            if (labeledEl) labeledEl.textContent = modelInfo.labeled_count || '0';
+            if (detectionEl) detectionEl.textContent = (modelInfo.detection_rate || 0) + '%';
+            if (falsePositiveEl) falsePositiveEl.textContent = (modelInfo.false_positive_rate || 0) + '%';
+            if (accuracyEl) accuracyEl.textContent = (modelInfo.accuracy || 0) + '%';
+        }
+        
+        // Update model selection dropdown
+        if (availableModels.success) {
+            updateModelSelectDropdown(availableModels.models, modelInfo.version);
+        }
+    })
+    .catch(error => console.error('Error loading model info:', error));
+}
+
+function updateModelSelectDropdown(models, currentVersion) {
+    const selectEl = document.getElementById('model-select');
+    const switchBtn = document.getElementById('switch-model-btn');
+    
+    console.log('🔄 updateModelSelectDropdown: currentVersion =', currentVersion);
+    console.log('📋 Available models:', models.map(m => m.version));
+    
+    // Debug: Check the dropdown element
+    console.log('🔍 Dropdown element check:');
+    console.log('  selectEl:', selectEl);
+    console.log('  current value:', selectEl?.value);
+    console.log('  current selectedIndex:', selectEl?.selectedIndex);
+    console.log('  current options count:', selectEl?.options?.length);
+    
+    if (!selectEl) {
+        console.error('❌ model-select element not found');
+        return;
+    }
+    
+    // Store the current scroll position and focus state
+    const wasSelected = document.activeElement === selectEl;
+    
+    // Clear existing options
+    selectEl.innerHTML = '';
+    
+    // Add models as options
+    models.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model.version;
+        option.textContent = `${model.display_name} (${model.creation_date})`;
+        selectEl.appendChild(option);
+    });
+    
+    // Set the current version as selected
+    const oldValue = selectEl.value;
+    selectEl.value = currentVersion;
+    
+    // Verify the update worked
+    const actualValue = selectEl.value;
+    const selectedOptionText = selectEl.options[selectEl.selectedIndex]?.textContent || 'None';
+    console.log('✅ Dropdown updated. From:', oldValue, 'To Expected:', currentVersion, 'Actual:', actualValue);
+    console.log('🎯 Selected option text:', selectedOptionText);
+    console.log('🎯 Dropdown selectedIndex:', selectEl.selectedIndex);
+    
+    // Visual feedback removed - no longer needed for debugging
+    
+    if (actualValue !== currentVersion) {
+        console.error('❌ Dropdown update failed! Trying alternative method...');
+        // Alternative method: select by index
+        const targetOption = Array.from(selectEl.options).find(opt => opt.value === currentVersion);
+        if (targetOption) {
+            targetOption.selected = true;
+            selectEl.selectedIndex = targetOption.index;
+            console.log('🔄 Alternative method: Set selectedIndex to', targetOption.index);
+        }
+    }
+    
+    // Restore focus if it was previously focused
+    if (wasSelected) {
+        selectEl.focus();
+    }
+    
+    // Enable switch button (but don't set onclick here - it's set globally)
+    if (switchBtn) {
+        switchBtn.disabled = false;
+    }
+    
+    // Enable select change handler
+    selectEl.onchange = function() {
+        const selectedVersion = selectEl.value;
+        if (switchBtn) {
+            switchBtn.disabled = selectedVersion === currentVersion;
+        }
+    };
+}
+
+function switchModel() {
+    const selectEl = document.getElementById('model-select');
+    const switchBtn = document.getElementById('switch-model-btn');
+    const selectedVersion = selectEl.value;
+    
+    console.log('🔄 switchModel called. Selected version:', selectedVersion);
+    
+    if (!selectedVersion) {
+        console.error('❌ No version selected');
+        return;
+    }
+    
+    // Disable button during switch
+    switchBtn.disabled = true;
+    switchBtn.textContent = 'Switching...';
+    
+    console.log('📡 Sending switch request to backend...');
+    fetch('/api/training/switch-model', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            version: selectedVersion
         })
-        .catch(error => console.error('Error loading model info:', error));
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('📥 Switch response:', data);
+        if (data.success) {
+            console.log('✅ Backend switch successful');
+            showNotification('Success', `Switched to model version: ${selectedVersion}`, 'success');
+            // Add a small delay to ensure backend has processed the switch
+            setTimeout(() => {
+                console.log('🔄 Calling refreshModelInfo after switch...');
+                refreshModelInfo();
+                // Also refresh header model info if it exists
+                if (typeof loadHeaderModelInfo === 'function') {
+                    loadHeaderModelInfo();
+                }
+            }, 100);
+        } else {
+            console.error('❌ Backend switch failed:', data.error);
+            showNotification('Error', `Failed to switch model: ${data.error}`, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error switching model:', error);
+        showNotification('Error', 'Failed to switch model', 'error');
+    })
+    .finally(() => {
+        // Re-enable button
+        switchBtn.disabled = false;
+        switchBtn.textContent = 'Switch';
+    });
 }
 
 function refreshUnknownCategories() {
@@ -2596,6 +2784,793 @@ function closeNotification(notificationId) {
         }, 300);
     }
 }
+
+// Multi-Step Retraining Wizard Functions
+let wizardState = {
+    currentStep: 1,
+    selectedBaseModel: null,
+    selectedDataSource: null,
+    selectedScan: null,
+    uploadedFile: null,
+    processingOption: null,
+    modelName: '',
+    modelDescription: '',
+    hasAnomalies: false,
+    anomalyCount: 0
+};
+
+function openRetrainingWizard() {
+    // Reset wizard state
+    wizardState = {
+        currentStep: 1,
+        selectedBaseModel: null,
+        selectedDataSource: null,
+        selectedScan: null,
+        uploadedFile: null,
+        processingOption: null,
+        modelName: '',
+        modelDescription: '',
+        hasAnomalies: false,
+        anomalyCount: 0
+    };
+    
+    // Load available models for step 1
+    loadBaseModelOptions();
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('retrainingWizardModal'));
+    modal.show();
+    
+    // Reset to step 1
+    showWizardStep(1);
+}
+
+function loadBaseModelOptions() {
+    fetch('/api/training/available-models')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const container = document.getElementById('base-model-options');
+                container.innerHTML = '';
+                
+                data.models.forEach(model => {
+                    const modelCard = document.createElement('div');
+                    modelCard.className = 'card model-option mb-3';
+                    modelCard.style = 'background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;';
+                    modelCard.setAttribute('data-model', model.version);
+                    
+                    modelCard.innerHTML = `
+                        <div class="card-body">
+                            <h6><i class="fas fa-brain me-2"></i>${model.display_name}</h6>
+                            <p class="text-muted small mb-2">Created: ${model.creation_date}</p>
+                            <p class="text-muted small">Version: ${model.version}</p>
+                        </div>
+                    `;
+                    
+                    modelCard.onclick = () => selectBaseModel(model.version, modelCard);
+                    container.appendChild(modelCard);
+                });
+            }
+        })
+        .catch(error => console.error('Error loading models:', error));
+}
+
+function selectBaseModel(version, element) {
+    // Clear previous selection
+    document.querySelectorAll('.model-option').forEach(el => el.classList.remove('selected'));
+    
+    // Select current
+    element.classList.add('selected');
+    wizardState.selectedBaseModel = version;
+    
+    // Enable next button
+    updateWizardButtons();
+}
+
+function wizardNextStep() {
+    if (!validateCurrentStep()) {
+        return;
+    }
+    
+    if (wizardState.currentStep < 4) {
+        wizardState.currentStep++;
+        showWizardStep(wizardState.currentStep);
+        
+        // Load data for new step
+        if (wizardState.currentStep === 2) {
+            setupDataSourceStep();
+        } else if (wizardState.currentStep === 3) {
+            setupProcessingStep();
+        } else if (wizardState.currentStep === 4) {
+            setupConfigurationStep();
+        }
+    }
+}
+
+function wizardPreviousStep() {
+    if (wizardState.currentStep > 1) {
+        wizardState.currentStep--;
+        showWizardStep(wizardState.currentStep);
+    }
+}
+
+function showWizardStep(step) {
+    // Hide all steps
+    document.querySelectorAll('.wizard-content').forEach(el => el.classList.add('d-none'));
+    
+    // Show current step
+    document.getElementById(`wizard-step-${step}`).classList.remove('d-none');
+    
+    // Update progress indicator
+    document.querySelectorAll('.wizard-step').forEach((el, index) => {
+        el.classList.remove('active', 'completed');
+        if (index + 1 < step) {
+            el.classList.add('completed');
+        } else if (index + 1 === step) {
+            el.classList.add('active');
+        }
+    });
+    
+    updateWizardButtons();
+}
+
+function updateWizardButtons() {
+    const backBtn = document.getElementById('wizard-back-btn');
+    const nextBtn = document.getElementById('wizard-next-btn');
+    const startBtn = document.getElementById('wizard-start-btn');
+    
+    // Show/hide back button
+    backBtn.style.display = wizardState.currentStep > 1 ? 'inline-block' : 'none';
+    
+    // Handle next/start button
+    if (wizardState.currentStep === 4) {
+        nextBtn.classList.add('d-none');
+        startBtn.classList.remove('d-none');
+        startBtn.disabled = !validateCurrentStep();
+    } else {
+        nextBtn.classList.remove('d-none');
+        startBtn.classList.add('d-none');
+        nextBtn.disabled = !validateCurrentStep();
+    }
+}
+
+function validateCurrentStep() {
+    switch (wizardState.currentStep) {
+        case 1:
+            return wizardState.selectedBaseModel !== null;
+        case 2:
+            if (wizardState.selectedDataSource === 'upload') {
+                return wizardState.uploadedFile !== null;
+            } else if (wizardState.selectedDataSource === 'existing') {
+                return wizardState.selectedScan !== null;
+            }
+            return wizardState.selectedDataSource !== null;
+        case 3:
+            if (wizardState.hasAnomalies) {
+                return wizardState.processingOption !== null;
+            }
+            return true; // Skip validation for clean data
+        case 4:
+            return true; // Model name is optional
+        default:
+            return false;
+    }
+}
+
+function setupDataSourceStep() {
+    // Add click handlers for data source options
+    document.querySelectorAll('.data-source-option').forEach(option => {
+        option.onclick = () => selectDataSource(option.getAttribute('data-source'), option);
+    });
+}
+
+function selectDataSource(source, element) {
+    // Clear previous selection
+    document.querySelectorAll('.data-source-option').forEach(el => el.classList.remove('selected'));
+    
+    // Select current
+    element.classList.add('selected');
+    wizardState.selectedDataSource = source;
+    
+    // Show relevant section
+    document.getElementById('upload-section').classList.add('d-none');
+    document.getElementById('scan-selection').classList.add('d-none');
+    
+    if (source === 'upload') {
+        document.getElementById('upload-section').classList.remove('d-none');
+        setupFileUpload();
+    } else if (source === 'existing') {
+        document.getElementById('scan-selection').classList.remove('d-none');
+        loadExistingScans();
+    }
+    
+    updateWizardButtons();
+}
+
+function setupFileUpload() {
+    const fileInput = document.getElementById('pcap-file-input');
+    fileInput.onchange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            wizardState.uploadedFile = file;
+            updateWizardButtons();
+        }
+    };
+}
+
+function loadExistingScans() {
+    const scanList = document.getElementById('scan-list');
+    scanList.innerHTML = '<div class="text-center p-3"><i class="fas fa-spinner fa-spin"></i> Loading scans...</div>';
+    
+    fetch('/api/training/scans')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (data.scans.length === 0) {
+                    scanList.innerHTML = `
+                        <div class="text-center p-4 text-muted">
+                            <i class="fas fa-search fa-2x mb-2"></i>
+                            <p>No analysis results found.</p>
+                            <small>Run some network analysis first to see scans here.</small>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let scansHtml = '';
+                data.scans.forEach(scan => {
+                    const sourceIcon = scan.source_type === 'timed_capture' ? 
+                        '<i class="fas fa-clock text-info me-1"></i>' : 
+                        '<i class="fas fa-upload text-primary me-1"></i>';
+                    
+                    const anomalyBadge = scan.anomaly_count > 0 ? 
+                        `<span class="badge bg-warning text-dark ms-2">${scan.anomaly_count} anomalies</span>` : 
+                        '<span class="badge bg-success ms-2">Clean</span>';
+                    
+                    scansHtml += `
+                        <div class="scan-item" data-scan-id="${scan.scan_id}" onclick="selectScan('${scan.scan_id}', this)" data-anomaly-count="${scan.anomaly_count}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">${sourceIcon}${scan.scan_id}</h6>
+                                    <small class="text-muted">
+                                        ${scan.timestamp} • ${scan.total_connections} connections${anomalyBadge}
+                                    </small>
+                                </div>
+                                <i class="fas fa-check-circle text-success d-none"></i>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                scanList.innerHTML = scansHtml;
+            } else {
+                scanList.innerHTML = `
+                    <div class="text-center p-4 text-danger">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                        <p>Error loading scans: ${data.error}</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading scans:', error);
+            scanList.innerHTML = `
+                <div class="text-center p-4 text-danger">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                    <p>Failed to load scans</p>
+                </div>
+            `;
+        });
+}
+
+function selectScan(scanId, element) {
+    // Clear previous selection
+    document.querySelectorAll('.scan-item').forEach(el => {
+        el.classList.remove('selected');
+        el.querySelector('.fa-check-circle').classList.add('d-none');
+    });
+    
+    // Select current
+    element.classList.add('selected');
+    element.querySelector('.fa-check-circle').classList.remove('d-none');
+    wizardState.selectedScan = scanId;
+    
+    // Get anomaly info from data attributes
+    const anomalyCount = parseInt(element.getAttribute('data-anomaly-count') || '0');
+    wizardState.hasAnomalies = anomalyCount > 0;
+    wizardState.anomalyCount = anomalyCount;
+    
+    updateWizardButtons();
+}
+
+function setupProcessingStep() {
+    const anomalySection = document.getElementById('anomaly-processing-section');
+    const normalSection = document.getElementById('normal-processing-section');
+    
+    if (wizardState.hasAnomalies) {
+        anomalySection.classList.remove('d-none');
+        normalSection.classList.add('d-none');
+        document.getElementById('anomaly-count').textContent = wizardState.anomalyCount;
+        
+        // Add click handlers for processing options
+        document.querySelectorAll('.processing-option').forEach(option => {
+            option.onclick = () => selectProcessingOption(option.getAttribute('data-processing'), option);
+        });
+    } else {
+        anomalySection.classList.add('d-none');
+        normalSection.classList.remove('d-none');
+        wizardState.processingOption = 'clean'; // Auto-select for clean data
+    }
+    
+    updateWizardButtons();
+}
+
+function selectProcessingOption(option, element) {
+    // Clear previous selection
+    document.querySelectorAll('.processing-option').forEach(el => el.classList.remove('selected'));
+    
+    // Select current
+    element.classList.add('selected');
+    wizardState.processingOption = option;
+    
+    updateWizardButtons();
+}
+
+function setupConfigurationStep() {
+    // Generate suggested model name (async)
+    generateModelName().then(suggestedName => {
+        document.getElementById('model-name').placeholder = suggestedName;
+    });
+    
+    // Update training summary
+    updateTrainingSummary();
+    
+    updateWizardButtons();
+}
+
+function generateModelName() {
+    // Get the next available version number based on base model
+    return fetch('/api/training/available-models')
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                return 'v2'; // Fallback
+            }
+            
+            const models = data.models;
+            const baseModel = wizardState.selectedBaseModel;
+            
+            // If using base model, start with v2
+            if (baseModel === 'base') {
+                const existingVersions = models
+                    .filter(m => m.version.startsWith('v') && m.version.length > 1)
+                    .map(m => parseInt(m.version.substring(1)))
+                    .filter(n => !isNaN(n));
+                
+                const nextVersion = existingVersions.length > 0 ? Math.max(...existingVersions) + 1 : 2;
+                return `v${nextVersion}`;
+            } else {
+                // If using a retrained model as base, create sub-versions
+                const baseVersionNum = baseModel.substring(1); // e.g., "2" from "v2"
+                const subVersions = models
+                    .filter(m => m.version.startsWith(`${baseModel}_`))
+                    .map(m => {
+                        const parts = m.version.split('_');
+                        return parseInt(parts[1]) || 1;
+                    })
+                    .filter(n => !isNaN(n));
+                
+                const nextSubVersion = subVersions.length > 0 ? Math.max(...subVersions) + 1 : 2;
+                return `${baseModel}_${nextSubVersion}`;
+            }
+        })
+        .catch(error => {
+            console.error('Error generating model name:', error);
+            return 'v2'; // Fallback
+        });
+}
+
+function updateTrainingSummary() {
+    const summary = document.getElementById('training-summary');
+    const baseModelText = wizardState.selectedBaseModel === 'base' ? 'Base Model' : `Version ${wizardState.selectedBaseModel.toUpperCase()}`;
+    const dataSourceText = wizardState.selectedDataSource === 'upload' ? 
+        `Upload: ${wizardState.uploadedFile?.name || 'Unknown file'}` : 
+        `Existing Scan: ${wizardState.selectedScan || 'Unknown scan'}`;
+    
+    let processingText = 'Clean data processing';
+    if (wizardState.hasAnomalies) {
+        processingText = wizardState.processingOption === 'treat-normal' ? 
+            'Treat anomalies as normal data' : 
+            'Filter out anomalous connections';
+    }
+    
+    summary.innerHTML = `
+        <li><strong>Base Model:</strong> ${baseModelText}</li>
+        <li><strong>Data Source:</strong> ${dataSourceText}</li>
+        <li><strong>Processing:</strong> ${processingText}</li>
+        <li><strong>Expected Output:</strong> New model version with enhanced training data</li>
+    `;
+}
+
+function startRetraining() {
+    // Collect final configuration
+    const customModelName = document.getElementById('model-name').value;
+    const modelDescription = document.getElementById('model-description').value;
+    
+    wizardState.modelDescription = modelDescription;
+    
+    // Get model name (use custom or generate)
+    const modelNamePromise = customModelName ? 
+        Promise.resolve(customModelName) : 
+        generateModelName();
+    
+    modelNamePromise.then(modelName => {
+        wizardState.modelName = modelName;
+        
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('retrainingWizardModal'));
+        modal.hide();
+        
+        // Show notification and start training
+        showNotification('Training Started', `Starting retraining process for model: ${modelName}`, 'info');
+        
+        // Call the enhanced retraining API
+        const retrainingConfig = {
+            base_model: wizardState.selectedBaseModel,
+            data_source: wizardState.selectedDataSource,
+            scan_id: wizardState.selectedScan,
+            processing_option: wizardState.processingOption,
+            model_name: modelName,
+            model_description: wizardState.modelDescription
+        };
+        
+        fetch('/api/training/enhanced-retrain', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(retrainingConfig)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Success', `Enhanced retraining started for model: ${data.model_name}`, 'success');
+                
+                // Start polling for progress
+                const taskId = data.task_id;
+                pollTrainingProgress(taskId);
+                
+                // Refresh model info after a delay
+                setTimeout(() => {
+                    refreshModelInfo();
+                }, 2000);
+            } else {
+                showNotification('Error', `Failed to start retraining: ${data.error}`, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error starting retraining:', error);
+            showNotification('Error', 'Failed to start retraining process', 'error');
+        });
+    });
+}
+
+function pollTrainingProgress(taskId) {
+    const pollInterval = setInterval(() => {
+        fetch(`/api/training/progress/${taskId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'completed') {
+                    clearInterval(pollInterval);
+                    showNotification('Complete', `Model training completed: ${data.message}`, 'success');
+                    refreshModelInfo(); // Refresh to show new model
+                } else if (data.status === 'failed') {
+                    clearInterval(pollInterval);
+                    showNotification('Failed', `Training failed: ${data.message}`, 'error');
+                } else {
+                    // Show progress notification
+                    const progressMsg = `${data.message} (${data.progress}%)`;
+                    console.log(`Training progress: ${progressMsg}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error polling training progress:', error);
+                clearInterval(pollInterval);
+            });
+    }, 3000); // Poll every 3 seconds
+    
+    // Stop polling after 10 minutes to prevent infinite polling
+    setTimeout(() => {
+        clearInterval(pollInterval);
+    }, 600000);
+}
+
 </script>
+
+<!-- Multi-Step Retraining Modal -->
+<div class="modal fade" id="retrainingWizardModal" tabindex="-1" aria-labelledby="retrainingWizardModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="background: #1e1e2e; border: 1px solid rgba(255, 255, 255, 0.2);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                <h5 class="modal-title" id="retrainingWizardModalLabel">
+                    <i class="fas fa-cogs me-2"></i>Model Retraining Wizard
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Progress Indicator -->
+                <div class="wizard-progress mb-4">
+                    <div class="d-flex justify-content-between">
+                        <div class="wizard-step active" data-step="1">
+                            <div class="step-number">1</div>
+                            <div class="step-label">Base Model</div>
+                        </div>
+                        <div class="wizard-step" data-step="2">
+                            <div class="step-number">2</div>
+                            <div class="step-label">Data Source</div>
+                        </div>
+                        <div class="wizard-step" data-step="3">
+                            <div class="step-number">3</div>
+                            <div class="step-label">Data Processing</div>
+                        </div>
+                        <div class="wizard-step" data-step="4">
+                            <div class="step-number">4</div>
+                            <div class="step-label">Configuration</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Base Model Selection -->
+                <div class="wizard-content" id="wizard-step-1">
+                    <h4><i class="fas fa-brain me-2"></i>Select Base Model</h4>
+                    <p class="text-muted">Choose which model to use as the foundation for retraining:</p>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6" id="base-model-options">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Data Source Selection -->
+                <div class="wizard-content d-none" id="wizard-step-2">
+                    <h4><i class="fas fa-database me-2"></i>Select Training Data Source</h4>
+                    <p class="text-muted">Choose how to provide training data for the model:</p>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card data-source-option" data-source="upload" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-upload fa-3x mb-3 text-primary"></i>
+                                    <h5>Upload PCAP File</h5>
+                                    <p class="text-muted">Upload a new PCAP file for training</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card data-source-option" data-source="existing" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-history fa-3x mb-3 text-success"></i>
+                                    <h5>Use Existing Scan</h5>
+                                    <p class="text-muted">Select from previously analyzed scans</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File Upload Section -->
+                    <div class="mt-4 d-none" id="upload-section">
+                        <div class="card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);">
+                            <div class="card-body">
+                                <h6><i class="fas fa-cloud-upload-alt me-2"></i>Upload PCAP File</h6>
+                                <input type="file" class="form-control" id="pcap-file-input" accept=".pcap,.pcapng" style="background: #262730; border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff;">
+                                <small class="text-muted">Supported formats: .pcap, .pcapng</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Existing Scan Selection -->
+                    <div class="mt-4 d-none" id="scan-selection">
+                        <div class="card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);">
+                            <div class="card-body">
+                                <h6><i class="fas fa-search me-2"></i>Select Existing Scan</h6>
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="scan-search" placeholder="Search scans..." style="background: #262730; border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff;">
+                                </div>
+                                <div id="scan-list" style="max-height: 300px; overflow-y: auto;">
+                                    <!-- Will be populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Data Processing Options -->
+                <div class="wizard-content d-none" id="wizard-step-3">
+                    <h4><i class="fas fa-filter me-2"></i>Data Processing Options</h4>
+                    <div id="anomaly-processing-section" class="d-none">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Anomalies Detected:</strong> This scan contains <span id="anomaly-count">0</span> flagged anomalies.
+                        </div>
+                        
+                        <p class="text-muted">How would you like to handle the anomalous connections?</p>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="card processing-option" data-processing="treat-normal" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-check-circle me-2 text-success"></i>Treat as Normal</h6>
+                                        <p class="text-muted small">Include all connections as normal training data, ignoring anomaly labels</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card processing-option" data-processing="filter-anomalies" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-filter me-2 text-warning"></i>Filter Out Anomalies</h6>
+                                        <p class="text-muted small">Remove anomalous connections, use only normal labeled data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="normal-processing-section">
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong>Clean Data:</strong> This scan contains only normal traffic, perfect for training.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Model Configuration and Naming -->
+                <div class="wizard-content d-none" id="wizard-step-4">
+                    <h4><i class="fas fa-cog me-2"></i>Model Configuration</h4>
+                    <p class="text-muted">Configure the new model version and review settings:</p>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);">
+                                <div class="card-body">
+                                    <h6><i class="fas fa-tag me-2"></i>Model Naming</h6>
+                                    <div class="mb-3">
+                                        <label for="model-name" class="form-label">Model Name</label>
+                                        <input type="text" class="form-control" id="model-name" placeholder="Auto-generated" style="background: #262730; border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff;">
+                                        <small class="text-muted">Leave empty for automatic naming (V2, V3, etc.)</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="model-description" class="form-label">Description (Optional)</label>
+                                        <textarea class="form-control" id="model-description" rows="3" placeholder="Describe this model version..." style="background: #262730; border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff;"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);">
+                                <div class="card-body">
+                                    <h6><i class="fas fa-list-ul me-2"></i>Training Summary</h6>
+                                    <ul class="list-unstyled" id="training-summary">
+                                        <!-- Will be populated dynamically -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(255, 255, 255, 0.2);">
+                <button type="button" class="btn btn-secondary" id="wizard-back-btn" style="display: none;" onclick="wizardPreviousStep()">
+                    <i class="fas fa-arrow-left me-1"></i>Back
+                </button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="wizard-next-btn" onclick="wizardNextStep()">
+                    Next<i class="fas fa-arrow-right ms-1"></i>
+                </button>
+                <button type="button" class="btn btn-success d-none" id="wizard-start-btn" onclick="startRetraining()">
+                    <i class="fas fa-play me-1"></i>Start Retraining
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.wizard-progress {
+    position: relative;
+}
+
+.wizard-progress::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 1;
+}
+
+.wizard-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    font-weight: bold;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.step-label {
+    font-size: 0.85rem;
+    text-align: center;
+    color: #b0b0b0;
+}
+
+.wizard-step.active .step-number {
+    background: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.wizard-step.active .step-label {
+    color: #ffffff;
+}
+
+.wizard-step.completed .step-number {
+    background: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+.wizard-step.completed .step-label {
+    color: #28a745;
+}
+
+.data-source-option:hover,
+.processing-option:hover,
+.model-option:hover {
+    border-color: #007bff !important;
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+.data-source-option.selected,
+.processing-option.selected,
+.model-option.selected {
+    border-color: #007bff !important;
+    background: rgba(0, 123, 255, 0.1) !important;
+}
+
+.scan-item {
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.scan-item:hover {
+    border-color: #007bff;
+    background: rgba(0, 123, 255, 0.05);
+}
+
+.scan-item.selected {
+    border-color: #007bff;
+    background: rgba(0, 123, 255, 0.1);
+}
+</style>
 
 {% endblock %}

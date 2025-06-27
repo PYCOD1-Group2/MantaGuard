@@ -31,18 +31,23 @@ class NetworkAnalyzer:
         Initialize the network analyzer.
         
         Args:
-            model_dir: Directory containing ML model files. If None, uses default.
+            model_dir: Directory containing ML model files. If None, auto-detects latest.
             model_version: Version suffix for model files. If None, auto-detects latest.
         """
-        self.model_dir = Path(model_dir) if model_dir else config.get_retrained_models_dir()
+        # Set model version and directory
         self.model_version = model_version
+        
+        if model_dir:
+            self.model_dir = Path(model_dir)
+        else:
+            # Auto-detect latest version if not specified
+            if self.model_version is None:
+                self.model_version = self._get_latest_model_version()
+            self.model_dir = config.get_ocsvm_model_dir(self.model_version)
+            
         self.model = None
         self.scaler = None
         self.encoders = None
-        
-        # Auto-detect latest version if not specified
-        if self.model_version is None:
-            self.model_version = self._get_latest_model_version()
             
         self._load_models()
     
@@ -51,87 +56,89 @@ class NetworkAnalyzer:
         Auto-detect the latest available model version.
         
         Returns:
-            Latest model version string (e.g., 'v3', 'v2', or '' for base)
+            Latest model version string (e.g., 'v3', 'v2', or 'base')
         """
         try:
             import re
+            ocsvm_models_dir = config.get_ocsvm_models_dir()
             
-            # Look for all model files in the directory
-            model_files = list(self.model_dir.glob("ocsvm_model*.pkl"))
+            # Look for version directories
+            if not ocsvm_models_dir.exists():
+                logger.warning(f"OCSVM models directory not found: {ocsvm_models_dir}")
+                return 'base'
             
-            if not model_files:
-                logger.warning(f"No model files found in {self.model_dir}")
-                return ''
-            
-            # Extract version numbers from filenames
+            # Get all version directories
+            version_dirs = [d for d in ocsvm_models_dir.iterdir() if d.is_dir()]
             versions = []
-            version_pattern = re.compile(r'ocsvm_model_v(\d+)\.pkl')
             
-            for model_file in model_files:
-                filename = model_file.name
-                if filename == 'ocsvm_model.pkl':
-                    # Base version (no suffix)
-                    versions.append((0, ''))
-                else:
-                    match = version_pattern.match(filename)
-                    if match:
-                        version_num = int(match.group(1))
-                        version_str = f'v{version_num}'
-                        versions.append((version_num, version_str))
+            for version_dir in version_dirs:
+                version_name = version_dir.name
+                
+                if version_name == 'base':
+                    if self._verify_model_files_exist_in_dir(version_dir):
+                        versions.append((0, 'base'))
+                elif version_name.startswith('v') and version_name[1:].isdigit():
+                    version_num = int(version_name[1:])
+                    if self._verify_model_files_exist_in_dir(version_dir):
+                        versions.append((version_num, version_name))
             
             if not versions:
                 logger.warning("No valid model versions found")
-                return ''
+                return 'base'
             
             # Sort by version number and get the latest
             versions.sort(key=lambda x: x[0], reverse=True)
             latest_version = versions[0][1]
             
-            logger.info(f"Auto-detected latest model version: {latest_version or 'base'}")
-            
-            # Verify that all required files exist for this version
-            if self._verify_model_files_exist(latest_version):
-                return latest_version
-            else:
-                # Fall back to next available version
-                for _, fallback_version in versions[1:]:
-                    if self._verify_model_files_exist(fallback_version):
-                        logger.warning(f"Latest version incomplete, using fallback: {fallback_version or 'base'}")
-                        return fallback_version
-                
-                logger.error("No complete model version found")
-                return ''
+            logger.info(f"Auto-detected latest model version: {latest_version}")
+            return latest_version
                 
         except Exception as e:
             logger.error(f"Error detecting latest model version: {e}")
-            return 'v2'  # Default fallback
+            return 'base'  # Default fallback
+    
+    def _verify_model_files_exist_in_dir(self, model_dir: Path) -> bool:
+        """
+        Verify that all required model files exist in a specific directory.
+        
+        Args:
+            model_dir: Directory to check for model files
+            
+        Returns:
+            True if all required files exist, False otherwise
+        """
+        try:
+            required_files = [
+                'ocsvm_model.pkl',
+                'scaler.pkl', 
+                'encoders.pkl'
+            ]
+            
+            for filename in required_files:
+                filepath = model_dir / filename
+                if not filepath.exists():
+                    logger.debug(f"Missing model file: {filepath}")
+                    return False
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error verifying model files in {model_dir}: {e}")
+            return False
     
     def _verify_model_files_exist(self, version: str) -> bool:
         """
         Verify that all required model files exist for a given version.
         
         Args:
-            version: Version string (e.g., 'v2', 'v3', or '' for base)
+            version: Version string (e.g., 'v2', 'v3', or 'base')
             
         Returns:
             True if all required files exist, False otherwise
         """
         try:
-            version_suffix = f"_{version}" if version else ""
-            
-            required_files = [
-                f'ocsvm_model{version_suffix}.pkl',
-                f'scaler{version_suffix}.pkl', 
-                f'encoders{version_suffix}.pkl'
-            ]
-            
-            for filename in required_files:
-                filepath = self.model_dir / filename
-                if not filepath.exists():
-                    logger.debug(f"Missing model file: {filepath}")
-                    return False
-            
-            return True
+            model_dir = config.get_ocsvm_model_dir(version)
+            return self._verify_model_files_exist_in_dir(model_dir)
             
         except Exception as e:
             logger.error(f"Error verifying model files for version {version}: {e}")
@@ -161,26 +168,26 @@ class NetworkAnalyzer:
             List of available version strings, sorted from newest to oldest
         """
         try:
-            import re
+            ocsvm_models_dir = config.get_ocsvm_models_dir()
             
-            model_files = list(self.model_dir.glob("ocsvm_model*.pkl"))
+            if not ocsvm_models_dir.exists():
+                logger.warning(f"OCSVM models directory not found: {ocsvm_models_dir}")
+                return []
+            
+            # Get all version directories
+            version_dirs = [d for d in ocsvm_models_dir.iterdir() if d.is_dir()]
             versions = []
-            version_pattern = re.compile(r'ocsvm_model_v(\d+)\.pkl')
             
-            for model_file in model_files:
-                filename = model_file.name
-                if filename == 'ocsvm_model.pkl':
-                    # Check if base version is complete
-                    if self._verify_model_files_exist(''):
+            for version_dir in version_dirs:
+                version_name = version_dir.name
+                
+                if version_name == 'base':
+                    if self._verify_model_files_exist_in_dir(version_dir):
                         versions.append((0, 'base'))
-                else:
-                    match = version_pattern.match(filename)
-                    if match:
-                        version_num = int(match.group(1))
-                        version_str = f'v{version_num}'
-                        # Only include if complete
-                        if self._verify_model_files_exist(version_str):
-                            versions.append((version_num, version_str))
+                elif version_name.startswith('v') and version_name[1:].isdigit():
+                    version_num = int(version_name[1:])
+                    if self._verify_model_files_exist_in_dir(version_dir):
+                        versions.append((version_num, version_name))
             
             # Sort by version number (newest first) and return version strings
             versions.sort(key=lambda x: x[0], reverse=True)
@@ -193,20 +200,10 @@ class NetworkAnalyzer:
     def _load_models(self) -> None:
         """Load ML models, scaler, and encoders."""
         try:
-            # Determine model file paths
-            version_suffix = f"_{self.model_version}" if self.model_version else ""
-            
-            model_path = self.model_dir / f'ocsvm_model{version_suffix}.pkl'
-            scaler_path = self.model_dir / f'scaler{version_suffix}.pkl'
-            encoders_path = self.model_dir / f'encoders{version_suffix}.pkl'
-            
-            # Try v2 model first, then fallback to base model
-            if not model_path.exists() and self.model_version:
-                logger.warning(f"Model version '{self.model_version}' not found, trying base model")
-                model_path = self.model_dir / 'ocsvm_model.pkl'
-                scaler_path = self.model_dir / 'scaler.pkl'
-                encoders_path = self.model_dir / 'encoders.pkl'
-                self.model_version = ''
+            # Use standard file names (no version suffix in new structure)
+            model_path = self.model_dir / 'ocsvm_model.pkl'
+            scaler_path = self.model_dir / 'scaler.pkl'
+            encoders_path = self.model_dir / 'encoders.pkl'
             
             # Check if model files exist
             missing_files = []
@@ -215,14 +212,14 @@ class NetworkAnalyzer:
                     missing_files.append(f"{name} ({path})")
             
             if missing_files:
-                raise FileNotFoundError(f"Model files not found: {', '.join(missing_files)}")
+                raise FileNotFoundError(f"Model files not found: {', '.join(missing_files)}. Available versions: {self.get_available_versions()}")
             
             # Load model components
             self.model = joblib.load(model_path)
             self.scaler = joblib.load(scaler_path)
             self.encoders = joblib.load(encoders_path)
             
-            logger.info(f"Loaded ML model from {self.model_dir}, version: {self.model_version or 'base'}")
+            logger.info(f"Loaded ML model from {self.model_dir}, version: {self.model_version}")
             
         except Exception as e:
             logger.error(f"Failed to load ML models: {e}")

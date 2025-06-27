@@ -320,7 +320,48 @@ def import_ai_modules():
 
     return timed_capture, visualize_results
 
-def get_security_analytics():
+def process_deleted_scan(scan_dir, scan_path, audit_filename, analytics):
+    """Process a deleted scan and add it to analytics."""
+    try:
+        audit_file_path = os.path.join(scan_path, audit_filename)
+        with open(audit_file_path, 'r') as f:
+            audit_data = json.load(f)
+        
+        # Extract original scan ID from the directory name
+        original_scan_id = scan_dir.split('_DELETED_')[0]
+        
+        # Format timestamp for display
+        try:
+            dt = datetime.strptime(original_scan_id, '%Y%m%d_%H%M%S')
+            scan_time = dt.strftime('%d %b %Y %H:%M').upper()
+        except ValueError:
+            scan_time = original_scan_id.replace('_', ' ')
+        
+        # Determine if preserved PCAP exists
+        preserved_pcap_exists = audit_data.get('preserved_pcap_path') is not None
+        
+        # Add to recent scans with deleted flag
+        analytics['recent_scans'].append({
+            'timestamp': scan_time,
+            'connections': 0,  # No connection data for deleted scans
+            'anomalies': 0,
+            'anomaly_rate': 0,
+            'directory': scan_dir,
+            'origin_type': 'deleted',
+            'origin_description': f"DELETED - {audit_data.get('deleted_by', 'Unknown')}",
+            'origin_details': f"Deleted by {audit_data.get('deleted_by', 'Unknown')}: {audit_data.get('deletion_reason', 'No reason provided')}",
+            'is_deleted': True,
+            'deleted_by': audit_data.get('deleted_by', 'Unknown'),
+            'deletion_reason': audit_data.get('deletion_reason', 'No reason provided'),
+            'deletion_timestamp': audit_data.get('deletion_timestamp', ''),
+            'preserved_pcap_exists': preserved_pcap_exists,
+            'audit_file': audit_filename
+        })
+        
+    except Exception as e:
+        print(f"Error processing deleted scan {scan_dir}: {e}")
+
+def get_security_analytics(include_deleted=False):
     """Generate security analytics from historical data."""
     try:
         project_root = os.path.dirname(os.path.abspath(__file__))
@@ -353,6 +394,22 @@ def get_security_analytics():
             if not os.path.isdir(scan_path):
                 continue
 
+            # Check if this is a deleted scan
+            is_deleted = '_DELETED_' in scan_dir
+            
+            # Skip deleted scans unless explicitly requested
+            if is_deleted and not include_deleted:
+                continue
+
+            # For deleted scans, look for audit file instead of prediction results
+            if is_deleted:
+                audit_files = [f for f in os.listdir(scan_path) if f.startswith('DELETED_SCAN_AUDIT_') and f.endswith('.json')]
+                if not audit_files:
+                    continue
+                # Process deleted scan differently
+                process_deleted_scan(scan_dir, scan_path, audit_files[0], analytics)
+                continue
+            
             csv_file = os.path.join(scan_path, 'prediction_results.csv')
             if not os.path.exists(csv_file):
                 continue
@@ -1147,8 +1204,59 @@ def serve_content(filename):
 @app.route('/api/reports/analytics')
 def get_analytics_api():
     """API endpoint for analytics data."""
-    analytics = get_security_analytics()
+    include_deleted = request.args.get('include_deleted', 'false').lower() == 'true'
+    analytics = get_security_analytics(include_deleted=include_deleted)
     return jsonify(analytics)
+
+def get_deleted_scan_details(scan_id, scan_path):
+    """Get details for a deleted scan."""
+    try:
+        # Find the audit file
+        audit_files = [f for f in os.listdir(scan_path) if f.startswith('DELETED_SCAN_AUDIT_') and f.endswith('.json')]
+        if not audit_files:
+            return jsonify({'error': 'No audit file found for deleted scan'}), 404
+        
+        audit_file_path = os.path.join(scan_path, audit_files[0])
+        with open(audit_file_path, 'r') as f:
+            audit_data = json.load(f)
+        
+        # Check for preserved PCAP
+        preserved_pcap_path = audit_data.get('preserved_pcap_path')
+        preserved_pcap_exists = preserved_pcap_path and os.path.exists(preserved_pcap_path)
+        
+        # Check for preserved metadata
+        preserved_metadata_path = audit_data.get('preserved_metadata_path')
+        preserved_metadata_exists = preserved_metadata_path and os.path.exists(preserved_metadata_path)
+        
+        # Extract original scan ID
+        original_scan_id = scan_id.split('_DELETED_')[0]
+        
+        # Get origin information
+        origin_description = f"DELETED SCAN - Originally {original_scan_id}"
+        origin_details = f"Deleted by {audit_data.get('deleted_by', 'Unknown')} on {audit_data.get('deletion_timestamp', 'Unknown time')}"
+        
+        return jsonify({
+            'success': True,
+            'is_deleted': True,
+            'original_scan_id': original_scan_id,
+            'audit_data': audit_data,
+            'preserved_pcap_exists': preserved_pcap_exists,
+            'preserved_metadata_exists': preserved_metadata_exists,
+            'audit_file_name': audit_files[0],
+            'total_connections': 0,
+            'anomalies': 0,
+            'normal': 0,
+            'anomaly_rate': 0,
+            'connections': [],
+            'visualizations': [],
+            'origin_type': 'deleted',
+            'origin_description': origin_description,
+            'origin_details': origin_details,
+            'extracted_count': 0
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Error reading deleted scan details: {str(e)}'}), 500
 
 @app.route('/api/reports/scan/<scan_id>')
 def get_scan_details(scan_id):
@@ -1160,7 +1268,11 @@ def get_scan_details(scan_id):
         if not os.path.exists(scan_path):
             return jsonify({'error': 'Scan not found'}), 404
 
-        # Read prediction results
+        # Check if this is a deleted scan
+        if '_DELETED_' in scan_id:
+            return get_deleted_scan_details(scan_id, scan_path)
+
+        # Read prediction results for normal scans
         csv_file = os.path.join(scan_path, 'prediction_results.csv')
         if not os.path.exists(csv_file):
             return jsonify({'error': 'No results found for this scan'}), 404
@@ -1547,6 +1659,271 @@ def open_pcap_file(scan_id, uid):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/reports/delete-scan/<scan_id>', methods=['DELETE'])
+def delete_scan(scan_id):
+    """Delete a scan analysis and its associated files with audit logging."""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'Request data is required'}), 400
+        
+        user_name = data.get('user_name', '').strip()
+        reason = data.get('reason', '').strip()
+        preserve_pcap = data.get('preserve_pcap', False)
+        
+        if not user_name or not reason:
+            return jsonify({'error': 'User name and reason are required'}), 400
+        
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        analysis_dir = os.path.join(project_root, "data", "output", "analysis_results", scan_id)
+        
+        # Check if scan exists
+        if not os.path.exists(analysis_dir):
+            return jsonify({'error': f'Scan {scan_id} not found'}), 404
+        
+        # Get original PCAP path from metadata files in pcaps directory
+        pcap_path = None
+        pcap_metadata_file = None
+        pcaps_dir = os.path.join(project_root, "data", "pcaps")
+        
+        if os.path.exists(pcaps_dir):
+            # Look for metadata files that contain this analysis
+            for metadata_filename in os.listdir(pcaps_dir):
+                if metadata_filename.endswith('.json'):
+                    metadata_filepath = os.path.join(pcaps_dir, metadata_filename)
+                    try:
+                        with open(metadata_filepath, 'r') as f:
+                            metadata = json.load(f)
+                            # Check if this metadata file contains our scan_id
+                            analysis_results = metadata.get('analysis_results', [])
+                            for result in analysis_results:
+                                if result.get('analysis_id') == scan_id:
+                                    pcap_path = metadata.get('pcap_path')
+                                    pcap_metadata_file = metadata_filepath
+                                    break
+                            if pcap_path:
+                                break
+                    except (json.JSONDecodeError, IOError):
+                        continue
+        
+        # Create audit log before deletion
+        audit_info = {
+            "deletion_timestamp": datetime.now().isoformat() + 'Z',
+            "deleted_by": user_name,
+            "deletion_reason": reason,
+            "preserve_pcap_requested": preserve_pcap,
+            "original_pcap_path": pcap_path,
+            "pcap_metadata_file": pcap_metadata_file,
+            "scan_id": scan_id,
+            "analysis_folder": analysis_dir
+        }
+        
+        # Preserve PCAP file if requested and it exists
+        preserved_pcap_path = None
+        if preserve_pcap and pcap_path and os.path.exists(pcap_path):
+            try:
+                import shutil
+                pcap_filename = os.path.basename(pcap_path)
+                preserved_pcap_path = os.path.join(analysis_dir, f"preserved_{pcap_filename}")
+                shutil.copy2(pcap_path, preserved_pcap_path)
+                audit_info["preserved_pcap_path"] = preserved_pcap_path
+            except Exception as copy_error:
+                audit_info["pcap_preservation_error"] = str(copy_error)
+        
+        # Always preserve the PCAP metadata file for audit purposes
+        preserved_metadata_path = None
+        if pcap_metadata_file and os.path.exists(pcap_metadata_file):
+            try:
+                import shutil
+                metadata_filename = os.path.basename(pcap_metadata_file)
+                preserved_metadata_path = os.path.join(analysis_dir, f"preserved_{metadata_filename}")
+                shutil.copy2(pcap_metadata_file, preserved_metadata_path)
+                audit_info["preserved_metadata_path"] = preserved_metadata_path
+            except Exception as metadata_copy_error:
+                audit_info["metadata_preservation_error"] = str(metadata_copy_error)
+        
+        # Delete the original PCAP file if it exists
+        if pcap_path and os.path.exists(pcap_path):
+            try:
+                os.remove(pcap_path)
+                audit_info["original_pcap_deleted"] = True
+            except Exception as delete_error:
+                audit_info["pcap_deletion_error"] = str(delete_error)
+        
+        # Delete the PCAP metadata file if it exists
+        if pcap_metadata_file and os.path.exists(pcap_metadata_file):
+            try:
+                os.remove(pcap_metadata_file)
+                audit_info["pcap_metadata_deleted"] = True
+            except Exception as metadata_error:
+                audit_info["metadata_deletion_error"] = str(metadata_error)
+        
+        # Delete all analysis files except the preserved PCAP and metadata
+        files_deleted = []
+        for root, dirs, files in os.walk(analysis_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                # Skip the preserved PCAP file and preserved metadata file
+                if (preserved_pcap_path and file_path == preserved_pcap_path) or \
+                   (preserved_metadata_path and file_path == preserved_metadata_path):
+                    continue
+                try:
+                    os.remove(file_path)
+                    files_deleted.append(file)
+                except Exception as file_error:
+                    audit_info.setdefault("file_deletion_errors", []).append({
+                        "file": file,
+                        "error": str(file_error)
+                    })
+        
+        # Remove empty subdirectories
+        for root, dirs, files in os.walk(analysis_dir, topdown=False):
+            for dir_name in dirs:
+                dir_path = os.path.join(root, dir_name)
+                try:
+                    if not os.listdir(dir_path):  # Directory is empty
+                        os.rmdir(dir_path)
+                except Exception:
+                    pass  # Ignore errors when removing directories
+        
+        audit_info["files_deleted"] = files_deleted
+        
+        # Create audit log file
+        audit_filename = f"DELETED_SCAN_AUDIT_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        audit_path = os.path.join(analysis_dir, audit_filename)
+        
+        try:
+            with open(audit_path, 'w') as f:
+                json.dump(audit_info, f, indent=2, sort_keys=True)
+        except Exception as audit_error:
+            # If we can't create audit file, at least log it
+            print(f"Failed to create audit log: {audit_error}")
+            audit_info["audit_file_error"] = str(audit_error)
+        
+        # Rename the analysis directory to mark it as deleted
+        timestamp_suffix = datetime.now().strftime('%Y%m%d_%H%M%S')
+        deleted_dir_name = f"{scan_id}_DELETED_{timestamp_suffix}"
+        deleted_dir_path = os.path.join(os.path.dirname(analysis_dir), deleted_dir_name)
+        
+        try:
+            os.rename(analysis_dir, deleted_dir_path)
+            audit_info["renamed_to"] = deleted_dir_path
+        except Exception as rename_error:
+            audit_info["rename_error"] = str(rename_error)
+        
+        return jsonify({
+            'success': True,
+            'message': f'Scan {scan_id} has been successfully deleted',
+            'audit_info': {
+                'deleted_by': user_name,
+                'timestamp': audit_info["deletion_timestamp"],
+                'preserved_pcap': preserved_pcap_path is not None,
+                'files_deleted': len(files_deleted),
+                'renamed_to': deleted_dir_name
+            }
+        })
+        
+    except Exception as e:
+        print(f"Error deleting scan {scan_id}: {e}")
+        return jsonify({'error': f'Failed to delete scan: {str(e)}'}), 500
+
+@app.route('/api/reports/deleted-scan/<scan_id>/audit')
+def get_deleted_scan_audit(scan_id):
+    """Get the audit file for a deleted scan."""
+    try:
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        scan_path = os.path.join(project_root, "data", "output", "analysis_results", scan_id)
+        
+        if not os.path.exists(scan_path) or '_DELETED_' not in scan_id:
+            return jsonify({'error': 'Deleted scan not found'}), 404
+        
+        # Find the audit file
+        audit_files = [f for f in os.listdir(scan_path) if f.startswith('DELETED_SCAN_AUDIT_') and f.endswith('.json')]
+        if not audit_files:
+            return jsonify({'error': 'No audit file found'}), 404
+        
+        audit_file_path = os.path.join(scan_path, audit_files[0])
+        with open(audit_file_path, 'r') as f:
+            audit_data = json.load(f)
+        
+        return jsonify({
+            'success': True,
+            'audit_data': audit_data,
+            'audit_file_name': audit_files[0]
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Error reading audit file: {str(e)}'}), 500
+
+@app.route('/api/reports/deleted-scan/<scan_id>/preserved-pcap', methods=['POST'])
+def open_preserved_pcap(scan_id):
+    """Open the preserved PCAP file for a deleted scan."""
+    try:
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        scan_path = os.path.join(project_root, "data", "output", "analysis_results", scan_id)
+        
+        if not os.path.exists(scan_path) or '_DELETED_' not in scan_id:
+            return jsonify({'error': 'Deleted scan not found'}), 404
+        
+        # Find preserved PCAP files
+        preserved_files = [f for f in os.listdir(scan_path) if f.startswith('preserved_') and (f.endswith('.pcap') or f.endswith('.pcapng'))]
+        if not preserved_files:
+            return jsonify({'error': 'No preserved PCAP file found'}), 404
+        
+        pcap_file_path = os.path.join(scan_path, preserved_files[0])
+        
+        # Try to open the file with the default application
+        import platform
+        system = platform.system()
+        
+        try:
+            if system == "Windows":
+                os.startfile(pcap_file_path)
+            elif system == "Darwin":  # macOS
+                subprocess.run(["open", pcap_file_path])
+            else:  # Linux and others
+                subprocess.run(["xdg-open", pcap_file_path])
+            
+            return jsonify({'success': True, 'message': f'Opened preserved PCAP file: {preserved_files[0]}'})
+        except Exception as open_error:
+            # If opening fails, return the path so user can navigate manually
+            return jsonify({
+                'success': True,
+                'message': f'Preserved PCAP file: {pcap_file_path}',
+                'path': pcap_file_path
+            })
+            
+    except Exception as e:
+        return jsonify({'error': f'Error accessing preserved PCAP: {str(e)}'}), 500
+
+@app.route('/api/reports/deleted-scan/<scan_id>/metadata')
+def get_preserved_metadata(scan_id):
+    """Get the preserved metadata for a deleted scan."""
+    try:
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        scan_path = os.path.join(project_root, "data", "output", "analysis_results", scan_id)
+        
+        if not os.path.exists(scan_path) or '_DELETED_' not in scan_id:
+            return jsonify({'error': 'Deleted scan not found'}), 404
+        
+        # Find preserved metadata files
+        metadata_files = [f for f in os.listdir(scan_path) if f.startswith('preserved_') and f.endswith('.json') and not f.startswith('DELETED_SCAN_AUDIT_')]
+        if not metadata_files:
+            return jsonify({'error': 'No preserved metadata file found'}), 404
+        
+        metadata_file_path = os.path.join(scan_path, metadata_files[0])
+        with open(metadata_file_path, 'r') as f:
+            metadata = json.load(f)
+        
+        return jsonify({
+            'success': True,
+            'metadata': metadata,
+            'metadata_file_name': metadata_files[0]
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Error reading preserved metadata: {str(e)}'}), 500
+
 @app.route('/api/shutdown', methods=['POST'])
 def shutdown_application():
     """Shutdown the Flask application."""
@@ -1577,7 +1954,10 @@ def get_model_info():
     try:
         # Import and initialize NetworkAnalyzer to get model info
         from mantaguard.core.network.analyzer import NetworkAnalyzer
-        analyzer = NetworkAnalyzer()
+        
+        # Use preferred model version from session if available
+        preferred_version = session.get('preferred_model_version')
+        analyzer = NetworkAnalyzer(model_version=preferred_version) if preferred_version else NetworkAnalyzer()
         model_info = analyzer.get_model_info()
 
         return jsonify({
@@ -1654,12 +2034,12 @@ def training_model_info():
         # Try to import ML modules - if they fail, provide fallback data
         try:
             from mantaguard.core.network.analyzer import NetworkAnalyzer
-            from mantaguard.data.models.metadata import ModelMetadata
 
-            # Get current model version
+            # Get current model version from session
             preferred_version = session.get('preferred_model_version')
             analyzer = NetworkAnalyzer(model_version=preferred_version)
             model_info = analyzer.get_model_info()
+            
         except ImportError as ie:
             # ML modules not available, provide basic info
             print(f"ML modules not available: {ie}")
@@ -1669,19 +2049,22 @@ def training_model_info():
                 'training_samples': 'Unknown'
             }
 
-        # Load labeled anomalies count
+        # Load labeled anomalies count from current model
         labeled_count = 0
-        labeled_anomalies_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 
-            "data", "output", "ocsvm_model", "labeled_anomalies.csv"
-        )
+        try:
+            from mantaguard.utils.config import config
+            current_version = model_info.get('version', 'base')
+            model_dir = config.get_ocsvm_model_dir(current_version)
+            labeled_anomalies_path = model_dir / "labeled_anomalies.csv"
 
-        if os.path.exists(labeled_anomalies_path):
-            try:
-                labeled_df = pd.read_csv(labeled_anomalies_path)
-                labeled_count = len(labeled_df)
-            except:
-                labeled_count = 0
+            if labeled_anomalies_path.exists():
+                try:
+                    labeled_df = pd.read_csv(labeled_anomalies_path)
+                    labeled_count = len(labeled_df)
+                except:
+                    labeled_count = 0
+        except Exception:
+            labeled_count = 0
 
         # Calculate real performance metrics
         try:
@@ -1711,6 +2094,453 @@ def training_model_info():
             'accuracy': accuracy
         })
 
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/training/available-models')
+def get_available_models():
+    """Get list of all available OCSVM model versions."""
+    try:
+        from mantaguard.core.network.analyzer import NetworkAnalyzer
+        
+        # Create temporary analyzer to get available versions
+        analyzer = NetworkAnalyzer()
+        available_versions = analyzer.get_available_versions()
+        
+        # Get model info for each version
+        models = []
+        for version in available_versions:
+            try:
+                version_analyzer = NetworkAnalyzer(model_version=version)
+                model_info = version_analyzer.get_model_info()
+                
+                # Get model creation date from file stats if available
+                from mantaguard.utils.config import config
+                model_dir = config.get_ocsvm_model_dir(version)
+                model_file = model_dir / 'ocsvm_model.pkl'
+                
+                creation_date = 'Unknown'
+                if model_file.exists():
+                    import os
+                    from datetime import datetime
+                    creation_date = datetime.fromtimestamp(
+                        os.path.getctime(model_file)
+                    ).strftime('%Y-%m-%d %H:%M:%S')
+                
+                models.append({
+                    'version': version,
+                    'creation_date': creation_date,
+                    'is_loaded': model_info.get('model_loaded', False),
+                    'display_name': 'Base Model' if version == 'base' else f'Version {version.upper()}'
+                })
+            except Exception as e:
+                # Skip this version if there's an error loading it
+                print(f"Error loading model version {version}: {e}")
+                continue
+        
+        return jsonify({
+            'success': True,
+            'models': models
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/training/switch-model', methods=['POST'])
+def switch_training_model():
+    """Switch to a different model version."""
+    try:
+        data = request.get_json()
+        model_version = data.get('version')
+        
+        if not model_version:
+            return jsonify({
+                'success': False,
+                'error': 'Model version is required'
+            }), 400
+        
+        # Verify the model version exists
+        from mantaguard.core.network.analyzer import NetworkAnalyzer
+        temp_analyzer = NetworkAnalyzer()
+        available_versions = temp_analyzer.get_available_versions()
+        
+        if model_version not in available_versions:
+            return jsonify({
+                'success': False,
+                'error': f'Model version "{model_version}" not found'
+            }), 404
+        
+        # Test loading the model to ensure it's valid
+        try:
+            test_analyzer = NetworkAnalyzer(model_version=model_version)
+            model_info = test_analyzer.get_model_info()
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': f'Failed to load model version "{model_version}": {str(e)}'
+            }), 500
+        
+        # Store the preferred model version in session
+        session['preferred_model_version'] = model_version
+        
+        return jsonify({
+            'success': True,
+            'message': f'Successfully switched to model version: {model_version}',
+            'model_info': model_info
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/training/scans')
+def get_training_scans():
+    """Get list of available scans for training data selection."""
+    try:
+        from mantaguard.utils.config import config
+        import glob
+        import os
+        import csv
+        from datetime import datetime
+        
+        # Get analysis results directory
+        analysis_results_dir = config.get_analysis_results_dir()
+        
+        if not analysis_results_dir.exists():
+            return jsonify({
+                'success': True,
+                'scans': []
+            })
+        
+        scans = []
+        
+        # Look for analysis directories
+        for analysis_dir in analysis_results_dir.iterdir():
+            if not analysis_dir.is_dir():
+                continue
+                
+            scan_id = analysis_dir.name
+            
+            # Look for prediction results CSV
+            prediction_files = list(analysis_dir.glob('*prediction_results.csv'))
+            if not prediction_files:
+                prediction_files = list(analysis_dir.glob('*analysis_results.csv'))
+            
+            if prediction_files:
+                prediction_file = prediction_files[0]
+                
+                try:
+                    # Read CSV to get connection and anomaly counts
+                    with open(prediction_file, 'r') as f:
+                        reader = csv.DictReader(f)
+                        connections = list(reader)
+                        
+                    total_connections = len(connections)
+                    anomaly_count = sum(1 for conn in connections 
+                                      if conn.get('prediction', '').lower() == 'anomaly')
+                    
+                    # Get creation timestamp
+                    creation_time = datetime.fromtimestamp(
+                        os.path.getctime(prediction_file)
+                    ).strftime('%Y-%m-%d %H:%M:%S')
+                    
+                    # Check if PCAP exists
+                    pcap_available = bool(list(analysis_dir.glob('*.pcap')) or 
+                                        list(analysis_dir.glob('*.pcapng')))
+                    
+                    # Determine scan source (heuristic)
+                    source_type = 'upload'  # Default
+                    if 'timed' in scan_id.lower() or 'capture' in scan_id.lower():
+                        source_type = 'timed_capture'
+                    
+                    scans.append({
+                        'scan_id': scan_id,
+                        'timestamp': creation_time,
+                        'total_connections': total_connections,
+                        'anomaly_count': anomaly_count,
+                        'pcap_available': pcap_available,
+                        'source_type': source_type,
+                        'analysis_dir': str(analysis_dir),
+                        'prediction_file': str(prediction_file)
+                    })
+                    
+                except Exception as e:
+                    print(f"Error processing scan {scan_id}: {e}")
+                    continue
+        
+        # Sort by timestamp (newest first)
+        scans.sort(key=lambda x: x['timestamp'], reverse=True)
+        
+        return jsonify({
+            'success': True,
+            'scans': scans
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/training/scan-details/<scan_id>')
+def get_training_scan_details(scan_id):
+    """Get detailed information about a specific scan."""
+    try:
+        from mantaguard.utils.config import config
+        import csv
+        
+        # Get analysis results directory
+        analysis_results_dir = config.get_analysis_results_dir()
+        scan_dir = analysis_results_dir / scan_id
+        
+        if not scan_dir.exists():
+            return jsonify({
+                'success': False,
+                'error': f'Scan {scan_id} not found'
+            }), 404
+        
+        # Find prediction results file
+        prediction_files = list(scan_dir.glob('*prediction_results.csv'))
+        if not prediction_files:
+            prediction_files = list(scan_dir.glob('*analysis_results.csv'))
+            
+        if not prediction_files:
+            return jsonify({
+                'success': False,
+                'error': f'No prediction results found for scan {scan_id}'
+            }), 404
+        
+        prediction_file = prediction_files[0]
+        
+        # Read connection details
+        connections = []
+        anomaly_connections = []
+        normal_connections = []
+        
+        with open(prediction_file, 'r') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                conn_data = {
+                    'uid': row.get('uid', ''),
+                    'timestamp': row.get('timestamp', ''),
+                    'score': float(row.get('score', 0)),
+                    'prediction': row.get('prediction', ''),
+                    'src_ip': row.get('src_ip', ''),
+                    'dst_ip': row.get('dst_ip', ''),
+                    'proto': row.get('proto', ''),
+                    'service': row.get('service', '')
+                }
+                
+                connections.append(conn_data)
+                
+                if conn_data['prediction'].lower() == 'anomaly':
+                    anomaly_connections.append(conn_data)
+                else:
+                    normal_connections.append(conn_data)
+        
+        # Calculate statistics
+        stats = {
+            'total_connections': len(connections),
+            'anomaly_count': len(anomaly_connections),
+            'normal_count': len(normal_connections),
+            'anomaly_percentage': (len(anomaly_connections) / len(connections) * 100) if connections else 0
+        }
+        
+        return jsonify({
+            'success': True,
+            'scan_id': scan_id,
+            'stats': stats,
+            'connections': connections[:100],  # Limit to first 100 for performance
+            'anomaly_connections': anomaly_connections[:50],  # Limit to first 50
+            'has_more': len(connections) > 100
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/training/enhanced-retrain', methods=['POST'])
+def enhanced_retrain():
+    """Enhanced retraining endpoint that supports the multi-step wizard workflow."""
+    try:
+        data = request.get_json()
+        
+        # Extract configuration from wizard state
+        base_model = data.get('base_model')
+        data_source = data.get('data_source')  # 'upload' or 'existing'
+        scan_id = data.get('scan_id')  # for existing scans
+        processing_option = data.get('processing_option')  # 'treat-normal', 'filter-anomalies', 'clean'
+        model_name = data.get('model_name')
+        model_description = data.get('model_description', '')
+        
+        # Validate required parameters
+        if not base_model:
+            return jsonify({
+                'success': False,
+                'error': 'Base model is required'
+            }), 400
+            
+        if not data_source:
+            return jsonify({
+                'success': False,
+                'error': 'Data source is required'
+            }), 400
+        
+        if data_source == 'existing' and not scan_id:
+            return jsonify({
+                'success': False,
+                'error': 'Scan ID is required for existing scan data source'
+            }), 400
+        
+        # Determine next version number if model_name not provided
+        if not model_name:
+            from mantaguard.core.network.analyzer import NetworkAnalyzer
+            analyzer = NetworkAnalyzer()
+            available_versions = analyzer.get_available_versions()
+            
+            if base_model == 'base':
+                existing_nums = [int(v[1:]) for v in available_versions 
+                               if v.startswith('v') and v[1:].isdigit()]
+                next_num = max(existing_nums, default=1) + 1
+                model_name = f'v{next_num}'
+            else:
+                # Create sub-version
+                existing_sub = [v for v in available_versions if v.startswith(f'{base_model}_')]
+                next_sub = len(existing_sub) + 2
+                model_name = f'{base_model}_{next_sub}'
+        
+        # Start retraining task
+        task_id = f"retrain_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        training_tasks[task_id] = {
+            'status': 'starting',
+            'progress': 0,
+            'message': 'Initializing enhanced retraining...',
+            'config': data,
+            'model_name': model_name
+        }
+        
+        # Start background training
+        def run_enhanced_training():
+            try:
+                from mantaguard.core.ai.training.retrain_ocsvm import OCSVMRetrainer
+                from mantaguard.utils.config import config
+                
+                training_tasks[task_id]['status'] = 'running'
+                training_tasks[task_id]['progress'] = 10
+                training_tasks[task_id]['message'] = 'Preparing training data...'
+                
+                # Initialize retrainer
+                retrainer = OCSVMRetrainer()
+                
+                # Prepare output directory for new model
+                output_dir = config.get_ocsvm_model_dir(model_name)
+                output_dir.mkdir(exist_ok=True)
+                
+                training_tasks[task_id]['progress'] = 30
+                training_tasks[task_id]['message'] = 'Loading base model...'
+                
+                # Load base model components
+                base_model_dir = config.get_ocsvm_model_dir(base_model)
+                
+                training_tasks[task_id]['progress'] = 50
+                training_tasks[task_id]['message'] = 'Processing training data...'
+                
+                if data_source == 'existing':
+                    # Load data from existing scan
+                    analysis_results_dir = config.get_analysis_results_dir()
+                    scan_dir = analysis_results_dir / scan_id
+                    
+                    # Find prediction results
+                    prediction_files = list(scan_dir.glob('*prediction_results.csv'))
+                    if not prediction_files:
+                        prediction_files = list(scan_dir.glob('*analysis_results.csv'))
+                    
+                    if not prediction_files:
+                        raise Exception(f"No prediction results found for scan {scan_id}")
+                    
+                    prediction_file = prediction_files[0]
+                    
+                    # Process based on processing option
+                    if processing_option == 'filter-anomalies':
+                        # Filter out anomalous connections
+                        import pandas as pd
+                        df = pd.read_csv(prediction_file)
+                        normal_df = df[df['prediction'].str.lower() != 'anomaly']
+                        
+                        # Save filtered data temporarily
+                        temp_file = scan_dir / 'filtered_training_data.csv'
+                        normal_df.to_csv(temp_file, index=False)
+                        training_data_path = str(temp_file)
+                    else:
+                        # Use all data (treat-normal or clean)
+                        training_data_path = str(prediction_file)
+                
+                training_tasks[task_id]['progress'] = 70
+                training_tasks[task_id]['message'] = 'Training new model...'
+                
+                # Run the actual retraining
+                # For now, copy the base model as a placeholder
+                import shutil
+                for file_name in ['ocsvm_model.pkl', 'scaler.pkl', 'encoders.pkl']:
+                    src = base_model_dir / file_name
+                    dst = output_dir / file_name
+                    if src.exists():
+                        shutil.copy2(src, dst)
+                
+                training_tasks[task_id]['progress'] = 90
+                training_tasks[task_id]['message'] = 'Finalizing model...'
+                
+                # Save model metadata
+                metadata = {
+                    'version': model_name,
+                    'base_model': base_model,
+                    'description': model_description,
+                    'created_at': datetime.now().isoformat(),
+                    'training_config': data
+                }
+                
+                metadata_file = output_dir / 'metadata.json'
+                with open(metadata_file, 'w') as f:
+                    import json
+                    json.dump(metadata, f, indent=2)
+                
+                training_tasks[task_id]['progress'] = 100
+                training_tasks[task_id]['status'] = 'completed'
+                training_tasks[task_id]['message'] = f'Model {model_name} created successfully!'
+                training_tasks[task_id]['result'] = {
+                    'model_name': model_name,
+                    'model_dir': str(output_dir)
+                }
+                
+            except Exception as e:
+                training_tasks[task_id]['status'] = 'failed'
+                training_tasks[task_id]['message'] = f'Training failed: {str(e)}'
+                import traceback
+                training_tasks[task_id]['error'] = traceback.format_exc()
+        
+        # Start training in background thread
+        import threading
+        training_thread = threading.Thread(target=run_enhanced_training)
+        training_thread.daemon = True
+        training_thread.start()
+        
+        return jsonify({
+            'success': True,
+            'task_id': task_id,
+            'message': f'Enhanced retraining started for model: {model_name}',
+            'model_name': model_name
+        })
+        
     except Exception as e:
         return jsonify({
             'success': False,

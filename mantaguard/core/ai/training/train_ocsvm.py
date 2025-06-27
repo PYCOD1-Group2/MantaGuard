@@ -191,7 +191,7 @@ def main():
     
     # Set default output directory if not provided
     if not args.output_dir:
-        args.output_dir = config.get_models_dir() / "ocsvm_model"
+        args.output_dir = config.get_ocsvm_base_model_dir()
     
     try:
         # Create trainer and train model

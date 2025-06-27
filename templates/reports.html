@@ -598,6 +598,31 @@
         border-color: #e6a700 !important;
         color: var(--cyber-bg-dark) !important;
     }
+    
+    /* Deleted scan toggle styling */
+    .deleted-toggle {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
+    
+    .deleted-toggle:checked {
+        background-color: #bb2d3b !important;
+        border-color: #bb2d3b !important;
+    }
+    
+    .deleted-toggle:focus {
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+    
+    .deleted-toggle-label {
+        color: #ff6b6b !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem;
+    }
+    
+    .deleted-toggle-label:hover {
+        color: #ff5252 !important;
+    }
 </style>
 {% endblock %}
 
@@ -716,8 +741,14 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         <h5><i class="fas fa-history me-2"></i>Scan History</h5>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input deleted-toggle" type="checkbox" id="showDeletedScans" onchange="toggleDeletedScans()">
+                            <label class="form-check-label deleted-toggle-label" for="showDeletedScans">
+                                <i class="fas fa-exclamation-triangle me-1"></i>Include deleted scans
+                            </label>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div id="recent-scans">
@@ -744,9 +775,9 @@
                                             </span>
                                         </div>
                                         <div class="col-md-2 text-end">
-                                            <button class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-eye me-1"></i>View Details
-                                            </button>
+                                            <small class="text-muted" style="cursor: pointer;">
+                                                <i class="fas fa-expand-alt me-1"></i>Click to Expand
+                                            </small>
                                         </div>
                                     </div>
                                 </div>
@@ -797,6 +828,67 @@
                         <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Scan Confirmation Modal -->
+<div class="modal fade" id="deleteScanModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #1E1E1E; border: 2px solid #dc3545;">
+            <div class="modal-header" style="border-bottom: 1px solid #dc3545;">
+                <h5 class="modal-title text-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Delete Scan Confirmation
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger mb-4">
+                    <i class="fas fa-warning me-2"></i>
+                    <strong>Warning:</strong> This action will permanently delete the scan analysis and associated PCAP file. This operation cannot be undone.
+                </div>
+                
+                <div class="mb-3">
+                    <strong>Scan to be deleted:</strong> <span id="deleteScanId" class="text-warning"></span>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="preservePcapOption">
+                        <label class="form-check-label" for="preservePcapOption">
+                            Preserve a copy of the original PCAP file in the analysis folder
+                        </label>
+                    </div>
+                    <small class="text-muted">If checked, the original PCAP will be copied to the analysis folder before deletion for forensic purposes.</small>
+                </div>
+                
+                <hr style="border-color: rgba(255, 255, 255, 0.2);">
+                
+                <div class="mb-3">
+                    <label for="deleteUserName" class="form-label">Your Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="deleteUserName" required 
+                           style="background: #262730; border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff;"
+                           placeholder="Enter your full name">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="deleteReason" class="form-label">Reason for Deletion <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="deleteReason" rows="3" required
+                              style="background: #262730; border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff;"
+                              placeholder="Please provide a detailed reason for deleting this scan..."></textarea>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Audit Trail:</strong> Your name and reason will be stored in the analysis folder for accountability and audit purposes.
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #dc3545;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDeleteScan()" disabled>
+                    <i class="fas fa-trash-alt me-1"></i>Delete Scan
+                </button>
             </div>
         </div>
     </div>
@@ -1113,6 +1205,12 @@ function updateModalContent(data, scanId) {
     const modalTitle = document.getElementById('scanDetailsTitle');
     const modalBody = document.getElementById('scanDetailsBody');
 
+    // Handle deleted scans differently
+    if (data.is_deleted) {
+        updateDeletedScanModalContent(data, scanId, modalTitle, modalBody);
+        return;
+    }
+
     // Generate visualization tabs
     const vizTabs = data.visualizations.length > 0 ? 
         data.visualizations.map((viz, index) => {
@@ -1142,9 +1240,14 @@ function updateModalContent(data, scanId) {
     modalTitle.innerHTML = `<i class="fas fa-${originIcon} me-2"></i>Scan Details - ${data.origin_description}`;
 
     modalBody.innerHTML = `
-        <div class="alert alert-info mb-3">
-            <i class="fas fa-info-circle me-2"></i>
-            <strong>Source:</strong> ${data.origin_details}
+        <div class="alert alert-info mb-3 d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Source:</strong> ${data.origin_details}
+            </div>
+            <button class="btn btn-outline-danger btn-sm" onclick="showDeleteScanModal('${scanId}')" title="Delete this scan and its associated files">
+                <i class="fas fa-trash-alt me-1"></i>Delete Scan
+            </button>
         </div>
 
         <div class="row mb-4">
@@ -1974,6 +2077,395 @@ function openPcapFile(scanId, uid) {
         showToast('Error opening PCAP file: ' + error.message, false);
     });
 }
+
+// Delete scan functions
+let currentDeleteScanId = null;
+
+function showDeleteScanModal(scanId) {
+    currentDeleteScanId = scanId;
+    
+    // Update modal content
+    document.getElementById('deleteScanId').textContent = scanId;
+    
+    // Reset form
+    document.getElementById('deleteUserName').value = '';
+    document.getElementById('deleteReason').value = '';
+    document.getElementById('preservePcapOption').checked = false;
+    document.getElementById('confirmDeleteBtn').disabled = true;
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('deleteScanModal'));
+    modal.show();
+}
+
+function confirmDeleteScan() {
+    if (!currentDeleteScanId) return;
+    
+    const userName = document.getElementById('deleteUserName').value.trim();
+    const reason = document.getElementById('deleteReason').value.trim();
+    const preservePcap = document.getElementById('preservePcapOption').checked;
+    
+    if (!userName || !reason) {
+        showToast('Please fill in all required fields', false);
+        return;
+    }
+    
+    // Disable button and show loading
+    const deleteBtn = document.getElementById('confirmDeleteBtn');
+    deleteBtn.disabled = true;
+    deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Deleting...';
+    
+    // Make API call
+    fetch(`/api/reports/delete-scan/${currentDeleteScanId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            user_name: userName,
+            reason: reason,
+            preserve_pcap: preservePcap
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, true);
+            
+            // Close delete modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteScanModal'));
+            if (modal) modal.hide();
+            
+            // Close scan details modal if open
+            if (currentScanModal) {
+                closeScanModal();
+            }
+            
+            // Refresh reports list
+            refreshReports();
+        } else {
+            showToast(data.error || 'Failed to delete scan', false);
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting scan:', error);
+        showToast('Error deleting scan: ' + error.message, false);
+    })
+    .finally(() => {
+        // Reset button
+        deleteBtn.disabled = false;
+        deleteBtn.innerHTML = '<i class="fas fa-trash-alt me-1"></i>Delete Scan';
+    });
+}
+
+// Handle deleted scan modal content
+function updateDeletedScanModalContent(data, scanId, modalTitle, modalBody) {
+    const originIcon = 'trash-alt';
+    modalTitle.innerHTML = `<i class="fas fa-${originIcon} me-2 text-danger"></i>Deleted Scan - ${data.original_scan_id}`;
+
+    const auditData = data.audit_data;
+    const deletionDate = new Date(auditData.deletion_timestamp).toLocaleString();
+    
+    modalBody.innerHTML = `
+        <div class="alert alert-danger mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>DELETED SCAN</strong> - This scan has been permanently deleted from the system
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);">
+                    <div class="card-body">
+                        <h6><i class="fas fa-info-circle me-2"></i>Deletion Details</h6>
+                        <table class="table table-dark table-sm">
+                            <tr><td><strong>Deleted by:</strong></td><td>${auditData.deleted_by}</td></tr>
+                            <tr><td><strong>Deletion time:</strong></td><td>${deletionDate}</td></tr>
+                            <tr><td><strong>Reason:</strong></td><td>${auditData.deletion_reason}</td></tr>
+                            <tr><td><strong>Original PCAP:</strong></td><td>${auditData.original_pcap_deleted ? 'Deleted' : 'Preserved'}</td></tr>
+                            <tr><td><strong>PCAP preserved:</strong></td><td>${data.preserved_pcap_exists ? 'Yes' : 'No'}</td></tr>
+                            <tr><td><strong>Files deleted:</strong></td><td>${auditData.files_deleted.length} files</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);">
+                    <div class="card-body">
+                        <h6><i class="fas fa-archive me-2"></i>Preserved Files</h6>
+                        <div class="mb-3">
+                            <strong>Audit Trail:</strong>
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-outline-info" onclick="viewAuditFile('${scanId}', '${data.audit_file_name}')">
+                                    <i class="fas fa-eye me-1"></i>View Full Audit Log
+                                </button>
+                            </div>
+                        </div>
+                        ${data.preserved_pcap_exists ? `
+                            <div class="mb-3">
+                                <strong>Preserved PCAP:</strong>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-outline-success" onclick="openPreservedPcap('${scanId}')">
+                                        <i class="fas fa-download me-1"></i>Access Preserved PCAP
+                                    </button>
+                                </div>
+                            </div>
+                        ` : ''}
+                        ${data.preserved_metadata_exists ? `
+                            <div class="mb-3">
+                                <strong>Original Metadata:</strong>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="viewPreservedMetadata('${scanId}')">
+                                        <i class="fas fa-file-alt me-1"></i>View Metadata
+                                    </button>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);">
+            <div class="card-body">
+                <h6><i class="fas fa-list me-2"></i>Deleted Files</h6>
+                <div class="row">
+                    ${auditData.files_deleted.map(file => `
+                        <div class="col-md-3 mb-2">
+                            <span class="badge bg-secondary">${file}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Update reports content with new data
+function updateReportsContent(data) {
+    // Update metrics
+    document.getElementById('total-scans').textContent = data.total_scans;
+    document.getElementById('total-connections').textContent = data.total_connections;
+    document.getElementById('anomaly-count').textContent = data.anomaly_count;
+    document.getElementById('anomaly-rate').textContent = data.network_activity.anomaly_rate + '%';
+    
+    // Update recent scans
+    const recentScansDiv = document.getElementById('recent-scans');
+    if (data.recent_scans && data.recent_scans.length > 0) {
+        recentScansDiv.innerHTML = data.recent_scans.map(scan => {
+            const isDeleted = scan.is_deleted || false;
+            const deletedClass = isDeleted ? 'border-danger' : '';
+            const deletedBadge = isDeleted ? '<span class="badge bg-danger ms-2">DELETED</span>' : '';
+            
+            if (isDeleted) {
+                // Deleted scan layout
+                return `
+                    <div class="scan-item ${deletedClass}" onclick="viewScanDetails('${scan.directory}')">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">
+                                    <i class="fas fa-trash-alt text-danger me-2"></i>
+                                    ${scan.timestamp}${deletedBadge}
+                                </h6>
+                                <p class="mb-1">${scan.origin_description}</p>
+                                <small class="text-muted">${scan.origin_details}</small>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-muted">Scan deleted</div>
+                                <div class="text-muted">by ${scan.deleted_by}</div>
+                                <small class="text-muted mt-1" style="cursor: pointer;">
+                                    <i class="fas fa-expand-alt me-1"></i>Click to Expand
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Normal scan layout (maintain original structure)
+                return `
+                    <div class="scan-item" onclick="viewScanDetails('${scan.directory}')">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <strong>${scan.timestamp}</strong>
+                            </div>
+                            <div class="col-md-2">
+                                <i class="fas fa-${scan.origin_type === 'timed_capture' ? 'clock' : scan.origin_type === 'upload' ? 'upload' : 'question'} me-1"></i>
+                                <small>${scan.origin_description}</small>
+                            </div>
+                            <div class="col-md-2">
+                                <i class="fas fa-link me-1"></i>${scan.connections} connections
+                            </div>
+                            <div class="col-md-2">
+                                <i class="fas fa-exclamation-circle me-1"></i>${scan.anomalies} anomalies
+                            </div>
+                            <div class="col-md-2">
+                                <span class="anomaly-rate-${scan.anomaly_rate > 50 ? 'high' : scan.anomaly_rate > 20 ? 'medium' : 'low'}">
+                                    ${scan.anomaly_rate}% anomaly rate
+                                </span>
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <small class="text-muted" style="cursor: pointer;">
+                                    <i class="fas fa-expand-alt me-1"></i>Click to Expand
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }).join('');
+    } else {
+        recentScansDiv.innerHTML = '<p class="text-muted">No scans found</p>';
+    }
+}
+
+// Toggle deleted scans functionality
+function toggleDeletedScans() {
+    const includeDeleted = document.getElementById('showDeletedScans').checked;
+    const url = `/api/reports/analytics${includeDeleted ? '?include_deleted=true' : ''}`;
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            updateReportsContent(data);
+        })
+        .catch(error => {
+            console.error('Error fetching analytics:', error);
+            showToast('Error loading scan data', false);
+        });
+}
+
+// Functions for deleted scan file access
+function viewAuditFile(scanId, auditFileName) {
+    fetch(`/api/reports/deleted-scan/${scanId}/audit`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAuditModal(data.audit_data, auditFileName);
+            } else {
+                showToast('Error loading audit file: ' + data.error, false);
+            }
+        })
+        .catch(error => {
+            showToast('Error loading audit file: ' + error.message, false);
+        });
+}
+
+function openPreservedPcap(scanId) {
+    fetch(`/api/reports/deleted-scan/${scanId}/preserved-pcap`, {
+        method: 'POST'
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.message, true);
+            } else {
+                showToast('Error accessing preserved PCAP: ' + data.error, false);
+            }
+        })
+        .catch(error => {
+            showToast('Error accessing preserved PCAP: ' + error.message, false);
+        });
+}
+
+function viewPreservedMetadata(scanId) {
+    fetch(`/api/reports/deleted-scan/${scanId}/metadata`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showMetadataModal(data.metadata, scanId);
+            } else {
+                showToast('Error loading metadata: ' + data.error, false);
+            }
+        })
+        .catch(error => {
+            showToast('Error loading metadata: ' + error.message, false);
+        });
+}
+
+function showAuditModal(auditData, fileName) {
+    // Create and show a modal with formatted audit data
+    const modalHtml = `
+        <div class="modal fade" id="auditModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" style="background-color: #1E1E1E; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                        <h5 class="modal-title"><i class="fas fa-file-alt me-2"></i>Audit Log - ${fileName}</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <pre style="background: #262730; padding: 20px; border-radius: 6px; color: #ffffff; max-height: 500px; overflow-y: auto;">${JSON.stringify(auditData, null, 2)}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('auditModal');
+    if (existingModal) existingModal.remove();
+    
+    // Add modal to DOM and show
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    const modal = new bootstrap.Modal(document.getElementById('auditModal'));
+    modal.show();
+    
+    // Clean up when modal is hidden
+    document.getElementById('auditModal').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
+}
+
+function showMetadataModal(metadata, scanId) {
+    // Create and show a modal with formatted metadata
+    const modalHtml = `
+        <div class="modal fade" id="metadataModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" style="background-color: #1E1E1E; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                        <h5 class="modal-title"><i class="fas fa-file-code me-2"></i>Original PCAP Metadata - ${scanId}</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <pre style="background: #262730; padding: 20px; border-radius: 6px; color: #ffffff; max-height: 500px; overflow-y: auto;">${JSON.stringify(metadata, null, 2)}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('metadataModal');
+    if (existingModal) existingModal.remove();
+    
+    // Add modal to DOM and show
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    const modal = new bootstrap.Modal(document.getElementById('metadataModal'));
+    modal.show();
+    
+    // Clean up when modal is hidden
+    document.getElementById('metadataModal').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
+}
+
+// Validate form inputs and enable/disable delete button
+document.addEventListener('DOMContentLoaded', function() {
+    const userNameField = document.getElementById('deleteUserName');
+    const reasonField = document.getElementById('deleteReason');
+    const deleteBtn = document.getElementById('confirmDeleteBtn');
+    
+    function validateDeleteForm() {
+        const userName = userNameField.value.trim();
+        const reason = reasonField.value.trim();
+        deleteBtn.disabled = !userName || !reason;
+    }
+    
+    if (userNameField) userNameField.addEventListener('input', validateDeleteForm);
+    if (reasonField) reasonField.addEventListener('input', validateDeleteForm);
+});
 
 </script>
 {% endblock %}

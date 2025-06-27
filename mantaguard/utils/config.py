@@ -68,21 +68,38 @@ class MantaGuardConfig:
         """Get the forensics directory."""
         return self.FORENSICS_DIR
     
+    def get_ocsvm_models_dir(self) -> Path:
+        """Get the OCSVM models root directory."""
+        return self.MODELS_DIR / "ocsvm"
+    
+    def get_ocsvm_base_model_dir(self) -> Path:
+        """Get the OCSVM base model directory."""
+        return self.get_ocsvm_models_dir() / "base"
+    
+    def get_ocsvm_model_dir(self, version: str = "base") -> Path:
+        """Get a specific OCSVM model directory by version."""
+        return self.get_ocsvm_models_dir() / version
+    
+    def get_mcc_models_dir(self) -> Path:
+        """Get the Multi-Class Classifier models root directory."""
+        return self.MODELS_DIR / "mcc"
+    
+    def get_mcc_base_model_dir(self) -> Path:
+        """Get the MCC base model directory."""
+        return self.get_mcc_models_dir() / "base"
+    
+    def get_mcc_model_dir(self, version: str = "base") -> Path:
+        """Get a specific MCC model directory by version."""
+        return self.get_mcc_models_dir() / version
+
+    # Legacy methods for backward compatibility during transition
     def get_models_dir(self) -> Path:
-        """Get the models directory."""
-        # Check current data/output structure first
-        current_models = self.DATA_DIR / "output" / "ocsvm_model"
-        if current_models.exists():
-            return current_models
-        return self.MODELS_DIR / "current"
+        """Get the models directory (legacy method)."""
+        return self.get_ocsvm_base_model_dir()
     
     def get_retrained_models_dir(self) -> Path:
-        """Get the retrained models directory."""
-        # Check current data/output structure first
-        current_retrained = self.DATA_DIR / "output" / "retrained_model"
-        if current_retrained.exists():
-            return current_retrained
-        return self.MODELS_DIR / "retrained"
+        """Get the retrained models directory (legacy method)."""
+        return self.get_ocsvm_model_dir("v2")
 
 
 # Global configuration instance

@@ -802,8 +802,8 @@
             statusElement.className = 'model-status-indicator status-loading';
         }
 
-        // Call the switch API
-        fetch('/api/switch_model', {
+        // Call the switch API (use training endpoint for session consistency)
+        fetch('/api/training/switch-model', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -820,6 +820,10 @@
                 // Refresh the display
                 setTimeout(() => {
                     loadHeaderModelInfo();
+                    // Also refresh training page model info if it exists
+                    if (typeof refreshModelInfo === 'function') {
+                        refreshModelInfo();
+                    }
                 }, 1000);
             } else {
                 showShutdownNotification(`Failed to switch: ${data.error}`, 'warning');

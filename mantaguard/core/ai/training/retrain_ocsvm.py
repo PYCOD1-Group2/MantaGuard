@@ -130,8 +130,7 @@ class OCSVMRetrainer:
             Dictionary with retraining results and metrics
         """
         if model_dir is None:
-            project_root = Path(__file__).parent.parent.parent.parent.parent
-            model_dir = project_root / "data" / "output" / "ocsvm_model"
+            model_dir = config.get_ocsvm_base_model_dir()
         else:
             model_dir = Path(model_dir)
         
@@ -188,20 +187,20 @@ class OCSVMRetrainer:
         # help inform the decision boundary
         
         # Determine the next model version
-        retrained_dir = model_dir.parent / "retrained_model"
-        retrained_dir.mkdir(exist_ok=True)
+        ocsvm_models_dir = config.get_ocsvm_models_dir()
         
-        # Find the next version number
+        # Find existing version directories
         existing_versions = []
-        for file_path in retrained_dir.glob("*_v*.pkl"):
-            try:
-                version_str = file_path.stem.split('_v')[-1]
-                existing_versions.append(int(version_str))
-            except ValueError:
-                continue
+        for version_dir in ocsvm_models_dir.iterdir():
+            if version_dir.is_dir() and version_dir.name.startswith('v') and version_dir.name[1:].isdigit():
+                existing_versions.append(int(version_dir.name[1:]))
         
         next_version = max(existing_versions, default=1) + 1
         logger.info(f"Creating model version: v{next_version}")
+        
+        # Create new version directory
+        retrained_dir = config.get_ocsvm_model_dir(f"v{next_version}")
+        retrained_dir.mkdir(exist_ok=True)
         
         # Train a new OCSVM model
         # Note: OneClassSVM is primarily for novelty detection with normal data
@@ -226,12 +225,10 @@ class OCSVMRetrainer:
         logger.info("Training new OCSVM model with labeled data...")
         new_model.fit(X_labeled_scaled)
         
-        # Save the new model components
-        model_version_suffix = f"_v{next_version}"
-        
-        model_save_path = retrained_dir / f"ocsvm_model{model_version_suffix}.pkl"
-        scaler_save_path = retrained_dir / f"scaler{model_version_suffix}.pkl" 
-        encoders_save_path = retrained_dir / f"encoders{model_version_suffix}.pkl"
+        # Save the new model components (standard names in new structure)
+        model_save_path = retrained_dir / "ocsvm_model.pkl"
+        scaler_save_path = retrained_dir / "scaler.pkl" 
+        encoders_save_path = retrained_dir / "encoders.pkl"
         
         joblib.dump(new_model, model_save_path)
         joblib.dump(scaler, scaler_save_path)
@@ -457,10 +454,10 @@ class OCSVMRetrainer:
             output_dir = Path(output_dir)
             safe_create_directory(output_dir)
             
-            # Define file paths
-            model_path = output_dir / 'ocsvm_model_v2.pkl'
-            scaler_path = output_dir / 'scaler_v2.pkl'
-            encoders_path = output_dir / 'encoders_v2.pkl'
+            # Define file paths (standard names in new structure)
+            model_path = output_dir / 'ocsvm_model.pkl'
+            scaler_path = output_dir / 'scaler.pkl'
+            encoders_path = output_dir / 'encoders.pkl'
             
             # Save components
             joblib.dump(model, model_path)
@@ -503,7 +500,14 @@ def main():
     
     # Set default output directory if not provided
     if not args.output_dir:
-        args.output_dir = config.get_models_dir() / "retrained_model"
+        # Determine next version for default output
+        ocsvm_models_dir = config.get_ocsvm_models_dir()
+        existing_versions = []
+        for version_dir in ocsvm_models_dir.iterdir():
+            if version_dir.is_dir() and version_dir.name.startswith('v') and version_dir.name[1:].isdigit():
+                existing_versions.append(int(version_dir.name[1:]))
+        next_version = max(existing_versions, default=1) + 1
+        args.output_dir = config.get_ocsvm_model_dir(f"v{next_version}")
     
     try:
         # Create retrainer and retrain model
