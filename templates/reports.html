@@ -228,6 +228,18 @@
         transform: translateX(2px);
         box-shadow: var(--cyber-shadow);
     }
+    
+    .scan-item.active-scan {
+        border-color: var(--cyber-primary);
+        background: rgba(0, 191, 255, 0.1);
+        cursor: default;
+        transform: none;
+    }
+    
+    .scan-item.active-scan:hover {
+        transform: none;
+        background: rgba(0, 191, 255, 0.15);
+    }
 
     /* Professional buttons */
     .btn-outline-primary {
@@ -893,6 +905,71 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Connection Label Modal -->
+<div class="modal fade" id="editLabelModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #1E1E1E; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit me-2"></i>Edit Connection Label
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Connection UID:</label>
+                    <input type="text" id="editLabelUid" class="form-control" readonly
+                           style="background: #262730; border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff;">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Current Label:</label>
+                    <span id="editLabelCurrent" class="badge bg-secondary ms-2"></span>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">New Label:</label>
+                    <div class="mt-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="newLabel" id="labelNormal" value="normal">
+                            <label class="form-check-label" for="labelNormal">
+                                <span class="badge bg-success">Normal</span> - Legitimate network traffic
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="newLabel" id="labelAnomaly" value="anomaly">
+                            <label class="form-check-label" for="labelAnomaly">
+                                <span class="badge bg-danger">Anomaly</span> - Suspicious or malicious traffic
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Confidence Level:</label>
+                    <select id="confidenceLevel" class="form-select" 
+                            style="background: #262730; border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff;">
+                        <option value="low">Low - Uncertain about this classification</option>
+                        <option value="medium" selected>Medium - Reasonably confident</option>
+                        <option value="high">High - Very confident in this classification</option>
+                    </select>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Note:</strong> This will update the prediction for this connection and change the score to reflect your confidence level.
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveLabel" onclick="saveConnectionLabel()">
+                    <i class="fas fa-save me-1"></i>Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -983,6 +1060,9 @@ function updateThreatTimeline(threats) {
 
 function updateRecentScans(scans) {
     const scansContainer = document.getElementById('recent-scans');
+    
+    // Cache the scan data for later refreshes
+    window.lastRecentScansData = scans;
 
     let html = '';
     scans.forEach(scan => {
@@ -1021,7 +1101,7 @@ function updateRecentScans(scans) {
         }
 
         html += `
-            <div class="scan-item" onclick="viewScanDetails('${scan.directory}')">
+            <div class="scan-item${currentActiveScanId === scan.directory ? ' active-scan' : ''}" ${currentActiveScanId === scan.directory ? '' : `onclick="viewScanDetails('${scan.directory}')"`}>
                 <div class="row align-items-center">
                     <div class="col-md-2">
                         <strong>${formattedTimestamp}</strong>
@@ -1042,9 +1122,14 @@ function updateRecentScans(scans) {
                         </span>
                     </div>
                     <div class="col-md-2 text-end">
-                        <button class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-eye me-1"></i>View Details
-                        </button>
+                        ${currentActiveScanId === scan.directory ? 
+                            `<small class="text-muted">
+                                <i class="fas fa-eye me-1"></i>Details Open
+                            </small>` :
+                            `<small class="text-muted">
+                                <i class="fas fa-expand-alt me-1"></i>Click to Expand
+                            </small>`
+                        }
                     </div>
                 </div>
             </div>
@@ -1069,6 +1154,7 @@ function updateRecentScans(scans) {
 
 // Global variable to track the current modal instance
 let currentScanModal = null;
+let currentActiveScanId = null;
 
 // Function to safely close and cleanup modal with aggressive cleanup
 function closeScanModal() {
@@ -1083,6 +1169,18 @@ function closeScanModal() {
             console.warn('Error disposing modal:', e);
         }
         currentScanModal = null;
+    }
+    
+    // Clear active scan ID
+    currentActiveScanId = null;
+    
+    // Refresh scan list to update button states
+    if (typeof updateRecentScans === 'function') {
+        // Only refresh if we have recent scan data cached
+        const lastScanData = window.lastRecentScansData;
+        if (lastScanData) {
+            updateRecentScans(lastScanData);
+        }
     }
 
     // Force hide the modal element
@@ -1330,8 +1428,19 @@ function updateModalContent(data, scanId) {
                                         ${conn.uid}
                                     </td>
                                     <td>${conn.proto || 'unknown'}</td>
-                                    <td>${parseFloat(conn.score).toFixed(4)}</td>
-                                    <td><span class="badge ${conn.prediction === 'anomaly' ? 'bg-danger' : 'bg-success'}">${conn.prediction}</span></td>
+                                    <td>
+                                        ${parseFloat(conn.score).toFixed(4)}
+                                        ${conn.user_confidence && conn.user_confidence !== "" ? `<br><small class="text-muted">Confidence: ${conn.user_confidence}</small>` : ''}
+                                    </td>
+                                    <td>
+                                        <span class="badge ${conn.prediction === 'anomaly' ? 'bg-danger' : 'bg-success'} prediction-badge" 
+                                              style="cursor: pointer;" 
+                                              onclick="editConnectionLabel('${scanId}', '${conn.uid}', '${conn.prediction}', '${conn.user_confidence || 'medium'}')"
+                                              title="Click to edit label">
+                                            ${conn.prediction}
+                                            ${conn.user_modified && conn.user_modified !== false ? '<i class="fas fa-edit ms-1" title="User modified"></i>' : ''}
+                                        </span>
+                                    </td>
                                     <td>
                                         ${conn.has_extracted_pcap ? 
                                             `<button class="btn btn-xs btn-success" onclick="openPcapFile('${scanId}', '${conn.uid}')" title="Open extracted PCAP file">
@@ -1689,6 +1798,9 @@ function viewScanDetails(scanId) {
             try {
                 currentScanModal.show();
                 console.log('Modal shown successfully');
+                
+                // Set the active scan ID for button state tracking
+                currentActiveScanId = scanId;
 
                 // Fetch data AFTER modal is shown
                 console.log('Fetching scan data for:', scanId);
@@ -2466,6 +2578,100 @@ document.addEventListener('DOMContentLoaded', function() {
     if (userNameField) userNameField.addEventListener('input', validateDeleteForm);
     if (reasonField) reasonField.addEventListener('input', validateDeleteForm);
 });
+
+// Global variables for label editing
+let currentEditingScanId = '';
+let currentEditingUid = '';
+
+// Function to open the edit label modal
+function editConnectionLabel(scanId, uid, currentLabel, currentConfidence) {
+    currentEditingScanId = scanId;
+    currentEditingUid = uid;
+    
+    // Set modal values
+    document.getElementById('editLabelUid').value = uid;
+    document.getElementById('editLabelCurrent').textContent = currentLabel;
+    document.getElementById('editLabelCurrent').className = `badge ${currentLabel === 'anomaly' ? 'bg-danger' : 'bg-success'} ms-2`;
+    
+    // Set radio button selection (opposite of current)
+    if (currentLabel === 'anomaly') {
+        document.getElementById('labelNormal').checked = true;
+    } else {
+        document.getElementById('labelAnomaly').checked = true;
+    }
+    
+    // Set confidence level
+    document.getElementById('confidenceLevel').value = currentConfidence || 'medium';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('editLabelModal'));
+    modal.show();
+}
+
+// Function to save the connection label
+function saveConnectionLabel() {
+    const selectedLabel = document.querySelector('input[name="newLabel"]:checked');
+    const confidence = document.getElementById('confidenceLevel').value;
+    
+    if (!selectedLabel) {
+        showToast('Please select a label', false);
+        return;
+    }
+    
+    const saveBtn = document.getElementById('saveLabel');
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Saving...';
+    
+    fetch('/api/update_connection_label', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            scan_id: currentEditingScanId,
+            uid: currentEditingUid,
+            label: selectedLabel.value,
+            confidence: confidence
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, true);
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editLabelModal'));
+            if (modal) modal.hide();
+            
+            // Refresh the scan details to show updated label
+            refreshCurrentScanDetails(currentEditingScanId);
+            
+            // Refresh the analytics data to update compact view metadata
+            fetch('/api/reports/analytics')
+            .then(response => response.json())
+            .then(analyticsData => {
+                updateMetrics(analyticsData);
+                updateProtocolChart(analyticsData.protocol_distribution);
+                updateThreatTimeline(analyticsData.threat_timeline);
+                updateRecentScans(analyticsData.recent_scans);
+            })
+            .catch(error => {
+                console.warn('Could not refresh analytics after label change:', error);
+            });
+        } else {
+            showToast(data.error || 'Failed to update label', false);
+        }
+    })
+    .catch(error => {
+        console.error('Error updating label:', error);
+        showToast('Error updating label: ' + error.message, false);
+    })
+    .finally(() => {
+        // Reset button
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fas fa-save me-1"></i>Save Changes';
+    });
+}
 
 </script>
 {% endblock %}

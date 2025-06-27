@@ -1020,6 +1020,15 @@ def get_results():
     # Load predictions from file
     try:
         results_df = pd.read_csv(session['predictions_file'])
+        # Replace NaN values with None/defaults to avoid JSON serialization issues
+        results_df = results_df.fillna({
+            'user_confidence': "",
+            'user_modified': False,
+            'modified_at': "",
+            'confidence_score': 0.0
+        })
+        # Replace any remaining NaN values with None
+        results_df = results_df.where(pd.notnull(results_df), None)
         predictions = results_df.to_dict('records')
 
         # Try to enrich with protocol data from conn.log if available
@@ -1150,6 +1159,7 @@ def label_prediction():
     data = request.get_json()
     uid = data.get('uid')
     label = data.get('label')
+    confidence = data.get('confidence', 'medium')  # Default to medium confidence
 
     if not session['predictions_file'] or not os.path.exists(session['predictions_file']):
         return jsonify({'error': 'No predictions available'}), 400
@@ -1159,6 +1169,13 @@ def label_prediction():
         df = pd.read_csv(session['predictions_file'])
         selected_row = df[df['uid'] == uid].iloc[0].to_dict()
         selected_row['user_label'] = label
+        selected_row['user_confidence'] = confidence
+        selected_row['user_modified'] = True
+        selected_row['modified_at'] = datetime.now().isoformat()
+        
+        # Convert confidence to numeric score for compatibility
+        confidence_scores = {'low': 0.3, 'medium': 0.6, 'high': 0.9}
+        selected_row['confidence_score'] = confidence_scores[confidence]
 
         # Append to labeled_anomalies.csv
         project_root = os.path.dirname(os.path.abspath(__file__))
@@ -1172,9 +1189,76 @@ def label_prediction():
                 writer.writeheader()
             writer.writerow(selected_row)
 
-        return jsonify({'success': True, 'message': f'Label "{label}" added for UID {uid}'})
+        return jsonify({'success': True, 'message': f'Label "{label}" with {confidence} confidence added for UID {uid}'})
     except Exception as e:
         return jsonify({'error': f'Failed to label prediction: {str(e)}'}), 500
+
+@app.route('/api/update_connection_label', methods=['POST'])
+def update_connection_label():
+    """Update label for a connection in scan results."""
+    data = request.get_json()
+    scan_id = data.get('scan_id')
+    uid = data.get('uid')
+    new_label = data.get('label')  # 'normal' or 'anomaly'
+    confidence = data.get('confidence', 'medium')  # 'low', 'medium', 'high'
+    
+    if not all([scan_id, uid, new_label]):
+        return jsonify({'error': 'Missing required parameters'}), 400
+        
+    if new_label not in ['normal', 'anomaly']:
+        return jsonify({'error': 'Invalid label. Must be "normal" or "anomaly"'}), 400
+        
+    if confidence not in ['low', 'medium', 'high']:
+        return jsonify({'error': 'Invalid confidence. Must be "low", "medium", or "high"'}), 400
+    
+    try:
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        scan_path = os.path.join(project_root, "data", "output", "analysis_results", scan_id)
+        predictions_file = os.path.join(scan_path, "prediction_results.csv")
+        
+        if not os.path.exists(predictions_file):
+            return jsonify({'error': 'Scan results not found'}), 404
+            
+        # Load the predictions CSV
+        df = pd.read_csv(predictions_file)
+        
+        # Find the connection
+        connection_mask = df['uid'] == uid
+        if not connection_mask.any():
+            return jsonify({'error': 'Connection not found'}), 404
+            
+        # Add new columns if they don't exist
+        if 'user_confidence' not in df.columns:
+            df['user_confidence'] = ""  # Use empty string instead of None
+        if 'user_modified' not in df.columns:
+            df['user_modified'] = False
+        if 'modified_at' not in df.columns:
+            df['modified_at'] = ""  # Use empty string instead of None
+        if 'confidence_score' not in df.columns:
+            df['confidence_score'] = 0.0  # Use 0.0 instead of None
+            
+        # Update the prediction and add confidence score
+        df.loc[connection_mask, 'prediction'] = new_label
+        df.loc[connection_mask, 'user_confidence'] = confidence
+        df.loc[connection_mask, 'user_modified'] = True
+        df.loc[connection_mask, 'modified_at'] = datetime.now().isoformat()
+        
+        # Convert confidence to numeric score for compatibility
+        confidence_scores = {'low': 0.3, 'medium': 0.6, 'high': 0.9}
+        df.loc[connection_mask, 'confidence_score'] = confidence_scores[confidence]
+        
+        # Save the updated CSV
+        df.to_csv(predictions_file, index=False)
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Label updated to "{new_label}" with {confidence} confidence for UID {uid}',
+            'new_label': new_label,
+            'confidence': confidence
+        })
+    except Exception as e:
+        logger.error(f"Error updating connection label: {str(e)}")
+        return jsonify({'error': f'Failed to update label: {str(e)}'}), 500
 
 @app.route('/images/<path:filename>')
 def serve_image(filename):
@@ -1278,6 +1362,16 @@ def get_scan_details(scan_id):
             return jsonify({'error': 'No results found for this scan'}), 404
 
         df = pd.read_csv(csv_file)
+        
+        # Replace NaN values with None/defaults to avoid JSON serialization issues
+        df = df.fillna({
+            'user_confidence': "",
+            'user_modified': False,
+            'modified_at': "",
+            'confidence_score': 0.0
+        })
+        # Replace any remaining NaN values with None
+        df = df.where(pd.notnull(df), None)
 
         # Try to read the original conn.log to get protocol information
         conn_log_path = os.path.join(scan_path, 'zeek_logs', 'conn.log')
@@ -1374,6 +1468,16 @@ def get_scan_connections_only(scan_id):
             return jsonify({'error': 'No results found'}), 404
 
         df = pd.read_csv(csv_file)
+        
+        # Replace NaN values with None/defaults to avoid JSON serialization issues
+        df = df.fillna({
+            'user_confidence': "",
+            'user_modified': False,
+            'modified_at': "",
+            'confidence_score': 0.0
+        })
+        # Replace any remaining NaN values with None
+        df = df.where(pd.notnull(df), None)
 
         # Try to read protocol information from conn.log
         conn_log_path = os.path.join(scan_path, 'zeek_logs', 'conn.log')

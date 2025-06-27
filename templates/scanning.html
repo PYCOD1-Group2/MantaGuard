@@ -437,45 +437,6 @@
                             </div>
                         </div>
 
-                        <!-- Labeling Section -->
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5><i class="fas fa-tag me-2"></i>Label a Prediction</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label for="uid-select" class="form-label">Select Connection UID</label>
-                                        <select class="form-select" id="uid-select">
-                                            <option value="">Select a UID...</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Select Label</label>
-                                        <div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="label" id="label-normal" value="normal">
-                                                <label class="form-check-label" for="label-normal">Normal</label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="label" id="label-anomaly" value="anomaly">
-                                                <label class="form-check-label" for="label-anomaly">Anomaly</label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="label" id="label-unknown" value="unknown">
-                                                <label class="form-check-label" for="label-unknown">Unknown</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 d-flex align-items-end">
-                                        <button class="btn btn-success w-100" id="submit-label">
-                                            <i class="fas fa-check me-2"></i>Submit Label
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Visualizations -->
                         <div class="card">
                             <div class="card-header">
@@ -783,10 +744,8 @@ function loadResults() {
             
             // Populate results table
             const tableBody = document.getElementById('results-table-body');
-            const uidSelect = document.getElementById('uid-select');
             
             tableBody.innerHTML = '';
-            uidSelect.innerHTML = '<option value="">Select a UID...</option>';
             
             data.predictions.forEach(prediction => {
                 const row = document.createElement('tr');
@@ -802,19 +761,31 @@ function loadResults() {
                     <td>${prediction.uid}</td>
                     <td>${prediction.timestamp || 'N/A'}</td>
                     <td>${prediction.proto || 'unknown'}</td>
-                    <td>${parseFloat(prediction.score || 0).toFixed(4)}</td>
-                    <td><span class="badge ${prediction.prediction === 'anomaly' ? 'bg-danger' : 'bg-success'}">${prediction.prediction}</span></td>
                     <td>
-                        <button class="btn btn-sm btn-outline-primary" onclick="selectUID('${prediction.uid}')">Select</button>
-                        ${prediction.has_extracted_pcap ? '<i class="fas fa-check-circle text-success ms-2" title="PCAP Extracted"></i>' : ''}
+                        ${parseFloat(prediction.score || 0).toFixed(4)}
+                        ${prediction.user_confidence && prediction.user_confidence !== "" ? `<br><small class="text-muted">Confidence: ${prediction.user_confidence}</small>` : ''}
+                    </td>
+                    <td>
+                        <span class="badge ${prediction.prediction === 'anomaly' ? 'bg-danger' : 'bg-success'} prediction-badge" 
+                              style="cursor: pointer;" 
+                              onclick="editConnectionLabel('${prediction.uid}', '${prediction.prediction}', '${prediction.user_confidence || 'medium'}')"
+                              title="Click to edit label">
+                            ${prediction.prediction}
+                            ${prediction.user_modified && prediction.user_modified !== false ? '<i class="fas fa-edit ms-1" title="User modified"></i>' : ''}
+                        </span>
+                    </td>
+                    <td>
+                        ${prediction.has_extracted_pcap ? 
+                            `<button class="btn btn-xs btn-success" onclick="openPcapFile('${prediction.uid}')" title="Open extracted PCAP file">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>` :
+                            `<button class="btn btn-xs btn-outline-secondary" disabled title="PCAP not extracted yet">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>`
+                        }
                     </td>
                 `;
                 tableBody.appendChild(row);
-                
-                const option = document.createElement('option');
-                option.value = prediction.uid;
-                option.textContent = prediction.uid;
-                uidSelect.appendChild(option);
             });
             
             // Load visualizations
@@ -836,14 +807,32 @@ function loadResults() {
     });
 }
 
-function selectUID(uid) {
-    document.getElementById('uid-select').value = uid;
-}
-
 // Function to trigger refresh after extraction completes
 function triggerPostExtractionRefreshResults() {
     console.log('Triggering post-extraction refresh for scanning results');
     loadResults(); // Reload the entire results table
+}
+
+// Function to open extracted PCAP file
+function openPcapFile(uid) {
+    const scanId = window.currentResultsScanId;
+    if (!scanId) {
+        showToast('Scan ID not available', false);
+        return;
+    }
+    
+    fetch(`/api/reports/open_pcap_file/${scanId}/${uid}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, true);
+        } else {
+            showToast(data.message || data.error, false);
+        }
+    })
+    .catch(error => {
+        showToast('Error opening PCAP file: ' + error.message, false);
+    });
 }
 
 // Open forensics folder for the current scan
@@ -870,36 +859,6 @@ function openForensicsFolderResults() {
     });
 }
 
-// Submit label
-document.getElementById('submit-label').addEventListener('click', function() {
-    const uid = document.getElementById('uid-select').value;
-    const label = document.querySelector('input[name="label"]:checked')?.value;
-    
-    if (!uid || !label) {
-        alert('Please select a UID and label');
-        return;
-    }
-    
-    fetch('/api/label_prediction', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            uid: uid,
-            label: label
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.message);
-            // Reset form
-            document.getElementById('uid-select').value = '';
-            document.querySelector('input[name="label"]:checked').checked = false;
-        }
-    });
-});
 
 function loadVisualizations(visualizations) {
     const content = document.getElementById('visualizations-content');
@@ -1256,5 +1215,162 @@ function generateCurrentScanId() {
     const now = new Date();
     return now.toISOString().slice(0, 19).replace(/[-:T]/g, '_');
 }
+
+// Global variables for label editing
+let currentEditingUid = '';
+
+// Function to open the edit label modal
+function editConnectionLabel(uid, currentLabel, currentConfidence) {
+    currentEditingUid = uid;
+    
+    // Set modal values
+    document.getElementById('editLabelUid').value = uid;
+    document.getElementById('editLabelCurrent').textContent = currentLabel;
+    document.getElementById('editLabelCurrent').className = `badge ${currentLabel === 'anomaly' ? 'bg-danger' : 'bg-success'} ms-2`;
+    
+    // Set radio button selection (opposite of current)
+    if (currentLabel === 'anomaly') {
+        document.getElementById('labelNormal').checked = true;
+    } else {
+        document.getElementById('labelAnomaly').checked = true;
+    }
+    
+    // Set confidence level
+    document.getElementById('confidenceLevel').value = currentConfidence || 'medium';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('editLabelModal'));
+    modal.show();
+}
+
+// Function to save the connection label
+function saveConnectionLabel() {
+    const selectedLabel = document.querySelector('input[name="newLabel"]:checked');
+    const confidence = document.getElementById('confidenceLevel').value;
+    
+    if (!selectedLabel) {
+        showToast('Please select a label', false);
+        return;
+    }
+    
+    const saveBtn = document.getElementById('saveLabel');
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Saving...';
+    
+    // Check if we're in a scanning session and use the appropriate API
+    const apiEndpoint = window.currentResultsScanId ? 
+        '/api/update_connection_label' : 
+        '/api/label_prediction';
+    
+    const requestBody = window.currentResultsScanId ? 
+        {
+            scan_id: window.currentResultsScanId,
+            uid: currentEditingUid,
+            label: selectedLabel.value,
+            confidence: confidence
+        } : 
+        {
+            uid: currentEditingUid,
+            label: selectedLabel.value,
+            confidence: confidence
+        };
+    
+    fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, true);
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editLabelModal'));
+            if (modal) modal.hide();
+            
+            // Refresh the results table
+            loadResults();
+        } else {
+            showToast(data.error || 'Failed to update label', false);
+        }
+    })
+    .catch(error => {
+        showToast('Error updating label: ' + error.message, false);
+    })
+    .finally(() => {
+        // Reset button
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fas fa-save me-1"></i>Save Changes';
+    });
+}
 </script>
+
+<!-- Edit Connection Label Modal -->
+<div class="modal fade" id="editLabelModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #1E1E1E; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit me-2"></i>Edit Connection Label
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Connection UID:</label>
+                    <input type="text" id="editLabelUid" class="form-control" readonly
+                           style="background: #262730; border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff;">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Current Label:</label>
+                    <span id="editLabelCurrent" class="badge bg-secondary ms-2"></span>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">New Label:</label>
+                    <div class="mt-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="newLabel" id="labelNormal" value="normal">
+                            <label class="form-check-label" for="labelNormal">
+                                <span class="badge bg-success">Normal</span> - Legitimate network traffic
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="newLabel" id="labelAnomaly" value="anomaly">
+                            <label class="form-check-label" for="labelAnomaly">
+                                <span class="badge bg-danger">Anomaly</span> - Suspicious or malicious traffic
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Confidence Level:</label>
+                    <select id="confidenceLevel" class="form-select" 
+                            style="background: #262730; border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff;">
+                        <option value="low">Low - Uncertain about this classification</option>
+                        <option value="medium" selected>Medium - Reasonably confident</option>
+                        <option value="high">High - Very confident in this classification</option>
+                    </select>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Note:</strong> This will update the prediction for this connection and change the score to reflect your confidence level.
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveLabel" onclick="saveConnectionLabel()">
+                    <i class="fas fa-save me-1"></i>Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
